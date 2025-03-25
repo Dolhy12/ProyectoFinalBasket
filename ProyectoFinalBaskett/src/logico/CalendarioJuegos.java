@@ -18,8 +18,8 @@ public class CalendarioJuegos {
         juegos.add(juego);
     }
 
-    public void eliminarJuego(String idJuego) {
-        juegos.removeIf(j -> j.getID().equals(idJuego));
+    public boolean eliminarJuego(String idJuego) {
+        return juegos.removeIf(j -> j.getID().equals(idJuego));
     }
 
     public void actualizarResultadoJuego(String idJuego, Resultado resultado) {
@@ -52,7 +52,6 @@ public class CalendarioJuegos {
                 .orElse(null);
     }
 
-    // Getters y Setters en el formato solicitado
     public ArrayList<Juego> getJuegos() {
         return juegos;
     }
