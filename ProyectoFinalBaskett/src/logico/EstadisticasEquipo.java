@@ -17,32 +17,6 @@ public class EstadisticasEquipo {
         this.bloqueosTotales = 0;
     }
 
-    // Métodos para modificar estadísticas
-    public void agregarPuntos(int puntos) {
-        this.totalPuntos += puntos;
-    }
-
-    public void agregarVictoria() {
-        this.victorias++;
-    }
-
-    public void agregarDerrota() {
-        this.derrotas++;
-    }
-
-    public void agregarRobos(int robos) {
-        this.robosTotales += robos;
-    }
-
-    public void agregarAsistencias(int asistencias) {
-        this.asistenciasTotales += asistencias;
-    }
-
-    public void agregarBloqueos(int bloqueos) {
-        this.bloqueosTotales += bloqueos;
-    }
-
-    // Getters
     public int getTotalPuntos() {
         return totalPuntos;
     }
@@ -90,4 +64,29 @@ public class EstadisticasEquipo {
     public void setBloqueosTotales(int bloqueosTotales) {
         this.bloqueosTotales = bloqueosTotales;
     }
+    
+    public void agregarPuntos(int puntos) {
+        this.totalPuntos += puntos;
+    }
+
+    public void agregarVictoria() {
+        this.victorias++;
+    }
+
+    public void agregarDerrota() {
+        this.derrotas++;
+    }
+
+    public void agregarRobos(int robos) {
+        this.robosTotales += robos;
+    }
+
+    public void agregarAsistencias(int asistencias) {
+        this.asistenciasTotales += asistencias;
+    }
+
+    public void agregarBloqueos(int bloqueos) {
+        this.bloqueosTotales += bloqueos;
+    }
+
 }

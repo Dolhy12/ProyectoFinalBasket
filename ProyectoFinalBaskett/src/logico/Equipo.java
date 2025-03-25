@@ -19,14 +19,6 @@ public class Equipo {
         this.estadisticas = new EstadisticasEquipo();
     }
 
-    public void agregarJugador(Jugador jugador) {
-        jugadores.add(jugador);
-    }
-
-    public void eliminarJugador(String idJugador) {
-        jugadores.removeIf(j -> j.getID().equals(idJugador));
-    }
-
     public String getID() {
         return ID;
     }
@@ -73,5 +65,13 @@ public class Equipo {
 
     public void setEstadisticas(EstadisticasEquipo estadisticas) {
         this.estadisticas = estadisticas;
+    }
+    
+    public void agregarJugador(Jugador jugador) {
+        jugadores.add(jugador);
+    }
+
+    public void eliminarJugador(String idJugador) {
+        jugadores.removeIf(j -> j.getID().equals(idJugador));
     }
 }

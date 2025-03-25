@@ -13,10 +13,6 @@ public class Resultado {
         this.estadisticasJugadores = new ArrayList<>();
     }
 
-    public void agregarEstadisticaJugador(EstadisticaJuego estadistica) {
-        estadisticasJugadores.add(estadistica);
-    }
-
     public int getPuntosLocal() {
         return puntosLocal;
     }
@@ -39,5 +35,9 @@ public class Resultado {
 
     public void setEstadisticasJugadores(ArrayList<EstadisticaJuego> estadisticasJugadores) {
         this.estadisticasJugadores = estadisticasJugadores;
+    }
+    
+    public void agregarEstadisticaJugador(EstadisticaJuego estadistica) {
+        estadisticasJugadores.add(estadistica);
     }
 }

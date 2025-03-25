@@ -21,10 +21,6 @@ public class Jugador {
         this.estadisticas = new EstadisticasJugador();
     }
 
-    public void agregarLesion(Lesion lesion) {
-        lesiones.add(lesion);
-    }
-
     public String getID() {
         return ID;
     }
@@ -79,5 +75,9 @@ public class Jugador {
 
     public void setEstadisticas(EstadisticasJugador estadisticas) {
         this.estadisticas = estadisticas;
+    }
+    
+    public void agregarLesion(Lesion lesion) {
+        lesiones.add(lesion);
     }
 }

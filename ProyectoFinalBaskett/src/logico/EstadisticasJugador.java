@@ -27,57 +27,6 @@ public class EstadisticasJugador {
         this.triplesDobles = 0;
     }
 
-    public void agregarPuntos(int puntos) {
-        this.puntosTotales += puntos;
-    }
-
-    public void agregarPuntosNormales(int puntos) {
-        this.puntosNormales += puntos;
-        this.puntosTotales += puntos;
-    }
-
-    public void agregarPuntosTriples(int puntos) {
-        this.puntosTriples += puntos;
-        this.puntosTotales += puntos;
-    }
-
-    public void agregarPuntosTirosLibres(int puntos) {
-        this.puntosTirosLibres += puntos;
-        this.puntosTotales += puntos;
-    }
-
-    public void agregarRebotes(int rebotes) {
-        this.rebotes += rebotes;
-    }
-
-    public void agregarAsistencias(int asistencias) {
-        this.asistencias += asistencias;
-    }
-
-    public void agregarRobos(int robos) {
-        this.robos += robos;
-    }
-
-    public void agregarBloqueos(int bloqueos) {
-        this.bloqueos += bloqueos;
-    }
-
-    public void agregarMinutosJugados(int minutos) {
-        this.minutosJugados += minutos;
-    }
-
-    public void verificarDoblesDobles() {
-        int categorias = 0;
-        if (puntosTotales >= 10) categorias++;
-        if (rebotes >= 10) categorias++;
-        if (asistencias >= 10) categorias++;
-        if (robos >= 10) categorias++;
-        if (bloqueos >= 10) categorias++;
-        
-        if (categorias >= 2) doblesDobles++;
-        if (categorias >= 3) triplesDobles++;
-    }
-
     public int getPuntosTotales() {
         return puntosTotales;
     }
@@ -164,5 +113,56 @@ public class EstadisticasJugador {
 
     public void setTriplesDobles(int triplesDobles) {
         this.triplesDobles = triplesDobles;
+    }
+    
+    public void agregarPuntos(int puntos) {
+        this.puntosTotales += puntos;
+    }
+
+    public void agregarPuntosNormales(int puntos) {
+        this.puntosNormales += puntos;
+        this.puntosTotales += puntos;
+    }
+
+    public void agregarPuntosTriples(int puntos) {
+        this.puntosTriples += puntos;
+        this.puntosTotales += puntos;
+    }
+
+    public void agregarPuntosTirosLibres(int puntos) {
+        this.puntosTirosLibres += puntos;
+        this.puntosTotales += puntos;
+    }
+
+    public void agregarRebotes(int rebotes) {
+        this.rebotes += rebotes;
+    }
+
+    public void agregarAsistencias(int asistencias) {
+        this.asistencias += asistencias;
+    }
+
+    public void agregarRobos(int robos) {
+        this.robos += robos;
+    }
+
+    public void agregarBloqueos(int bloqueos) {
+        this.bloqueos += bloqueos;
+    }
+
+    public void agregarMinutosJugados(int minutos) {
+        this.minutosJugados += minutos;
+    }
+
+    public void verificarDoblesDobles() {
+        int categorias = 0;
+        if (puntosTotales >= 10) categorias++;
+        if (rebotes >= 10) categorias++;
+        if (asistencias >= 10) categorias++;
+        if (robos >= 10) categorias++;
+        if (bloqueos >= 10) categorias++;
+        
+        if (categorias >= 2) doblesDobles++;
+        if (categorias >= 3) triplesDobles++;
     }
 }
