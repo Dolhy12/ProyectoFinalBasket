@@ -84,7 +84,6 @@ public class CalendarioJuegos {
             visitante.getEstadisticas().agregarVictoria();
         }
     }
-
     public Juego buscarJuego(String idJuego) {
         return juegos.stream()
                 .filter(j -> j.getID().equals(idJuego))
