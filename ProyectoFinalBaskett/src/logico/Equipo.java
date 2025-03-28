@@ -7,14 +7,20 @@ public class Equipo {
     private String nombre;
     private String ciudad;
     private String entrenador;
+    private String capitan;
+    private String nombreDeLaMascota;
+    private int tiempoFundado; 
     private ArrayList<Jugador> jugadores;
     private EstadisticasEquipo estadisticas;
 
-    public Equipo(String ID, String nombre, String ciudad, String entrenador) {
+    public Equipo(String ID, int tiempoFundado, String capitan, String nombreDeLaMacota,String nombre, String ciudad, String entrenador) {
         this.ID = ID;
         this.nombre = nombre;
         this.ciudad = ciudad;
         this.entrenador = entrenador;
+        this.capitan = capitan; 
+        this.tiempoFundado = tiempoFundado; 
+        this.nombreDeLaMascota = nombreDeLaMascota;
         this.jugadores = new ArrayList<>();
         this.estadisticas = new EstadisticasEquipo();
     }
@@ -74,4 +80,28 @@ public class Equipo {
     public void eliminarJugador(String idJugador) {
         jugadores.removeIf(j -> j.getID().equals(idJugador));
     }
+
+	public String getCapitan() {
+		return capitan;
+	}
+
+	public void setCapitan(String capitan) {
+		this.capitan = capitan;
+	}
+
+	public String getNombreDeLaMascota() {
+		return nombreDeLaMascota;
+	}
+
+	public void setNombreDeLaMascota(String nombreDeLaMascota) {
+		this.nombreDeLaMascota = nombreDeLaMascota;
+	}
+
+	public int getTiempoFundado() {
+		return tiempoFundado;
+	}
+
+	public void setTiempoFundado(int tiempoFundado) {
+		this.tiempoFundado = tiempoFundado;
+	}
 }
