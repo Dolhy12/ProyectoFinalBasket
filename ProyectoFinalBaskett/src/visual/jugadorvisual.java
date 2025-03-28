@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 import logico.ControladoraLiga;
 import logico.Jugador;
 
-public class JugadorVisual extends JFrame {
+public class jugadorvisual extends JFrame {
 
     private JPanel contentPane;
     private JTextField txtID;
@@ -34,7 +34,7 @@ public class JugadorVisual extends JFrame {
     private JTextField txtNumero;
     private ControladoraLiga controladora;
 
-    public JugadorVisual(ControladoraLiga controladora) {
+    public jugadorvisual(ControladoraLiga controladora) {
         this.controladora = controladora;
         initialize();
     }
@@ -43,9 +43,9 @@ public class JugadorVisual extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                
+                 
                     ControladoraLiga controladora = new ControladoraLiga();
-                    JugadorVisual frame = new JugadorVisual(controladora);
+                    jugadorvisual frame = new jugadorvisual(controladora);
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -54,7 +54,6 @@ public class JugadorVisual extends JFrame {
         });
     }
 
-    
     private void initialize() {
         setTitle("Registrar Jugador");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -74,7 +73,7 @@ public class JugadorVisual extends JFrame {
         txtID.setBounds(20, 45, 240, 30);
         contentPane.add(txtID);
         txtID.setColumns(10);
-
+        
         JLabel lblNombre = new JLabel("NOMBRE:");
         lblNombre.setFont(new Font("Arial", Font.BOLD, 14));
         lblNombre.setBounds(20, 80, 80, 25);
@@ -180,14 +179,12 @@ public class JugadorVisual extends JFrame {
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Date fechaNacimiento = formatter.parse(fechaNacimientoStr);
 
-              
                     Jugador jugador = new Jugador(id, nombre, edad, posicion, nacionalidad, fechaNacimiento, peso, altura, numero);
 
-               
                     controladora.agregarJugador(jugador);
 
                     JOptionPane.showMessageDialog(null, "Jugador registrado con éxito. ID: " + id);
-                    dispose(); 
+                    dispose();
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "Error: Verifique que los campos numéricos (edad, peso, altura, número) sean correctos.");
                 } catch (Exception ex) {
