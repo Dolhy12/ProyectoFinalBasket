@@ -34,7 +34,7 @@ public class equipovisual extends JFrame {
         this.controladora = controladora;
         initialize();
     }
-
+ 
    
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
