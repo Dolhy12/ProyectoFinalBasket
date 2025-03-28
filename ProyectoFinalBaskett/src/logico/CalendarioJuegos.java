@@ -55,6 +55,14 @@ public class CalendarioJuegos {
     }
 
     public void agregarJuego(Juego juego) {
+        if (juego.getFecha().isBefore(this.fechaInicio) || juego.getFecha().isAfter(this.fechaFin)) {
+            throw new IllegalArgumentException("El juego está fuera de la temporada.");
+        }
+        if (tieneConflicto(juego.getEquipoLocal(), juego.getFecha()) || 
+            tieneConflicto(juego.getEquipoVisitante(), juego.getFecha())) {
+            throw new IllegalArgumentException("Un equipo ya tiene un juego programado en esa fecha.");
+        }
+
         juegos.add(juego);
     }
 
@@ -76,6 +84,8 @@ public class CalendarioJuegos {
         Resultado resultado = juego.getResultado();
 
         local.getEstadisticas().agregarPuntos(resultado.getPuntosLocal());
+        visitante.getEstadisticas().agregarPuntos(resultado.getPuntosVisitante());
+
         if (resultado.getPuntosLocal() > resultado.getPuntosVisitante()) {
             local.getEstadisticas().agregarVictoria();
             visitante.getEstadisticas().agregarDerrota();
@@ -83,11 +93,41 @@ public class CalendarioJuegos {
             local.getEstadisticas().agregarDerrota();
             visitante.getEstadisticas().agregarVictoria();
         }
+
+        ArrayList<Jugador> jugadoresLocales = resultado.getJugadoresLocales();
+        ArrayList<int[]> statsLocales = resultado.getStatsLocales();
+        for (int i = 0; i < jugadoresLocales.size(); i++) {
+            Jugador jugador = jugadoresLocales.get(i);
+            int[] stats = statsLocales.get(i);
+            jugador.getEstadisticas().agregarPuntos(stats[0]);
+            jugador.getEstadisticas().agregarRebotes(stats[1]);
+            jugador.getEstadisticas().agregarAsistencias(stats[2]);
+            jugador.getEstadisticas().verificarDoblesDobles();
+        }
+
+        ArrayList<Jugador> jugadoresVisitantes = resultado.getJugadoresVisitantes();
+        ArrayList<int[]> statsVisitantes = resultado.getStatsVisitantes();
+        for (int i = 0; i < jugadoresVisitantes.size(); i++) {
+            Jugador jugador = jugadoresVisitantes.get(i);
+            int[] stats = statsVisitantes.get(i);
+            jugador.getEstadisticas().agregarPuntos(stats[0]);
+            jugador.getEstadisticas().agregarRebotes(stats[1]);
+            jugador.getEstadisticas().agregarAsistencias(stats[2]);
+            jugador.getEstadisticas().verificarDoblesDobles();
+        }
     }
+    
     public Juego buscarJuego(String idJuego) {
         return juegos.stream()
                 .filter(j -> j.getID().equals(idJuego))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private boolean tieneConflicto(Equipo equipo, LocalDate fecha) {
+        return juegos.stream().anyMatch(j ->
+            (j.getEquipoLocal().equals(equipo) || j.getEquipoVisitante().equals(equipo)) &&
+            j.getFecha().equals(fecha)
+        );
     }
 }

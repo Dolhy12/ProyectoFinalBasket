@@ -1,6 +1,7 @@
 package logico;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ControladoraLiga {
     private ArrayList<Equipo> misEquipos;
@@ -90,7 +91,16 @@ public class ControladoraLiga {
     }
 
     public void actualizarResultadoJuego(String idJuego, Resultado resultado) {
-        calendario.actualizarResultadoJuego(idJuego, resultado);
+        Juego juego = calendario.buscarJuego(idJuego);
+        if (juego != null) {
+            Jugador jugadorLocal = juego.getEquipoLocal().getJugadores().get(0);
+            resultado.agregarEstadisticaLocal(jugadorLocal, 20, 5, 3);
+
+            Jugador jugadorVisitante = juego.getEquipoVisitante().getJugadores().get(0);
+            resultado.agregarEstadisticaVisitante(jugadorVisitante, 15, 4, 2);
+
+            juego.setResultado(resultado);
+        }
     }
 
     public Juego buscarJuego(String idJuego) {
@@ -106,14 +116,10 @@ public class ControladoraLiga {
     }
 
     public ArrayList<Juego> getJuegosPorEquipo(String idEquipo) {
-        ArrayList<Juego> juegosEquipo = new ArrayList<>();
-        for (Juego juego : calendario.getJuegos()) {
-            if (juego.getEquipoLocal().getID().equals(idEquipo) || 
-                juego.getEquipoVisitante().getID().equals(idEquipo)) {
-                juegosEquipo.add(juego);
-            }
-        }
-        return juegosEquipo;
+        return calendario.getJuegos().stream()
+            .filter(j -> j.getEquipoLocal().getID().equals(idEquipo) || 
+                         j.getEquipoVisitante().getID().equals(idEquipo))
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<Equipo> getMisEquipos() {
@@ -190,5 +196,30 @@ public class ControladoraLiga {
             }
         }
         return resultados;
+    }
+    
+    public ArrayList<Equipo> generarClasificacion() {
+        return (ArrayList<Equipo>) misEquipos.stream()
+            .sorted((e1, e2) -> {
+                int cmp = Integer.compare(e2.getEstadisticas().getVictorias(), e1.getEstadisticas().getVictorias());
+                if (cmp == 0) {
+                    cmp = Integer.compare(e2.getEstadisticas().getTotalPuntos(), e1.getEstadisticas().getTotalPuntos());
+                }
+                return cmp;
+            })
+            .collect(Collectors.toList());
+    }
+    
+    public ArrayList<Jugador> reportarJugadoresLesionados() {
+        return (ArrayList<Jugador>) misJugadores.stream()
+            .filter(j -> j.getLesiones().stream().anyMatch(l -> l.getEstado().equals("Activa")))
+            .collect(Collectors.toList());
+    }
+    
+    public ArrayList<Jugador> topJugadoresPorPuntos() {
+        return (ArrayList<Jugador>) misJugadores.stream()
+            .sorted((j1, j2) -> Integer.compare(j2.getEstadisticas().getPuntosTotales(), j1.getEstadisticas().getPuntosTotales()))
+            .limit(10)
+            .collect(Collectors.toList());
     }
 }
