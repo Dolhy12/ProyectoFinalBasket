@@ -121,4 +121,29 @@ public class Jugador {
 	public void setFechaDeNacimiento(Date fechaDeNacimiento) {
 		this.fechaDeNacimiento = fechaDeNacimiento;
 	}
+	public void verificarLesiones() {
+        LocalDate hoy = LocalDate.now(); 
+        lesiones.removeIf(lesion -> {
+            LocalDate fechaFin = lesion.getFechaLesion().plusDays(lesion.getDuracionEstimada());
+            if (hoy.isAfter(fechaFin)) {
+                lesion.setEstado("Recuperada"); 
+                return true; 
+            }
+            return false;
+        });
+    }
+
+    public void eliminarLesion(String tipo) {
+        lesiones.removeIf(l -> l.getTipo().equals(tipo));
+    }
+
+    public ArrayList<Lesion> getLesionesActivas() {
+        ArrayList<Lesion> activas = new ArrayList<>();
+        for (Lesion lesion : lesiones) {
+            if (lesion.getEstado().equals("Activa")) {
+                activas.add(lesion);
+            }
+        }
+        return activas;
+    }
 }

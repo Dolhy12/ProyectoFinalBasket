@@ -1,5 +1,6 @@
 package logico;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -221,5 +222,66 @@ public class ControladoraLiga {
             .sorted((j1, j2) -> Integer.compare(j2.getEstadisticas().getPuntosTotales(), j1.getEstadisticas().getPuntosTotales()))
             .limit(10)
             .collect(Collectors.toList());
+    }
+    public void modificarEquipo(String idEquipo, String nombre, String ciudad, String entrenador, String capitan, String nombreDeLaMascota, int tiempoFundado) {
+        Equipo equipo = buscarEquipo(idEquipo);
+        if (equipo != null) {
+            equipo.setNombre(nombre);
+            equipo.setCiudad(ciudad);
+            equipo.setEntrenador(entrenador);
+            equipo.setCapitan(capitan);
+            equipo.setNombreDeLaMascota(nombreDeLaMascota);
+            equipo.setTiempoFundado(tiempoFundado);
+        }
+    }
+
+    public void agregarJugadorAEquipo(String idJugador, String idEquipo) {
+        Jugador jugador = buscarJugador(idJugador);
+        Equipo equipo = buscarEquipo(idEquipo);
+        if (jugador != null && equipo != null && !equipo.getJugadores().contains(jugador)) {
+            equipo.agregarJugador(jugador);
+            if (!misJugadores.contains(jugador)) {
+                misJugadores.add(jugador);
+            }
+        }
+    }
+
+    public void modificarJugador(String idJugador, String nombre, int edad, String posicion, int numero) {
+        Jugador jugador = buscarJugador(idJugador);
+        if (jugador != null) {
+            jugador.setNombre(nombre);
+            jugador.setEdad(edad);
+            jugador.setPosicion(posicion);
+            jugador.setNumero(numero);
+        }
+    }
+
+    public void agregarLesionAJugador(String idJugador, String tipo, String parteCuerpo, int diasBajaEstimado, String tratamiento, LocalDate fechaLesion, int duracionEstimada) {
+        Jugador jugador = buscarJugador(idJugador);
+        if (jugador != null) {
+            Lesion lesion = new Lesion(tipo, parteCuerpo, diasBajaEstimado, tratamiento, fechaLesion, duracionEstimada);
+            jugador.agregarLesion(lesion);
+        }
+    }
+
+    public void verificarLesionesJugadores() {
+        LocalDate hoy = LocalDate.now();
+        for (Jugador jugador : misJugadores) {
+            jugador.getLesiones().removeIf(lesion -> {
+                LocalDate fechaFin = lesion.getFechaLesion().plusDays(lesion.getDuracionEstimada());
+                if (hoy.isAfter(fechaFin)) {
+                    lesion.setEstado("Recuperada");
+                    return true; 
+                }
+                return false;
+            });
+        }
+    }
+
+    public void eliminarLesionDeJugador(String idJugador, String tipoLesion) {
+        Jugador jugador = buscarJugador(idJugador);
+        if (jugador != null) {
+            jugador.getLesiones().removeIf(l -> l.getTipo().equals(tipoLesion));
+        }
     }
 }

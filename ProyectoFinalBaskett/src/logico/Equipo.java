@@ -104,4 +104,20 @@ public class Equipo {
 	public void setTiempoFundado(int tiempoFundado) {
 		this.tiempoFundado = tiempoFundado;
 	}
+	public Jugador buscarJugador(String idJugador) {
+        for (Jugador jugador : jugadores) {
+            if (jugador.getID().equals(idJugador)) {
+                return jugador;
+            }
+        }
+        return null; 
+    }
+
+    public void modificarJugador(String idJugador, String nuevaPosicion, int nuevoNumero) {
+        Jugador jugador = buscarJugador(idJugador);
+        if (jugador != null) {
+            jugador.setPosicion(nuevaPosicion);
+            jugador.setNumero(nuevoNumero);
+        }
+    }
 }
