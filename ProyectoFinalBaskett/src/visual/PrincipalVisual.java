@@ -240,5 +240,12 @@ public class PrincipalVisual extends JFrame {
                 ventanaLista.setVisible(true);
             }
         });
+
+        mntmListarLesiones.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ListarLesionesVisual ventanaLista = new ListarLesionesVisual(controladora);
+                ventanaLista.setVisible(true);
+            }
+        });
     }
 }
