@@ -223,6 +223,7 @@ public class ControladoraLiga {
             .limit(10)
             .collect(Collectors.toList());
     }
+    
     public void modificarEquipo(String idEquipo, String nombre, String ciudad, String entrenador, String capitan, String nombreDeLaMascota, int tiempoFundado) {
         Equipo equipo = buscarEquipo(idEquipo);
         if (equipo != null) {
@@ -283,5 +284,13 @@ public class ControladoraLiga {
         if (jugador != null) {
             jugador.getLesiones().removeIf(l -> l.getTipo().equals(tipoLesion));
         }
+    }
+
+    public ArrayList<Jugador> getJugadoresLesionadosPorEquipo(String idEquipo) {
+        Equipo equipo = buscarEquipo(idEquipo);
+        if (equipo == null) return new ArrayList<>();
+        return equipo.getJugadores().stream()
+            .filter(j -> !j.getLesionesActivas().isEmpty())
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 }

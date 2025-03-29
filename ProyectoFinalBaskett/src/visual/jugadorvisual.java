@@ -9,12 +9,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox; 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JTextField;  
 import javax.swing.border.EmptyBorder;
 
 import logico.ControladoraLiga;
@@ -26,11 +26,11 @@ public class jugadorvisual extends JFrame {
     private JTextField txtID;
     private JTextField txtNombre;
     private JTextField txtEdad;
-    private JComboBox cmbPosicion; 
+    private JComboBox cmbPosicion;
     private JTextField txtNacionalidad;
-    private JComboBox cmbDia;   
-    private JComboBox cmbMes;   
-    private JComboBox cmbAnio; 
+    private JComboBox cmbDia;
+    private JComboBox cmbMes;
+    private JComboBox cmbAnio;
     private JTextField txtPeso;
     private JTextField txtAltura;
     private JTextField txtNumero;
@@ -58,10 +58,10 @@ public class jugadorvisual extends JFrame {
     private void initialize() {
         setTitle("Registrar Jugador");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 300, 600); 
+        setBounds(100, 100, 400, 600); 
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contentPane.setBackground(new Color(255, 147, 0)); 
+        contentPane.setBackground(new Color(255, 147, 0));
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
@@ -71,55 +71,55 @@ public class jugadorvisual extends JFrame {
         contentPane.add(lblID);
 
         txtID = new JTextField();
-        txtID.setBounds(20, 45, 240, 30);
-        txtID.setEditable(false); 
-        txtID.setText(generarIDUnico()); 
+        txtID.setBounds(100, 20, 260, 25);
+        txtID.setEditable(false);
+        txtID.setText(generarIDUnico());
         contentPane.add(txtID);
         txtID.setColumns(10);
-        
+
         JLabel lblNombre = new JLabel("NOMBRE:");
         lblNombre.setFont(new Font("Arial", Font.BOLD, 14));
-        lblNombre.setBounds(20, 80, 80, 25);
+        lblNombre.setBounds(20, 60, 80, 25);
         contentPane.add(lblNombre);
 
         txtNombre = new JTextField();
-        txtNombre.setBounds(20, 105, 240, 30);
+        txtNombre.setBounds(100, 60, 260, 25);
         contentPane.add(txtNombre);
         txtNombre.setColumns(10);
 
         JLabel lblEdad = new JLabel("EDAD:");
         lblEdad.setFont(new Font("Arial", Font.BOLD, 14));
-        lblEdad.setBounds(20, 140, 80, 25);
+        lblEdad.setBounds(20, 100, 80, 25);
         contentPane.add(lblEdad);
 
         txtEdad = new JTextField();
-        txtEdad.setBounds(20, 165, 240, 30);
+        txtEdad.setBounds(100, 100, 260, 25);
         contentPane.add(txtEdad);
         txtEdad.setColumns(10);
-
+        
         JLabel lblPosicion = new JLabel("POSICIÓN:");
         lblPosicion.setFont(new Font("Arial", Font.BOLD, 14));
-        lblPosicion.setBounds(20, 200, 80, 25);
+        lblPosicion.setBounds(20, 140, 80, 25);
         contentPane.add(lblPosicion);
 
         String[] posiciones = {"Base", "Escolta", "Alero", "Ala-Pívot", "Pívot"};
-        cmbPosicion = new JComboBox(posiciones); 
-        cmbPosicion.setBounds(20, 225, 240, 30);
+        cmbPosicion = new JComboBox(posiciones);
+        cmbPosicion.setBounds(100, 140, 260, 25);
         contentPane.add(cmbPosicion);
 
         JLabel lblNacionalidad = new JLabel("NACIONALIDAD:");
         lblNacionalidad.setFont(new Font("Arial", Font.BOLD, 14));
-        lblNacionalidad.setBounds(20, 260, 120, 25);
+        lblNacionalidad.setBounds(20, 180, 80, 25);
         contentPane.add(lblNacionalidad);
 
         txtNacionalidad = new JTextField();
-        txtNacionalidad.setBounds(20, 285, 240, 30);
+        txtNacionalidad.setBounds(100, 180, 260, 25);
         contentPane.add(txtNacionalidad);
         txtNacionalidad.setColumns(10);
 
-        JLabel lblFechaNacimiento = new JLabel("FECHA NACIMIENTO:");
+        JLabel lblFechaNacimiento = new JLabel("FECHA NAC.:");
         lblFechaNacimiento.setFont(new Font("Arial", Font.BOLD, 14));
-        lblFechaNacimiento.setBounds(20, 320, 140, 25);
+        lblFechaNacimiento.setBounds(20, 220, 80, 25);
         contentPane.add(lblFechaNacimiento);
 
         String[] dias = new String[31];
@@ -127,13 +127,13 @@ public class jugadorvisual extends JFrame {
             dias[i] = String.valueOf(i + 1);
         }
         cmbDia = new JComboBox(dias);
-        cmbDia.setBounds(20, 345, 60, 30);
+        cmbDia.setBounds(100, 220, 60, 25);
         contentPane.add(cmbDia);
 
         String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
                           "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
         cmbMes = new JComboBox(meses);
-        cmbMes.setBounds(90, 345, 100, 30);
+        cmbMes.setBounds(170, 220, 100, 25);
         contentPane.add(cmbMes);
 
         String[] anios = new String[46];
@@ -141,45 +141,45 @@ public class jugadorvisual extends JFrame {
             anios[i] = String.valueOf(1980 + i);
         }
         cmbAnio = new JComboBox(anios);
-        cmbAnio.setBounds(200, 345, 60, 30);
+        cmbAnio.setBounds(280, 220, 80, 25);
         contentPane.add(cmbAnio);
 
         JLabel lblPeso = new JLabel("PESO (kg):");
         lblPeso.setFont(new Font("Arial", Font.BOLD, 14));
-        lblPeso.setBounds(20, 380, 80, 25);
+        lblPeso.setBounds(20, 260, 80, 25);
         contentPane.add(lblPeso);
 
         txtPeso = new JTextField();
-        txtPeso.setBounds(20, 405, 240, 30);
+        txtPeso.setBounds(100, 260, 260, 25);
         contentPane.add(txtPeso);
         txtPeso.setColumns(10);
 
         JLabel lblAltura = new JLabel("ALTURA (m):");
         lblAltura.setFont(new Font("Arial", Font.BOLD, 14));
-        lblAltura.setBounds(20, 440, 80, 25);
+        lblAltura.setBounds(20, 300, 80, 25);
         contentPane.add(lblAltura);
 
         txtAltura = new JTextField();
-        txtAltura.setBounds(20, 465, 240, 30);
+        txtAltura.setBounds(100, 300, 260, 25);
         contentPane.add(txtAltura);
         txtAltura.setColumns(10);
 
         JLabel lblNumero = new JLabel("NÚMERO:");
         lblNumero.setFont(new Font("Arial", Font.BOLD, 14));
-        lblNumero.setBounds(20, 500, 80, 25);
+        lblNumero.setBounds(20, 340, 80, 25);
         contentPane.add(lblNumero);
 
         txtNumero = new JTextField();
-        txtNumero.setBounds(20, 525, 240, 30);
+        txtNumero.setBounds(100, 340, 260, 25);
         contentPane.add(txtNumero);
         txtNumero.setColumns(10);
 
         JButton btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setBounds(20, 560, 100, 30);
+        btnRegistrar.setBounds(20, 380, 100, 30);
         contentPane.add(btnRegistrar);
 
         JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.setBounds(160, 560, 100, 30);
+        btnCancelar.setBounds(130, 380, 100, 30);
         contentPane.add(btnCancelar);
 
         btnRegistrar.addActionListener(new ActionListener() {
@@ -192,8 +192,8 @@ public class jugadorvisual extends JFrame {
                     String nacionalidad = txtNacionalidad.getText();
                     
                     String dia = (String) cmbDia.getSelectedItem();
-                    int mesIndex = cmbMes.getSelectedIndex() + 1; 
-                    String mes = String.format("%02d", mesIndex); 
+                    int mesIndex = cmbMes.getSelectedIndex() + 1;
+                    String mes = String.format("%02d", mesIndex);
                     String anio = (String) cmbAnio.getSelectedItem();
                     String fechaNacimientoStr = dia + "/" + mes + "/" + anio;
 
@@ -220,13 +220,13 @@ public class jugadorvisual extends JFrame {
 
         btnCancelar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                dispose(); 
+                dispose();
             }
         });
     }
 
     private String generarIDUnico() {
-        int numeroJugadores = controladora.getMisJugadores().size(); 
-        return "JUG-" + (numeroJugadores + 1); 
+        int numeroJugadores = controladora.getMisJugadores().size();
+        return "JUG-" + (numeroJugadores + 1);
     }
 }
