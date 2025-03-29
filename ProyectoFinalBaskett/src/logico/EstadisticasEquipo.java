@@ -7,6 +7,7 @@ public class EstadisticasEquipo {
     private int robosTotales;
     private int asistenciasTotales;
     private int bloqueosTotales;
+    private int partidosJugados; 
 
     public EstadisticasEquipo() {
         this.totalPuntos = 0;
@@ -15,6 +16,31 @@ public class EstadisticasEquipo {
         this.robosTotales = 0;
         this.asistenciasTotales = 0;
         this.bloqueosTotales = 0;
+        this.partidosJugados = 0;
+    }
+
+    public void agregarVictoria() {
+        this.victorias++;
+        this.partidosJugados++;
+    }
+
+    public void agregarDerrota() {
+        this.derrotas++;
+        this.partidosJugados++;
+    }
+
+    public double getPorcentajeVictorias() {
+        if (partidosJugados == 0) return 0.0;
+        return (victorias * 100.0) / partidosJugados;
+    }
+
+    public double getPromedioPuntosPorPartido() {
+        if (partidosJugados == 0) return 0.0;
+        return (double) totalPuntos / partidosJugados;
+    }
+
+    public int getPartidosJugados() {
+        return partidosJugados;
     }
 
     public int getTotalPuntos() {
@@ -41,52 +67,27 @@ public class EstadisticasEquipo {
         return bloqueosTotales;
     }
 
-    public void setTotalPuntos(int totalPuntos) {
-        this.totalPuntos = totalPuntos;
-    }
-
-    public void setVictorias(int victorias) {
-        this.victorias = victorias;
-    }
-
-    public void setDerrotas(int derrotas) {
-        this.derrotas = derrotas;
-    }
-
-    public void setRobosTotales(int robosTotales) {
-        this.robosTotales = robosTotales;
-    }
-
-    public void setAsistenciasTotales(int asistenciasTotales) {
-        this.asistenciasTotales = asistenciasTotales;
-    }
-
-    public void setBloqueosTotales(int bloqueosTotales) {
-        this.bloqueosTotales = bloqueosTotales;
-    }
-    
     public void agregarPuntos(int puntos) {
-        this.totalPuntos += puntos;
-    }
-
-    public void agregarVictoria() {
-        this.victorias++;
-    }
-
-    public void agregarDerrota() {
-        this.derrotas++;
+        if (puntos > 0) {
+            this.totalPuntos += puntos;
+        }
     }
 
     public void agregarRobos(int robos) {
-        this.robosTotales += robos;
+        if (robos > 0) {
+            this.robosTotales += robos;
+        }
     }
 
     public void agregarAsistencias(int asistencias) {
-        this.asistenciasTotales += asistencias;
+        if (asistencias > 0) {
+            this.asistenciasTotales += asistencias;
+        }
     }
 
     public void agregarBloqueos(int bloqueos) {
-        this.bloqueosTotales += bloqueos;
+        if (bloqueos > 0) {
+            this.bloqueosTotales += bloqueos;
+        }
     }
-
 }
