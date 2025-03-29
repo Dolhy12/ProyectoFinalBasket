@@ -4,7 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-
+import java.awt.event.ActionEvent; 
+import java.awt.event.ActionListener; 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,11 +14,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane; 
 import javax.swing.border.BevelBorder;
+import logico.ControladoraLiga; 
 
 public class PrincipalVisual extends JFrame {
 
     private JPanel contentPane;
+    ControladoraLiga controladora = new ControladoraLiga();
 
     /**
      * Launch the application.
@@ -164,6 +168,76 @@ public class PrincipalVisual extends JFrame {
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 fondoLabel.setSize(getWidth(), getHeight());
+            }
+        }); 
+
+        mntmRegistrarEquipo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                equipovisual ventanaEquipo = new equipovisual(controladora);
+                ventanaEquipo.setVisible(true);
+            }
+        });
+
+        mntmRegistrarJugador.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                jugadorvisual ventanaJugador = new jugadorvisual(controladora);
+                ventanaJugador.setVisible(true);
+            }
+        });
+
+        mntmRegistrarLesion.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String idJugador = JOptionPane.showInputDialog("Ingrese el ID del jugador:");
+                if (idJugador != null && !idJugador.trim().isEmpty()) {
+                    if (controladora.existeJugador(idJugador)) {
+                        lesionvisual ventanaLesion = new lesionvisual(controladora, idJugador);
+                        ventanaLesion.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Jugador no encontrado.");
+                    }
+                }
+            }
+        });
+
+        mntmRegistrarEquipo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                equipovisual ventanaEquipo = new equipovisual(controladora);
+                ventanaEquipo.setVisible(true);
+            }
+        });
+
+        mntmRegistrarJugador.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                jugadorvisual ventanaJugador = new jugadorvisual(controladora);
+                ventanaJugador.setVisible(true);
+            }
+        });
+
+        mntmRegistrarLesion.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String idJugador = JOptionPane.showInputDialog("Ingrese el ID del jugador:");
+                if (idJugador != null && !idJugador.trim().isEmpty()) {
+                    if (controladora.existeJugador(idJugador)) {
+                        lesionvisual ventanaLesion = new lesionvisual(controladora, idJugador);
+                        ventanaLesion.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Jugador no encontrado.");
+                    }
+                }
+            }
+        });
+
+        mntmListarEquipos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ListarEquiposVisual ventanaLista = new ListarEquiposVisual(controladora);
+                ventanaLista.setVisible(true);
+            }
+        });
+
+        mntmListarJugadores.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ListarJugadoresVisual ventanaLista = new ListarJugadoresVisual(controladora);
+                ventanaLista.setVisible(true);
             }
         });
     }
