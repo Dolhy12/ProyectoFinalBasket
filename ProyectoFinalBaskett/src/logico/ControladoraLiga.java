@@ -293,4 +293,9 @@ public class ControladoraLiga {
             .filter(j -> !j.getLesionesActivas().isEmpty())
             .collect(Collectors.toCollection(ArrayList::new));
     }
+
+	public ArrayList<Juego> getJuegosPorJugador(String id) {
+		
+		return null;
+	}
 }
