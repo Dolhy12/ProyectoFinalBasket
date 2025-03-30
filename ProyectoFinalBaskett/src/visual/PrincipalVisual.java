@@ -213,7 +213,7 @@ public class PrincipalVisual extends JFrame {
 
         mntmListarEquipos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ListEquipos ventanaLista = new ListEquipos(controladora);
+                ListarEquipos ventanaLista = new ListarEquipos(controladora);
                 ventanaLista.setVisible(true);
             }
         });
