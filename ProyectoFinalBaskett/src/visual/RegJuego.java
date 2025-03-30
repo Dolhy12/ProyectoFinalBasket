@@ -20,6 +20,8 @@ import javax.swing.JTextField;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Calendar;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
@@ -146,7 +148,7 @@ public class RegJuego extends JDialog {
 				}
 				{
 					JComboBox cbxUbicacion = new JComboBox();
-					cargarLugares();
+					cargarLugares(cbxUbicacion);
 					cbxUbicacion.setBounds(88, 10, 155, 22);
 					panelUbicacion.add(cbxUbicacion);
 				}
@@ -176,10 +178,14 @@ public class RegJuego extends JDialog {
 		}
 	}
 
-	private void cargarLugares() {
-		// TODO Auto-generated method stub
-		
-	}
+	private void cargarLugares(JComboBox<String> comboBox) {
+        Set<String> lugares = new HashSet<>();
+        for (Equipo equipo : controladora.getMisEquipos()) {
+            lugares.add(equipo.getCiudad());
+        }
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(lugares.toArray(new String[0]));
+        comboBox.setModel(model);
+    }
 
 	private void cargarEquipos(JComboBox<Equipo> comboBox) {
         DefaultComboBoxModel<Equipo> model = new DefaultComboBoxModel<>();

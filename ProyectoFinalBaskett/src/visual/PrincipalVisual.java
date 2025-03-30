@@ -62,6 +62,12 @@ public class PrincipalVisual extends JFrame {
         mnCalendario.add(mntmVerCalendario);
 
         JMenuItem mntmAgregarJuego = new JMenuItem("Agregar Juego");
+        mntmAgregarJuego.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		RegJuego ventanaJuego = new RegJuego();
+        		ventanaJuego.setVisible(true);
+        	}
+        });
         mnCalendario.add(mntmAgregarJuego);
 
         JMenu mnEquipos = new JMenu("Equipos");
