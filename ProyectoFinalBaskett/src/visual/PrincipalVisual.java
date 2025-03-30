@@ -149,7 +149,7 @@ public class PrincipalVisual extends JFrame {
         JMenuItem mntmListarLesiones = new JMenuItem("Listar Lesiones");
         mntmListarLesiones.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		ListLesiones ventanaListLesiones = new ListLesiones(controladora);
+        		ListarLesiones ventanaListLesiones = new ListarLesiones(controladora);
         		ventanaListLesiones.setVisible(true);
         	}
         });

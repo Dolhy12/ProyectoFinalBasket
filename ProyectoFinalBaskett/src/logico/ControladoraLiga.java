@@ -298,4 +298,15 @@ public class ControladoraLiga {
 		
 		return null;
 	}
+
+	public Equipo buscarEquipoPorJugador(String idJugador) {
+    for (Equipo equipo : misEquipos) {
+        for (Jugador jugador : equipo.getJugadores()) {
+            if (jugador.getID().equals(idJugador)) {
+                return equipo;
+            }
+        }
+    }
+    return null;
+}
 }

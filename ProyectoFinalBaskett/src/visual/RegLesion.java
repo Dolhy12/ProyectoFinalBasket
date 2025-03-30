@@ -1,195 +1,186 @@
 package visual;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.time.LocalDate;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.util.Date;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import logico.ControladoraLiga;
-import logico.Jugador;
-import logico.Lesion;
 
-public class RegLesion extends JFrame {
+import java.awt.Color;
+import java.awt.Dimension;
 
-    private JPanel contentPane;
-    private JTextField txtTipo;
-    private JTextField txtParteCuerpo;
-    private JTextField txtDiasBajaEstimado;
-    private JTextField txtTratamiento;
-    private JTextField txtFechaLesion;
-    private JTextField txtDuracionEstimada;
-    private ControladoraLiga controladora;
-    private String idJugador;
-    private String tipoLesion; 
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JComboBox;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.awt.event.ActionEvent;
 
-    /**
-     * @wbp.parser.constructor
-     */
-    public RegLesion(ControladoraLiga controladora, String idJugador) {
-        this(controladora, idJugador, null); 
-    }
+public class RegLesion extends JDialog {
 
-    public RegLesion(ControladoraLiga controladora, String idJugador, String tipoLesion) {
+	private final JPanel contentPanel = new JPanel();
+	private static ControladoraLiga controladora;
+	private static String idJugador;
+	private JComboBox cbxLesion;
+	private JComboBox cbxTratamiento;
+	private JSpinner spnFecha;
+	private JSpinner spnDuracion;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		try {
+			RegLesion dialog = new RegLesion(controladora, idJugador);
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Create the dialog.
+	 */
+	public RegLesion(ControladoraLiga controladora, String idJugador) {
         this.controladora = controladora;
         this.idJugador = idJugador;
-        this.tipoLesion = tipoLesion;
-        initialize();
-        if (tipoLesion != null) {
-            cargarDatosLesion();
-        }
-    }
+        
+		setTitle("Registrar Lesion");
+		setBounds(100, 100, 506, 270);
+		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		contentPanel.setLayout(new BorderLayout(0, 0));
+		{
+			JPanel panel = new JPanel();
+			panel.setBackground(new Color(255, 147, 30));
+			contentPanel.add(panel, BorderLayout.CENTER);
+			panel.setLayout(null);
+			{
+				JPanel panelTipo = new JPanel();
+				panelTipo.setBackground(new Color(169, 169, 169));
+				panelTipo.setBounds(12, 13, 230, 66);
+				panel.add(panelTipo);
+				panelTipo.setLayout(null);
+				{
+					JLabel lblTipoLesion = new JLabel("Tipo de lesi\u00F3n:");
+					lblTipoLesion.setBounds(12, 13, 119, 16);
+					panelTipo.add(lblTipoLesion);
+				}
+				{
+					cbxLesion = new JComboBox();
+					cbxLesion.setModel(new DefaultComboBoxModel(new String[] {"<Seleccionar>", "Esguince de tobillo", "Rotura de ligamentos ", "Tendinitis rotuliana ", "Distensi\u00F3n muscular ", "Fracturas por estr\u00E9s ", "Lesiones en el tend\u00F3n de Aquiles", "Luxaci\u00F3n de hombro", "Esguince de dedos", "Fracturas en manos/mu\u00F1ecas", "Lesiones en el manguito rotador", "Concusi\u00F3n", "Contusiones/moratones", "Lesiones oculares", "Hernias discales", "Fascitis plantar", "S\u00EDndrome de la banda iliotibial", "Bursitis", "Tendinitis en el codo"}));
+					cbxLesion.setBounds(12, 31, 199, 22);
+					panelTipo.add(cbxLesion);
+				}
+			}
+			{
+				JPanel panelTratamiento = new JPanel();
+				panelTratamiento.setBackground(new Color(169, 169, 169));
+				panelTratamiento.setBounds(12, 92, 191, 66);
+				panel.add(panelTratamiento);
+				panelTratamiento.setLayout(null);
+				{
+					JLabel lblTratamiento = new JLabel("Tratamiento:");
+					lblTratamiento.setBounds(12, 13, 104, 16);
+					panelTratamiento.add(lblTratamiento);
+				}
+				{
+					cbxTratamiento = new JComboBox();
+					cbxTratamiento.setModel(new DefaultComboBoxModel(new String[] {"<Seleccionar>", "Reposo y Protecci\u00F3n", "Hielo y Compresi\u00F3n (RICE)", "Medicamentos", "Fisioterapia y Ejercicios", "Inmovilizaci\u00F3n", "Cirug\u00EDa", "Prevenci\u00F3n y Adaptaciones", "Terapias Avanzadas"}));
+					cbxTratamiento.setBounds(12, 31, 161, 22);
+					panelTratamiento.add(cbxTratamiento);
+				}
+			}
+			{
+				JPanel panelFecha = new JPanel();
+				panelFecha.setBackground(new Color(169, 169, 169));
+				panelFecha.setBounds(281, 13, 184, 66);
+				panel.add(panelFecha);
+				panelFecha.setLayout(null);
+				{
+					JLabel lblFecha = new JLabel("Fecha (DD-MM-YYYY):");
+					lblFecha.setBounds(12, 13, 157, 16);
+					panelFecha.add(lblFecha);
+				}
+				{
+					spnFecha = new JSpinner(new SpinnerDateModel());
+					spnFecha.setBounds(12, 31, 157, 22);
+					panelFecha.add(spnFecha);
+					JSpinner.DateEditor de_spnFecha = new JSpinner.DateEditor(spnFecha, "dd-MM-yyyy");
+					spnFecha.setEditor(de_spnFecha);
+					spnFecha.setPreferredSize(new Dimension(150, 25));
+					spnFecha.setValue(new Date());
+				}
+			}
+			{
+				JPanel panelDuracion = new JPanel();
+				panelDuracion.setBackground(new Color(169, 169, 169));
+				panelDuracion.setBounds(281, 92, 153, 66);
+				panel.add(panelDuracion);
+				panelDuracion.setLayout(null);
+				{
+					JLabel lblDuracion = new JLabel("Duraci\u00F3n (d\u00EDas):");
+					lblDuracion.setBounds(12, 13, 102, 16);
+					panelDuracion.add(lblDuracion);
+				}
+				{
+					spnDuracion = new JSpinner();
+					spnDuracion.setBounds(12, 31, 124, 22);
+					spnDuracion.setModel(new javax.swing.SpinnerNumberModel(1, 1, 365, 1));
+					panelDuracion.add(spnDuracion);
+				}
+			}
+		}
+		{
+			JPanel buttonPane = new JPanel();
+			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			{
+				JButton btnRegistrar = new JButton("Registrar");
+				btnRegistrar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						String tipoLesion = (String) cbxLesion.getSelectedItem();
+				        String tratamiento = (String) cbxTratamiento.getSelectedItem();
+				        Date fechaLesion = (Date) spnFecha.getValue();
+				        int duracion = (Integer) spnDuracion.getValue();
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                ControladoraLiga controladora = new ControladoraLiga();
-                RegLesion frame = new RegLesion(controladora, "J1");
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
+				        if (tipoLesion.equals("<Seleccionar>") || tratamiento.equals("<Seleccionar>")) {
+				            JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos.");
+				        } else {
+				            LocalDate localFechaLesion = new java.sql.Date(fechaLesion.getTime()).toLocalDate();
+				            
+				            controladora.agregarLesionAJugador(idJugador, tipoLesion, "Parte del cuerpo no especificada", 0, tratamiento, localFechaLesion, duracion);
+				            
+				            JOptionPane.showMessageDialog(null, "Lesión registrada exitosamente.");
+				            dispose();
+				        }
+					}
+				});
+				btnRegistrar.setActionCommand("OK");
+				buttonPane.add(btnRegistrar);
+				getRootPane().setDefaultButton(btnRegistrar);
+			}
+			{
+				JButton btnCancelar = new JButton("Cancelar");
+				btnCancelar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
+				btnCancelar.setActionCommand("Cancel");
+				buttonPane.add(btnCancelar);
+			}
+		}
+	}
 
-    private void initialize() {
-        Jugador jugador = controladora.buscarJugador(idJugador);
-        setTitle((tipoLesion == null ? "Registrar Lesión" : "Modificar Lesión") + " para " + 
-                 (jugador != null ? jugador.getNombre() : "Jugador no encontrado"));
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 300, 450);
-        contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contentPane.setBackground(new Color(255, 147, 0));
-        setContentPane(contentPane);
-        contentPane.setLayout(null);
-
-        JLabel lblTipo = new JLabel("TIPO:");
-        lblTipo.setFont(new Font("Arial", Font.BOLD, 14));
-        lblTipo.setBounds(20, 20, 80, 25);
-        contentPane.add(lblTipo);
-
-        txtTipo = new JTextField();
-        txtTipo.setBounds(20, 45, 240, 30);
-        contentPane.add(txtTipo);
-
-        JLabel lblParteCuerpo = new JLabel("PARTE DEL CUERPO:");
-        lblParteCuerpo.setFont(new Font("Arial", Font.BOLD, 14));
-        lblParteCuerpo.setBounds(20, 80, 140, 25);
-        contentPane.add(lblParteCuerpo);
-
-        txtParteCuerpo = new JTextField();
-        txtParteCuerpo.setBounds(20, 105, 240, 30);
-        contentPane.add(txtParteCuerpo);
-
-        JLabel lblDiasBajaEstimado = new JLabel("DÍAS DE BAJA:");
-        lblDiasBajaEstimado.setFont(new Font("Arial", Font.BOLD, 14));
-        lblDiasBajaEstimado.setBounds(20, 140, 120, 25);
-        contentPane.add(lblDiasBajaEstimado);
-
-        txtDiasBajaEstimado = new JTextField();
-        txtDiasBajaEstimado.setBounds(20, 165, 240, 30);
-        contentPane.add(txtDiasBajaEstimado);
-
-        JLabel lblTratamiento = new JLabel("TRATAMIENTO:");
-        lblTratamiento.setFont(new Font("Arial", Font.BOLD, 14));
-        lblTratamiento.setBounds(20, 200, 120, 25);
-        contentPane.add(lblTratamiento);
-
-        txtTratamiento = new JTextField();
-        txtTratamiento.setBounds(20, 225, 240, 30);
-        contentPane.add(txtTratamiento);
-
-        JLabel lblFechaLesion = new JLabel("FECHA (YYYY-MM-DD):");
-        lblFechaLesion.setFont(new Font("Arial", Font.BOLD, 14));
-        lblFechaLesion.setBounds(20, 260, 160, 25);
-        contentPane.add(lblFechaLesion);
-
-        txtFechaLesion = new JTextField(LocalDate.now().toString());
-        txtFechaLesion.setBounds(20, 285, 240, 30);
-        contentPane.add(txtFechaLesion);
-
-        JLabel lblDuracionEstimada = new JLabel("DURACIÓN (días):");
-        lblDuracionEstimada.setFont(new Font("Arial", Font.BOLD, 14));
-        lblDuracionEstimada.setBounds(20, 320, 120, 25);
-        contentPane.add(lblDuracionEstimada);
-
-        txtDuracionEstimada = new JTextField();
-        txtDuracionEstimada.setBounds(20, 345, 240, 30);
-        contentPane.add(txtDuracionEstimada);
-
-        JButton btnGuardar = new JButton(tipoLesion == null ? "Registrar" : "Guardar");
-        btnGuardar.setBounds(20, 390, 100, 30);
-        contentPane.add(btnGuardar);
-
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.setBounds(160, 390, 100, 30);
-        contentPane.add(btnCancelar);
-
-        btnGuardar.addActionListener(e -> guardarLesion());
-        btnCancelar.addActionListener(e -> dispose());
-    }
-
-    private void cargarDatosLesion() {
-        Jugador jugador = controladora.buscarJugador(idJugador);
-        if (jugador != null) {
-            for (Lesion lesion : jugador.getLesiones()) {
-                if (lesion.getTipo().equals(tipoLesion)) {
-                    txtTipo.setText(lesion.getTipo());
-                    txtParteCuerpo.setText(lesion.getParteCuerpo());
-                    txtDiasBajaEstimado.setText(String.valueOf(lesion.getDiasBajaEstimado()));
-                    txtTratamiento.setText(lesion.getTratamiento());
-                    txtFechaLesion.setText(lesion.getFechaLesion().toString());
-                    txtDuracionEstimada.setText(String.valueOf(lesion.getDuracionEstimada()));
-                    break;
-                }
-            }
-        }
-    }
-
-    private void guardarLesion() {
-        try {
-            String tipo = txtTipo.getText().trim();
-            String parteCuerpo = txtParteCuerpo.getText().trim();
-            int diasBajaEstimado = Integer.parseInt(txtDiasBajaEstimado.getText().trim());
-            String tratamiento = txtTratamiento.getText().trim();
-            LocalDate fechaLesion = LocalDate.parse(txtFechaLesion.getText().trim());
-            int duracionEstimada = Integer.parseInt(txtDuracionEstimada.getText().trim());
-
-            if (tipo.isEmpty() || parteCuerpo.isEmpty() || tratamiento.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Tipo, parte del cuerpo y tratamiento son obligatorios.");
-                return;
-            }
-            if (diasBajaEstimado < 0 || duracionEstimada < 0) {
-                JOptionPane.showMessageDialog(this, "Días de baja y duración deben ser positivos.");
-                return;
-            }
-
-            if (tipoLesion == null) { 
-                controladora.agregarLesionAJugador(idJugador, tipo, parteCuerpo, diasBajaEstimado, tratamiento, fechaLesion, duracionEstimada);
-                JOptionPane.showMessageDialog(this, "Lesión registrada con éxito.");
-            } else { 
-                Jugador jugador = controladora.buscarJugador(idJugador);
-                if (jugador != null) {
-                    jugador.eliminarLesion(tipoLesion); 
-                    controladora.agregarLesionAJugador(idJugador, tipo, parteCuerpo, diasBajaEstimado, tratamiento, fechaLesion, duracionEstimada);
-                    JOptionPane.showMessageDialog(this, "Lesión modificada con éxito.");
-                }
-            }
-            dispose();
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Días de baja y duración deben ser números.");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
-        }
-    }
 }
