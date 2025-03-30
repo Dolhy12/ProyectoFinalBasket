@@ -24,7 +24,7 @@ import logico.Equipo;
 import logico.Jugador;
 import logico.Lesion;
 
-public class ListarLesionesVisual extends JFrame {
+public class ListLesiones extends JFrame {
 
     private JPanel contentPane;
     private JTable table;
@@ -32,7 +32,7 @@ public class ListarLesionesVisual extends JFrame {
     private JComboBox<String> cmbEquipos;
     private ControladoraLiga controladora;
 
-    public ListarLesionesVisual(ControladoraLiga controladora) {
+    public ListLesiones(ControladoraLiga controladora) {
         this.controladora = controladora;
         initialize();
     }
@@ -41,7 +41,7 @@ public class ListarLesionesVisual extends JFrame {
         EventQueue.invokeLater(() -> {
             try {
                 ControladoraLiga controladora = new ControladoraLiga();
-                ListarLesionesVisual frame = new ListarLesionesVisual(controladora);
+                ListLesiones frame = new ListLesiones(controladora);
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -139,7 +139,7 @@ public class ListarLesionesVisual extends JFrame {
             if (fila >= 0) {
                 String idJugador = controladora.buscarJugadoresPorNombre((String) table.getValueAt(fila, 0)).get(0).getID();
                 String tipo = (String) table.getValueAt(fila, 2);
-                lesionvisual ventana = new lesionvisual(controladora, idJugador, tipo);
+                RegLesion ventana = new RegLesion(controladora, idJugador, tipo);
                 ventana.setVisible(true);
                 ventana.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override

@@ -19,7 +19,7 @@ import logico.ControladoraLiga;
 import logico.Jugador;
 import logico.Lesion;
 
-public class lesionvisual extends JFrame {
+public class RegLesion extends JFrame {
 
     private JPanel contentPane;
     private JTextField txtTipo;
@@ -35,11 +35,11 @@ public class lesionvisual extends JFrame {
     /**
      * @wbp.parser.constructor
      */
-    public lesionvisual(ControladoraLiga controladora, String idJugador) {
+    public RegLesion(ControladoraLiga controladora, String idJugador) {
         this(controladora, idJugador, null); 
     }
 
-    public lesionvisual(ControladoraLiga controladora, String idJugador, String tipoLesion) {
+    public RegLesion(ControladoraLiga controladora, String idJugador, String tipoLesion) {
         this.controladora = controladora;
         this.idJugador = idJugador;
         this.tipoLesion = tipoLesion;
@@ -53,7 +53,7 @@ public class lesionvisual extends JFrame {
         EventQueue.invokeLater(() -> {
             try {
                 ControladoraLiga controladora = new ControladoraLiga();
-                lesionvisual frame = new lesionvisual(controladora, "J1");
+                RegLesion frame = new RegLesion(controladora, "J1");
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();

@@ -86,6 +86,12 @@ public class PrincipalVisual extends JFrame {
         menuBar.add(mnEstadisticas);
 
         JMenuItem mntmEstadisticasEquipos = new JMenuItem("Estadísticas de Equipos");
+        mntmEstadisticasEquipos.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+                ListEstadisticasEquipo ventanaEst = new ListEstadisticasEquipo(controladora);
+                ventanaEst.setVisible(true);
+        	}
+        });
         mnEstadisticas.add(mntmEstadisticasEquipos);
 
         JMenuItem mntmEstadisticasJugadores = new JMenuItem("Estadísticas de Jugadores");
@@ -173,14 +179,14 @@ public class PrincipalVisual extends JFrame {
 
         mntmRegistrarEquipo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                equipovisual ventanaEquipo = new equipovisual(controladora);
+                RegEquipo ventanaEquipo = new RegEquipo(controladora);
                 ventanaEquipo.setVisible(true);
             }
         });
 
         mntmRegistrarJugador.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                jugadorvisual ventanaJugador = new jugadorvisual(controladora);
+                RegJugador ventanaJugador = new RegJugador(controladora);
                 ventanaJugador.setVisible(true);
             }
         });
@@ -190,35 +196,7 @@ public class PrincipalVisual extends JFrame {
                 String idJugador = JOptionPane.showInputDialog("Ingrese el ID del jugador:");
                 if (idJugador != null && !idJugador.trim().isEmpty()) {
                     if (controladora.existeJugador(idJugador)) {
-                        lesionvisual ventanaLesion = new lesionvisual(controladora, idJugador);
-                        ventanaLesion.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Jugador no encontrado.");
-                    }
-                }
-            }
-        });
-
-        mntmRegistrarEquipo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                equipovisual ventanaEquipo = new equipovisual(controladora);
-                ventanaEquipo.setVisible(true);
-            }
-        });
-
-        mntmRegistrarJugador.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                jugadorvisual ventanaJugador = new jugadorvisual(controladora);
-                ventanaJugador.setVisible(true);
-            }
-        });
-
-        mntmRegistrarLesion.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String idJugador = JOptionPane.showInputDialog("Ingrese el ID del jugador:");
-                if (idJugador != null && !idJugador.trim().isEmpty()) {
-                    if (controladora.existeJugador(idJugador)) {
-                        lesionvisual ventanaLesion = new lesionvisual(controladora, idJugador);
+                        RegLesion ventanaLesion = new RegLesion(controladora, idJugador);
                         ventanaLesion.setVisible(true);
                     } else {
                         JOptionPane.showMessageDialog(null, "Jugador no encontrado.");
@@ -229,21 +207,21 @@ public class PrincipalVisual extends JFrame {
 
         mntmListarEquipos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ListarEquiposVisual ventanaLista = new ListarEquiposVisual(controladora);
+                ListEquipos ventanaLista = new ListEquipos(controladora);
                 ventanaLista.setVisible(true);
             }
         });
 
         mntmListarJugadores.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ListarJugadoresVisual ventanaLista = new ListarJugadoresVisual(controladora);
+                ListJugadores ventanaLista = new ListJugadores(controladora);
                 ventanaLista.setVisible(true);
             }
         });
 
         mntmListarLesiones.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ListarLesionesVisual ventanaLista = new ListarLesionesVisual(controladora);
+                ListLesiones ventanaLista = new ListLesiones(controladora);
                 ventanaLista.setVisible(true);
             }
         });

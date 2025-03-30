@@ -13,12 +13,12 @@ import logico.ControladoraLiga;
 import logico.Equipo;
 import logico.EstadisticasEquipo;
 
-public class EstadisticasEquipoVisual extends JFrame {
+public class ListEstadisticasEquipo extends JFrame {
 
     private JTable tablaEstadisticas;
     private DefaultTableModel model;
 
-    public EstadisticasEquipoVisual(ControladoraLiga controladora) {
+    public ListEstadisticasEquipo(ControladoraLiga controladora) {
         setTitle("Estadísticas de Equipos");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 400);

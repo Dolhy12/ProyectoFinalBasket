@@ -16,15 +16,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import logico.ControladoraLiga;
-import logico.Equipo;
+import logico.Jugador;
 
-public class ListarEquiposVisual extends JFrame {
+public class ListJugadores extends JFrame {
 
     private JPanel contentPane;
     private JTable table;
     private ControladoraLiga controladora;
 
-    public ListarEquiposVisual(ControladoraLiga controladora) {
+    public ListJugadores(ControladoraLiga controladora) {
         this.controladora = controladora;
         initialize();
     }
@@ -33,7 +33,7 @@ public class ListarEquiposVisual extends JFrame {
         EventQueue.invokeLater(() -> {
             try {
                 ControladoraLiga controladora = new ControladoraLiga();
-                ListarEquiposVisual frame = new ListarEquiposVisual(controladora);
+                ListJugadores frame = new ListJugadores(controladora);
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -42,20 +42,20 @@ public class ListarEquiposVisual extends JFrame {
     }
 
     private void initialize() {
-        setTitle("Lista de Equipos");
+        setTitle("Lista de Jugadores");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 800, 450);
+        setBounds(100, 100, 900, 450);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentPane.setBackground(new Color(255, 147, 0));
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
-        String[] columnas = {"ID", "Nombre", "Ciudad", "Entrenador", "Capitán", "Mascota", "Tiempo Fundado"};
+        String[] columnas = {"ID", "Nombre", "Edad", "Posición", "Nacionalidad", "Nacimiento", "Peso", "Altura", "Número"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
         table = new JTable(modelo);
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(10, 10, 760, 340);
+        scrollPane.setBounds(10, 10, 860, 340);
         contentPane.add(scrollPane);
 
         JButton btnModificar = new JButton("Modificar");
@@ -66,23 +66,22 @@ public class ListarEquiposVisual extends JFrame {
         btnEliminar.setBounds(120, 360, 100, 30);
         contentPane.add(btnEliminar);
 
-        cargarEquipos();
+        cargarJugadores();
 
         btnModificar.addActionListener(e -> {
             int fila = table.getSelectedRow();
             if (fila >= 0) {
                 String id = (String) table.getValueAt(fila, 0);
-    
-                equipovisual ventana = new equipovisual(controladora, id);
+                RegJugador ventana = new RegJugador(controladora, id);
                 ventana.setVisible(true);
                 ventana.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-                        cargarEquipos();
+                        cargarJugadores();
                     }
                 });
             } else {
-                JOptionPane.showMessageDialog(this, "Seleccione un equipo.");
+                JOptionPane.showMessageDialog(this, "Seleccione un jugador.");
             }
         });
 
@@ -90,30 +89,32 @@ public class ListarEquiposVisual extends JFrame {
             int fila = table.getSelectedRow();
             if (fila >= 0) {
                 String id = (String) table.getValueAt(fila, 0);
-                int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar equipo " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar jugador " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    controladora.eliminarEquipo(id);
-                    cargarEquipos();
+                    controladora.eliminarJugador(id);
+                    cargarJugadores();
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Seleccione un equipo.");
+                JOptionPane.showMessageDialog(this, "Seleccione un jugador.");
             }
         });
     }
 
-    private void cargarEquipos() {
+    private void cargarJugadores() {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
         modelo.setRowCount(0);
-        ArrayList<Equipo> equipos = controladora.getMisEquipos();
-        for (Equipo equipo : equipos) {
+        ArrayList<Jugador> jugadores = controladora.getMisJugadores();
+        for (Jugador jugador : jugadores) {
             Object[] fila = {
-                equipo.getID(),
-                equipo.getNombre(),
-                equipo.getCiudad(),
-                equipo.getEntrenador(),
-                equipo.getCapitan(),
-                equipo.getNombreDeLaMascota(),
-                equipo.getTiempoFundado()
+                jugador.getID(),
+                jugador.getNombre(),
+                jugador.getEdad(),
+                jugador.getPosicion(),
+                jugador.getNacionalidad(),
+                jugador.getFechaDeNacimiento(),
+                jugador.getPeso(),
+                jugador.getAltura(),
+                jugador.getNumero()
             };
             modelo.addRow(fila);
         }

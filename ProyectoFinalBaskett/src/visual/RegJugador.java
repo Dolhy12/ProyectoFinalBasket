@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 import logico.ControladoraLiga;
 import logico.Jugador;
 
-public class jugadorvisual extends JFrame {
+public class RegJugador extends JFrame {
 
     private JPanel contentPane;
     private JTextField txtID;
@@ -40,11 +40,11 @@ public class jugadorvisual extends JFrame {
     /**
      * @wbp.parser.constructor
      */
-    public jugadorvisual(ControladoraLiga controladora) {
+    public RegJugador(ControladoraLiga controladora) {
         this(controladora, null); 
     }
 
-    public jugadorvisual(ControladoraLiga controladora, String idJugador) {
+    public RegJugador(ControladoraLiga controladora, String idJugador) {
         this.controladora = controladora;
         this.idJugador = idJugador;
         initialize();
@@ -57,7 +57,7 @@ public class jugadorvisual extends JFrame {
         EventQueue.invokeLater(() -> {
             try {
                 ControladoraLiga controladora = new ControladoraLiga();
-                jugadorvisual frame = new jugadorvisual(controladora);
+                RegJugador frame = new RegJugador(controladora);
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();

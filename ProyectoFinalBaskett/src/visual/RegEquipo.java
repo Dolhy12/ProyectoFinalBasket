@@ -17,7 +17,7 @@ import javax.swing.border.EmptyBorder;
 import logico.ControladoraLiga;
 import logico.Equipo;
 
-public class equipovisual extends JFrame {
+public class RegEquipo extends JFrame {
 
     private JPanel contentPane;
     private JTextField txtNombre;
@@ -32,11 +32,11 @@ public class equipovisual extends JFrame {
     /**
      * @wbp.parser.constructor
      */
-    public equipovisual(ControladoraLiga controladora) {
+    public RegEquipo(ControladoraLiga controladora) {
         this(controladora, null);
     }
 
-    public equipovisual(ControladoraLiga controladora, String idEquipo) {
+    public RegEquipo(ControladoraLiga controladora, String idEquipo) {
         this.controladora = controladora;
         this.idEquipo = idEquipo;
         initialize();
@@ -49,7 +49,7 @@ public class equipovisual extends JFrame {
         EventQueue.invokeLater(() -> {
             try {
                 ControladoraLiga controladora = new ControladoraLiga();
-                equipovisual frame = new equipovisual(controladora);
+                RegEquipo frame = new RegEquipo(controladora);
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
