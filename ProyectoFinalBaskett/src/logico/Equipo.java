@@ -13,7 +13,7 @@ public class Equipo {
     private ArrayList<Jugador> jugadores;
     private EstadisticasEquipo estadisticas;
 
-    public Equipo(String ID, int tiempoFundado, String capitan, String nombreDeLaMacota,String nombre, String ciudad, String entrenador) {
+    public Equipo(String ID, int tiempoFundado, String capitan, String nombreDeLaMascota, String nombre, String ciudad, String entrenador) {
         this.ID = ID;
         this.nombre = nombre;
         this.ciudad = ciudad;
@@ -25,86 +25,37 @@ public class Equipo {
         this.estadisticas = new EstadisticasEquipo();
     }
 
-    public String getID() {
-        return ID;
-    }
+    public String getID() { return ID; }
+    public String getNombre() { return nombre; }
+    public String getCiudad() { return ciudad; }
+    public String getEntrenador() { return entrenador; }
+    public String getCapitan() { return capitan; }
+    public String getNombreDeLaMascota() { return nombreDeLaMascota; }
+    public int getTiempoFundado() { return tiempoFundado; }
+    public ArrayList<Jugador> getJugadores() { return jugadores; }
+    public EstadisticasEquipo getEstadisticas() { return estadisticas; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public void setID(String ID) { this.ID = ID; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setCiudad(String ciudad) { this.ciudad = ciudad; }
+    public void setEntrenador(String entrenador) { this.entrenador = entrenador; }
+    public void setCapitan(String capitan) { this.capitan = capitan; }
+    public void setNombreDeLaMascota(String nombreDeLaMascota) { this.nombreDeLaMascota = nombreDeLaMascota; }
+    public void setTiempoFundado(int tiempoFundado) { this.tiempoFundado = tiempoFundado; }
+    public void setJugadores(ArrayList<Jugador> jugadores) { this.jugadores = jugadores; }
+    public void setEstadisticas(EstadisticasEquipo estadisticas) { this.estadisticas = estadisticas; }
 
-    public String getCiudad() {
-        return ciudad;
-    }
-
-    public String getEntrenador() {
-        return entrenador;
-    }
-
-    public ArrayList<Jugador> getJugadores() {
-        return jugadores;
-    }
-
-    public EstadisticasEquipo getEstadisticas() {
-        return estadisticas;
-    }
-
-    public void setID(String iD) {
-        ID = iD;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
-    }
-
-    public void setEntrenador(String entrenador) {
-        this.entrenador = entrenador;
-    }
-
-    public void setJugadores(ArrayList<Jugador> jugadores) {
-        this.jugadores = jugadores;
-    }
-
-    public void setEstadisticas(EstadisticasEquipo estadisticas) {
-        this.estadisticas = estadisticas;
-    }
-    
     public void agregarJugador(Jugador jugador) {
-        jugadores.add(jugador);
+        if (!jugadores.contains(jugador)) { 
+            jugadores.add(jugador);
+        }
     }
 
-    public void eliminarJugador(String idJugador) {
-        jugadores.removeIf(j -> j.getID().equals(idJugador));
+    public boolean eliminarJugador(String idJugador) {
+        return jugadores.removeIf(j -> j.getID().equals(idJugador));
     }
 
-	public String getCapitan() {
-		return capitan;
-	}
-
-	public void setCapitan(String capitan) {
-		this.capitan = capitan;
-	}
-
-	public String getNombreDeLaMascota() {
-		return nombreDeLaMascota;
-	}
-
-	public void setNombreDeLaMascota(String nombreDeLaMascota) {
-		this.nombreDeLaMascota = nombreDeLaMascota;
-	}
-
-	public int getTiempoFundado() {
-		return tiempoFundado;
-	}
-
-	public void setTiempoFundado(int tiempoFundado) {
-		this.tiempoFundado = tiempoFundado;
-	}
-	public Jugador buscarJugador(String idJugador) {
+    public Jugador buscarJugador(String idJugador) {
         for (Jugador jugador : jugadores) {
             if (jugador.getID().equals(idJugador)) {
                 return jugador;
@@ -119,5 +70,13 @@ public class Equipo {
             jugador.setPosicion(nuevaPosicion);
             jugador.setNumero(nuevoNumero);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Equipo equipo = (Equipo) o;
+        return ID.equals(equipo.ID);
     }
 }

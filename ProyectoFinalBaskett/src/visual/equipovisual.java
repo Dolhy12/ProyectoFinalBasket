@@ -1,6 +1,5 @@
 package visual;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -28,41 +27,46 @@ public class equipovisual extends JFrame {
     private JTextField txtNombreMascota;
     private JTextField txtTiempoFundado;
     private ControladoraLiga controladora;
+    private String idEquipo; 
 
-   
+    /**
+     * @wbp.parser.constructor
+     */
     public equipovisual(ControladoraLiga controladora) {
-        this.controladora = controladora;
-        initialize();
+        this(controladora, null);
     }
- 
-   
+
+    public equipovisual(ControladoraLiga controladora, String idEquipo) {
+        this.controladora = controladora;
+        this.idEquipo = idEquipo;
+        initialize();
+        if (idEquipo != null) { 
+            cargarDatosEquipo();
+        }
+    }
+
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                   
-                    ControladoraLiga controladora = new ControladoraLiga();
-                    equipovisual frame = new equipovisual(controladora);
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        EventQueue.invokeLater(() -> {
+            try {
+                ControladoraLiga controladora = new ControladoraLiga();
+                equipovisual frame = new equipovisual(controladora);
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
- 
-    
+
     private void initialize() {
-        setTitle("Registrar Equipo");
+        setTitle(idEquipo == null ? "Registrar Equipo" : "Modificar Equipo");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 300, 500); 
+        setBounds(100, 100, 300, 500);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contentPane.setBackground(new Color(255, 147, 0)); 
+        contentPane.setBackground(new Color(255, 147, 0));
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
-    
         JLabel lblNombre = new JLabel("NOMBRE:");
         lblNombre.setFont(new Font("Arial", Font.BOLD, 14));
         lblNombre.setBounds(20, 20, 80, 25);
@@ -71,9 +75,7 @@ public class equipovisual extends JFrame {
         txtNombre = new JTextField();
         txtNombre.setBounds(20, 45, 240, 30);
         contentPane.add(txtNombre);
-        txtNombre.setColumns(10);
 
-    
         JLabel lblCiudad = new JLabel("CIUDAD:");
         lblCiudad.setFont(new Font("Arial", Font.BOLD, 14));
         lblCiudad.setBounds(20, 80, 80, 25);
@@ -82,9 +84,7 @@ public class equipovisual extends JFrame {
         txtCiudad = new JTextField();
         txtCiudad.setBounds(20, 105, 240, 30);
         contentPane.add(txtCiudad);
-        txtCiudad.setColumns(10);
 
-       
         JLabel lblEntrenador = new JLabel("ENTRENADOR:");
         lblEntrenador.setFont(new Font("Arial", Font.BOLD, 14));
         lblEntrenador.setBounds(20, 140, 100, 25);
@@ -93,9 +93,7 @@ public class equipovisual extends JFrame {
         txtEntrenador = new JTextField();
         txtEntrenador.setBounds(20, 165, 240, 30);
         contentPane.add(txtEntrenador);
-        txtEntrenador.setColumns(10);
 
-       
         JLabel lblCapitan = new JLabel("CAPITÁN:");
         lblCapitan.setFont(new Font("Arial", Font.BOLD, 14));
         lblCapitan.setBounds(20, 200, 80, 25);
@@ -104,9 +102,7 @@ public class equipovisual extends JFrame {
         txtCapitan = new JTextField();
         txtCapitan.setBounds(20, 225, 240, 30);
         contentPane.add(txtCapitan);
-        txtCapitan.setColumns(10);
 
-      
         JLabel lblNombreMascota = new JLabel("MASCOTA:");
         lblNombreMascota.setFont(new Font("Arial", Font.BOLD, 14));
         lblNombreMascota.setBounds(20, 260, 80, 25);
@@ -115,10 +111,8 @@ public class equipovisual extends JFrame {
         txtNombreMascota = new JTextField();
         txtNombreMascota.setBounds(20, 285, 240, 30);
         contentPane.add(txtNombreMascota);
-        txtNombreMascota.setColumns(10);
 
-   
-        JLabel lblTiempoFundado = new JLabel("Fundacion:");
+        JLabel lblTiempoFundado = new JLabel("Fundación:");
         lblTiempoFundado.setFont(new Font("Arial", Font.BOLD, 14));
         lblTiempoFundado.setBounds(20, 320, 120, 25);
         contentPane.add(lblTiempoFundado);
@@ -126,49 +120,63 @@ public class equipovisual extends JFrame {
         txtTiempoFundado = new JTextField();
         txtTiempoFundado.setBounds(20, 345, 240, 30);
         contentPane.add(txtTiempoFundado);
-        txtTiempoFundado.setColumns(10);
 
-   
-        JButton btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setBounds(20, 400, 100, 30);
-        contentPane.add(btnRegistrar);
+        JButton btnGuardar = new JButton(idEquipo == null ? "Registrar" : "Guardar");
+        btnGuardar.setBounds(20, 400, 100, 30);
+        contentPane.add(btnGuardar);
 
-    
         JButton btnCancelar = new JButton("Cancelar");
         btnCancelar.setBounds(160, 400, 100, 30);
         contentPane.add(btnCancelar);
 
-        btnRegistrar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String nombre = txtNombre.getText();
-                    String ciudad = txtCiudad.getText();
-                    String entrenador = txtEntrenador.getText();
-                    String capitan = txtCapitan.getText();
-                    String nombreMascota = txtNombreMascota.getText();
-                    int tiempoFundado = Integer.parseInt(txtTiempoFundado.getText());
+        btnGuardar.addActionListener(e -> guardarEquipo());
+        btnCancelar.addActionListener(e -> dispose());
+    }
 
-                
-                    String idEquipo = "EQ" + (controladora.getMisEquipos().size() + 1);
+    private void cargarDatosEquipo() {
+        Equipo equipo = controladora.buscarEquipo(idEquipo);
+        if (equipo != null) {
+            txtNombre.setText(equipo.getNombre());
+            txtCiudad.setText(equipo.getCiudad());
+            txtEntrenador.setText(equipo.getEntrenador());
+            txtCapitan.setText(equipo.getCapitan());
+            txtNombreMascota.setText(equipo.getNombreDeLaMascota());
+            txtTiempoFundado.setText(String.valueOf(equipo.getTiempoFundado()));
+        }
+    }
 
-                    Equipo equipo = new Equipo(idEquipo, tiempoFundado, capitan, nombreMascota, nombre, ciudad, entrenador);
+    private void guardarEquipo() {
+        try {
+            String nombre = txtNombre.getText().trim();
+            String ciudad = txtCiudad.getText().trim();
+            String entrenador = txtEntrenador.getText().trim();
+            String capitan = txtCapitan.getText().trim();
+            String nombreMascota = txtNombreMascota.getText().trim();
+            int tiempoFundado = Integer.parseInt(txtTiempoFundado.getText().trim());
 
-                    controladora.agregarEquipo(equipo);
-
-                    JOptionPane.showMessageDialog(null, "Equipo registrado con éxito. ID: " + idEquipo);
-                    dispose(); 
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Error: El tiempo fundado debe ser un número.");
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Error al registrar el equipo: " + ex.getMessage());
-                }
+            if (nombre.isEmpty() || ciudad.isEmpty() || entrenador.isEmpty() || capitan.isEmpty() || nombreMascota.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.");
+                return;
             }
-        });
-
-        btnCancelar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
+            if (tiempoFundado < 0) {
+                JOptionPane.showMessageDialog(this, "El tiempo fundado no puede ser negativo.");
+                return;
             }
-        });
+
+            if (idEquipo == null) { 
+                String nuevoId = "EQ" + (controladora.getMisEquipos().size() + 1);
+                Equipo equipo = new Equipo(nuevoId, tiempoFundado, capitan, nombreMascota, nombre, ciudad, entrenador);
+                controladora.agregarEquipo(equipo);
+                JOptionPane.showMessageDialog(this, "Equipo registrado con éxito. ID: " + nuevoId);
+            } else { 
+                controladora.modificarEquipo(idEquipo, nombre, ciudad, entrenador, capitan, nombreMascota, tiempoFundado);
+                JOptionPane.showMessageDialog(this, "Equipo modificado con éxito.");
+            }
+            dispose();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "El tiempo fundado debe ser un número.");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
     }
 }

@@ -29,31 +29,42 @@ public class lesionvisual extends JFrame {
     private JTextField txtFechaLesion;
     private JTextField txtDuracionEstimada;
     private ControladoraLiga controladora;
-    private String idJugador; 
+    private String idJugador;
+    private String tipoLesion; 
 
+    /**
+     * @wbp.parser.constructor
+     */
     public lesionvisual(ControladoraLiga controladora, String idJugador) {
+        this(controladora, idJugador, null); 
+    }
+
+    public lesionvisual(ControladoraLiga controladora, String idJugador, String tipoLesion) {
         this.controladora = controladora;
         this.idJugador = idJugador;
+        this.tipoLesion = tipoLesion;
         initialize();
+        if (tipoLesion != null) {
+            cargarDatosLesion();
+        }
     }
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    ControladoraLiga controladora = new ControladoraLiga();
-                    lesionvisual frame = new lesionvisual(controladora, "J1");
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        EventQueue.invokeLater(() -> {
+            try {
+                ControladoraLiga controladora = new ControladoraLiga();
+                lesionvisual frame = new lesionvisual(controladora, "J1");
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
 
     private void initialize() {
         Jugador jugador = controladora.buscarJugador(idJugador);
-        setTitle("Registrar Lesión para " + (jugador != null ? jugador.getNombre() : "Jugador no encontrado"));
+        setTitle((tipoLesion == null ? "Registrar Lesión" : "Modificar Lesión") + " para " + 
+                 (jugador != null ? jugador.getNombre() : "Jugador no encontrado"));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setBounds(100, 100, 300, 450);
         contentPane = new JPanel();
@@ -70,7 +81,6 @@ public class lesionvisual extends JFrame {
         txtTipo = new JTextField();
         txtTipo.setBounds(20, 45, 240, 30);
         contentPane.add(txtTipo);
-        txtTipo.setColumns(10);
 
         JLabel lblParteCuerpo = new JLabel("PARTE DEL CUERPO:");
         lblParteCuerpo.setFont(new Font("Arial", Font.BOLD, 14));
@@ -80,7 +90,6 @@ public class lesionvisual extends JFrame {
         txtParteCuerpo = new JTextField();
         txtParteCuerpo.setBounds(20, 105, 240, 30);
         contentPane.add(txtParteCuerpo);
-        txtParteCuerpo.setColumns(10);
 
         JLabel lblDiasBajaEstimado = new JLabel("DÍAS DE BAJA:");
         lblDiasBajaEstimado.setFont(new Font("Arial", Font.BOLD, 14));
@@ -90,7 +99,6 @@ public class lesionvisual extends JFrame {
         txtDiasBajaEstimado = new JTextField();
         txtDiasBajaEstimado.setBounds(20, 165, 240, 30);
         contentPane.add(txtDiasBajaEstimado);
-        txtDiasBajaEstimado.setColumns(10);
 
         JLabel lblTratamiento = new JLabel("TRATAMIENTO:");
         lblTratamiento.setFont(new Font("Arial", Font.BOLD, 14));
@@ -100,7 +108,6 @@ public class lesionvisual extends JFrame {
         txtTratamiento = new JTextField();
         txtTratamiento.setBounds(20, 225, 240, 30);
         contentPane.add(txtTratamiento);
-        txtTratamiento.setColumns(10);
 
         JLabel lblFechaLesion = new JLabel("FECHA (YYYY-MM-DD):");
         lblFechaLesion.setFont(new Font("Arial", Font.BOLD, 14));
@@ -110,7 +117,6 @@ public class lesionvisual extends JFrame {
         txtFechaLesion = new JTextField(LocalDate.now().toString());
         txtFechaLesion.setBounds(20, 285, 240, 30);
         contentPane.add(txtFechaLesion);
-        txtFechaLesion.setColumns(10);
 
         JLabel lblDuracionEstimada = new JLabel("DURACIÓN (días):");
         lblDuracionEstimada.setFont(new Font("Arial", Font.BOLD, 14));
@@ -120,42 +126,70 @@ public class lesionvisual extends JFrame {
         txtDuracionEstimada = new JTextField();
         txtDuracionEstimada.setBounds(20, 345, 240, 30);
         contentPane.add(txtDuracionEstimada);
-        txtDuracionEstimada.setColumns(10);
 
-        JButton btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setBounds(20, 390, 100, 30);
-        contentPane.add(btnRegistrar);
+        JButton btnGuardar = new JButton(tipoLesion == null ? "Registrar" : "Guardar");
+        btnGuardar.setBounds(20, 390, 100, 30);
+        contentPane.add(btnGuardar);
 
         JButton btnCancelar = new JButton("Cancelar");
         btnCancelar.setBounds(160, 390, 100, 30);
         contentPane.add(btnCancelar);
 
-        btnRegistrar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String tipo = txtTipo.getText();
-                    String parteCuerpo = txtParteCuerpo.getText();
-                    int diasBajaEstimado = Integer.parseInt(txtDiasBajaEstimado.getText());
-                    String tratamiento = txtTratamiento.getText();
-                    LocalDate fechaLesion = LocalDate.parse(txtFechaLesion.getText());
-                    int duracionEstimada = Integer.parseInt(txtDuracionEstimada.getText());
+        btnGuardar.addActionListener(e -> guardarLesion());
+        btnCancelar.addActionListener(e -> dispose());
+    }
 
-                    controladora.agregarLesionAJugador(idJugador, tipo, parteCuerpo, diasBajaEstimado, tratamiento, fechaLesion, duracionEstimada);
-
-                    JOptionPane.showMessageDialog(null, "Lesión registrada con éxito para " + (jugador != null ? jugador.getNombre() : idJugador));
-                    dispose();
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Error: Los campos numéricos (días de baja, duración) deben ser números.");
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Error al registrar la lesión: " + ex.getMessage());
+    private void cargarDatosLesion() {
+        Jugador jugador = controladora.buscarJugador(idJugador);
+        if (jugador != null) {
+            for (Lesion lesion : jugador.getLesiones()) {
+                if (lesion.getTipo().equals(tipoLesion)) {
+                    txtTipo.setText(lesion.getTipo());
+                    txtParteCuerpo.setText(lesion.getParteCuerpo());
+                    txtDiasBajaEstimado.setText(String.valueOf(lesion.getDiasBajaEstimado()));
+                    txtTratamiento.setText(lesion.getTratamiento());
+                    txtFechaLesion.setText(lesion.getFechaLesion().toString());
+                    txtDuracionEstimada.setText(String.valueOf(lesion.getDuracionEstimada()));
+                    break;
                 }
             }
-        });
+        }
+    }
 
-        btnCancelar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
+    private void guardarLesion() {
+        try {
+            String tipo = txtTipo.getText().trim();
+            String parteCuerpo = txtParteCuerpo.getText().trim();
+            int diasBajaEstimado = Integer.parseInt(txtDiasBajaEstimado.getText().trim());
+            String tratamiento = txtTratamiento.getText().trim();
+            LocalDate fechaLesion = LocalDate.parse(txtFechaLesion.getText().trim());
+            int duracionEstimada = Integer.parseInt(txtDuracionEstimada.getText().trim());
+
+            if (tipo.isEmpty() || parteCuerpo.isEmpty() || tratamiento.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Tipo, parte del cuerpo y tratamiento son obligatorios.");
+                return;
             }
-        });
-    } 
+            if (diasBajaEstimado < 0 || duracionEstimada < 0) {
+                JOptionPane.showMessageDialog(this, "Días de baja y duración deben ser positivos.");
+                return;
+            }
+
+            if (tipoLesion == null) { 
+                controladora.agregarLesionAJugador(idJugador, tipo, parteCuerpo, diasBajaEstimado, tratamiento, fechaLesion, duracionEstimada);
+                JOptionPane.showMessageDialog(this, "Lesión registrada con éxito.");
+            } else { 
+                Jugador jugador = controladora.buscarJugador(idJugador);
+                if (jugador != null) {
+                    jugador.eliminarLesion(tipoLesion); 
+                    controladora.agregarLesionAJugador(idJugador, tipo, parteCuerpo, diasBajaEstimado, tratamiento, fechaLesion, duracionEstimada);
+                    JOptionPane.showMessageDialog(this, "Lesión modificada con éxito.");
+                }
+            }
+            dispose();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Días de baja y duración deben ser números.");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
 }

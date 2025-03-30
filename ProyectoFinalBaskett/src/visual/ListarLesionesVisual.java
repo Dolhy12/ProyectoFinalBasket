@@ -1,4 +1,5 @@
-package visual;
+
+package visual; 
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -11,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -36,15 +38,13 @@ public class ListarLesionesVisual extends JFrame {
     }
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    ControladoraLiga controladora = new ControladoraLiga();
-                    ListarLesionesVisual frame = new ListarLesionesVisual(controladora);
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        EventQueue.invokeLater(() -> {
+            try {
+                ControladoraLiga controladora = new ControladoraLiga();
+                ListarLesionesVisual frame = new ListarLesionesVisual(controladora);
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
@@ -52,14 +52,13 @@ public class ListarLesionesVisual extends JFrame {
     private void initialize() {
         setTitle("Lista de Lesiones");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 1000, 500);
+        setBounds(100, 100, 1000, 550);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentPane.setBackground(new Color(255, 147, 0));
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
-        // ComboBox para Jugadores
         JLabel lblJugador = new JLabel("Jugador:");
         lblJugador.setFont(new Font("Arial", Font.BOLD, 14));
         lblJugador.setBounds(10, 10, 80, 25);
@@ -73,7 +72,6 @@ public class ListarLesionesVisual extends JFrame {
         cmbJugadores.setBounds(90, 10, 300, 25);
         contentPane.add(cmbJugadores);
 
-        // ComboBox para Equipos
         JLabel lblEquipo = new JLabel("Equipo:");
         lblEquipo.setFont(new Font("Arial", Font.BOLD, 14));
         lblEquipo.setBounds(400, 10, 80, 25);
@@ -87,7 +85,6 @@ public class ListarLesionesVisual extends JFrame {
         cmbEquipos.setBounds(480, 10, 300, 25);
         contentPane.add(cmbEquipos);
 
-        // Botones
         JButton btnHistorial = new JButton("Ver Historial");
         btnHistorial.setBounds(790, 10, 100, 25);
         contentPane.add(btnHistorial);
@@ -96,7 +93,6 @@ public class ListarLesionesVisual extends JFrame {
         btnLesionados.setBounds(900, 10, 100, 25);
         contentPane.add(btnLesionados);
 
-        // Tabla
         String[] columnas = {"Jugador", "Equipo", "Tipo", "Parte del Cuerpo", "Días de Baja", "Tratamiento", "Fecha Lesión", "Duración Estimada", "Estado"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
         table = new JTable(modelo);
@@ -104,36 +100,70 @@ public class ListarLesionesVisual extends JFrame {
         scrollPane.setBounds(10, 50, 960, 400);
         contentPane.add(scrollPane);
 
-        // Cargar todas las lesiones por defecto
+        JButton btnModificar = new JButton("Modificar");
+        btnModificar.setBounds(10, 460, 100, 30);
+        contentPane.add(btnModificar);
+
+        JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar.setBounds(120, 460, 100, 30);
+        contentPane.add(btnEliminar);
+
         cargarLesiones(null, null);
 
-        // Acción para ver historial de un jugador
-        btnHistorial.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String seleccion = (String) cmbJugadores.getSelectedItem();
-                if (seleccion != null) {
-                    if (seleccion.equals("Todos")) {
-                        cargarLesiones(null, null);
-                    } else {
-                        String idJugador = seleccion.split("\\(")[1].replace(")", "");
-                        cargarLesiones(idJugador, null);
-                    }
+        btnHistorial.addActionListener(e -> {
+            String seleccion = (String) cmbJugadores.getSelectedItem();
+            if (seleccion != null) {
+                if (seleccion.equals("Todos")) {
+                    cargarLesiones(null, null);
+                } else {
+                    String idJugador = seleccion.split("\\(")[1].replace(")", "");
+                    cargarLesiones(idJugador, null);
                 }
             }
         });
 
-        // Acción para ver lesionados de un equipo
-        btnLesionados.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String seleccion = (String) cmbEquipos.getSelectedItem();
-                if (seleccion != null) {
-                    if (seleccion.equals("Todos")) {
-                        cargarLesiones(null, null);
-                    } else {
-                        String idEquipo = seleccion.split("\\(")[1].replace(")", "");
-                        cargarLesiones(null, idEquipo);
-                    }
+        btnLesionados.addActionListener(e -> {
+            String seleccion = (String) cmbEquipos.getSelectedItem();
+            if (seleccion != null) {
+                if (seleccion.equals("Todos")) {
+                    cargarLesiones(null, null);
+                } else {
+                    String idEquipo = seleccion.split("\\(")[1].replace(")", "");
+                    cargarLesiones(null, idEquipo);
                 }
+            }
+        });
+
+        btnModificar.addActionListener(e -> {
+            int fila = table.getSelectedRow();
+            if (fila >= 0) {
+                String idJugador = controladora.buscarJugadoresPorNombre((String) table.getValueAt(fila, 0)).get(0).getID();
+                String tipo = (String) table.getValueAt(fila, 2);
+                lesionvisual ventana = new lesionvisual(controladora, idJugador, tipo);
+                ventana.setVisible(true);
+                ventana.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                        cargarLesiones(null, null);
+                    }
+                });
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione una lesión.");
+            }
+        });
+
+        btnEliminar.addActionListener(e -> {
+            int fila = table.getSelectedRow();
+            if (fila >= 0) {
+                String idJugador = controladora.buscarJugadoresPorNombre((String) table.getValueAt(fila, 0)).get(0).getID();
+                String tipo = (String) table.getValueAt(fila, 2);
+                int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar lesión " + tipo + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    controladora.eliminarLesionDeJugador(idJugador, tipo);
+                    cargarLesiones(null, null);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione una lesión.");
             }
         });
     }

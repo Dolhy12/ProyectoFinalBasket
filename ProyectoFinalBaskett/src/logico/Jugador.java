@@ -31,111 +31,50 @@ public class Jugador {
         this.estadisticas = new EstadisticasJugador();
     }
 
-    public String getID() {
-        return ID;
-    }
+    public String getID() { return ID; }
+    public String getNombre() { return nombre; }
+    public int getEdad() { return edad; }
+    public String getPosicion() { return posicion; }
+    public String getNacionalidad() { return nacionalidad; }
+    public Date getFechaDeNacimiento() { return fechaDeNacimiento; }
+    public float getPeso() { return peso; }
+    public float getAltura() { return altura; }
+    public int getNumero() { return numero; }
+    public ArrayList<Lesion> getLesiones() { return lesiones; }
+    public EstadisticasJugador getEstadisticas() { return estadisticas; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public void setID(String ID) { this.ID = ID; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setEdad(int edad) { this.edad = edad; }
+    public void setPosicion(String posicion) { this.posicion = posicion; }
+    public void setNacionalidad(String nacionalidad) { this.nacionalidad = nacionalidad; }
+    public void setFechaDeNacimiento(Date fechaDeNacimiento) { this.fechaDeNacimiento = fechaDeNacimiento; }
+    public void setPeso(float peso) { this.peso = peso; }
+    public void setAltura(float altura) { this.altura = altura; }
+    public void setNumero(int numero) { this.numero = numero; }
+    public void setLesiones(ArrayList<Lesion> lesiones) { this.lesiones = lesiones; }
+    public void setEstadisticas(EstadisticasJugador estadisticas) { this.estadisticas = estadisticas; }
 
-    public int getEdad() {
-        return edad;
-    }
-
-    public String getPosicion() {
-        return posicion;
-    }
-    
-    public int getNumero() {
-        return numero;
-    }
-
-    public ArrayList<Lesion> getLesiones() {
-        return lesiones;
-    }
-
-    public EstadisticasJugador getEstadisticas() {
-        return estadisticas;
-    }
-
-    public void setID(String iD) {
-        ID = iD;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
-
-    public void setPosicion(String posicion) {
-        this.posicion = posicion;
-    }
-
-    public void setNumero(int numero) {
-        this.numero = numero;
-    }
-
-    public void setLesiones(ArrayList<Lesion> lesiones) {
-        this.lesiones = lesiones;
-    }
-
-    public void setEstadisticas(EstadisticasJugador estadisticas) {
-        this.estadisticas = estadisticas;
-    }
-    
     public void agregarLesion(Lesion lesion) {
-        lesiones.add(lesion);
+        if (!lesiones.contains(lesion)) { 
+            lesiones.add(lesion);
+        }
     }
 
-	public float getAltura() {
-		return altura;
-	}
-
-	public void setAltura(float altura) {
-		this.altura = altura;
-	}
-
-	public float getPeso() {
-		return peso;
-	}
-
-	public void setPeso(float peso) {
-		this.peso = peso;
-	}
-
-	public String getNacionalidad() {
-		return nacionalidad;
-	}
-
-	public void setNacionalidad(String nacionalidad) {
-		this.nacionalidad = nacionalidad;
-	}
-
-	public Date getFechaDeNacimiento() {
-		return fechaDeNacimiento;
-	}
-
-	public void setFechaDeNacimiento(Date fechaDeNacimiento) {
-		this.fechaDeNacimiento = fechaDeNacimiento;
-	}
-	public void verificarLesiones() {
-        LocalDate hoy = LocalDate.now(); 
+    public void verificarLesiones() {
+        LocalDate hoy = LocalDate.now();
         lesiones.removeIf(lesion -> {
             LocalDate fechaFin = lesion.getFechaLesion().plusDays(lesion.getDuracionEstimada());
             if (hoy.isAfter(fechaFin)) {
-                lesion.setEstado("Recuperada"); 
-                return true; 
+                lesion.setEstado("Recuperada");
+                return true;
             }
             return false;
         });
     }
 
-    public void eliminarLesion(String tipo) {
-        lesiones.removeIf(l -> l.getTipo().equals(tipo));
+    public boolean eliminarLesion(String tipo) {
+        return lesiones.removeIf(l -> l.getTipo().equals(tipo));
     }
 
     public ArrayList<Lesion> getLesionesActivas() {
@@ -146,5 +85,13 @@ public class Jugador {
             }
         }
         return activas;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Jugador jugador = (Jugador) o;
+        return ID.equals(jugador.ID);
     }
 }

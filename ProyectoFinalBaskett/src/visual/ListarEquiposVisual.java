@@ -2,9 +2,13 @@ package visual;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -26,15 +30,13 @@ public class ListarEquiposVisual extends JFrame {
     }
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    ControladoraLiga controladora = new ControladoraLiga();
-                    ListarEquiposVisual frame = new ListarEquiposVisual(controladora);
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        EventQueue.invokeLater(() -> {
+            try {
+                ControladoraLiga controladora = new ControladoraLiga();
+                ListarEquiposVisual frame = new ListarEquiposVisual(controladora);
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
@@ -42,7 +44,7 @@ public class ListarEquiposVisual extends JFrame {
     private void initialize() {
         setTitle("Lista de Equipos");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 800, 400); 
+        setBounds(100, 100, 800, 450);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentPane.setBackground(new Color(255, 147, 0));
@@ -53,15 +55,55 @@ public class ListarEquiposVisual extends JFrame {
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
         table = new JTable(modelo);
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(10, 10, 760, 340); 
+        scrollPane.setBounds(10, 10, 760, 340);
         contentPane.add(scrollPane);
 
+        JButton btnModificar = new JButton("Modificar");
+        btnModificar.setBounds(10, 360, 100, 30);
+        contentPane.add(btnModificar);
+
+        JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar.setBounds(120, 360, 100, 30);
+        contentPane.add(btnEliminar);
+
         cargarEquipos();
+
+        btnModificar.addActionListener(e -> {
+            int fila = table.getSelectedRow();
+            if (fila >= 0) {
+                String id = (String) table.getValueAt(fila, 0);
+    
+                equipovisual ventana = new equipovisual(controladora, id);
+                ventana.setVisible(true);
+                ventana.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                        cargarEquipos();
+                    }
+                });
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione un equipo.");
+            }
+        });
+
+        btnEliminar.addActionListener(e -> {
+            int fila = table.getSelectedRow();
+            if (fila >= 0) {
+                String id = (String) table.getValueAt(fila, 0);
+                int confirm = JOptionPane.showConfirmDialog(this, "¿Eliminar equipo " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    controladora.eliminarEquipo(id);
+                    cargarEquipos();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione un equipo.");
+            }
+        });
     }
 
     private void cargarEquipos() {
         DefaultTableModel modelo = (DefaultTableModel) table.getModel();
-        modelo.setRowCount(0); 
+        modelo.setRowCount(0);
         ArrayList<Equipo> equipos = controladora.getMisEquipos();
         for (Equipo equipo : equipos) {
             Object[] fila = {

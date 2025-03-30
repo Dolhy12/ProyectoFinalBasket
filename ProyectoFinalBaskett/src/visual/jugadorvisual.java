@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;  
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import logico.ControladoraLiga;
@@ -26,39 +26,49 @@ public class jugadorvisual extends JFrame {
     private JTextField txtID;
     private JTextField txtNombre;
     private JTextField txtEdad;
-    private JComboBox cmbPosicion;
+    private JComboBox<String> cmbPosicion;
     private JTextField txtNacionalidad;
-    private JComboBox cmbDia;
-    private JComboBox cmbMes;
-    private JComboBox cmbAnio;
+    private JComboBox<String> cmbDia;
+    private JComboBox<String> cmbMes;
+    private JComboBox<String> cmbAnio;
     private JTextField txtPeso;
     private JTextField txtAltura;
     private JTextField txtNumero;
     private ControladoraLiga controladora;
+    private String idJugador; 
 
+    /**
+     * @wbp.parser.constructor
+     */
     public jugadorvisual(ControladoraLiga controladora) {
+        this(controladora, null); 
+    }
+
+    public jugadorvisual(ControladoraLiga controladora, String idJugador) {
         this.controladora = controladora;
+        this.idJugador = idJugador;
         initialize();
+        if (idJugador != null) {
+            cargarDatosJugador();
+        }
     }
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    ControladoraLiga controladora = new ControladoraLiga();
-                    jugadorvisual frame = new jugadorvisual(controladora);
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        EventQueue.invokeLater(() -> {
+            try {
+                ControladoraLiga controladora = new ControladoraLiga();
+                jugadorvisual frame = new jugadorvisual(controladora);
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
 
     private void initialize() {
-        setTitle("Registrar Jugador");
+        setTitle(idJugador == null ? "Registrar Jugador" : "Modificar Jugador");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 400, 600); 
+        setBounds(100, 100, 400, 600);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentPane.setBackground(new Color(255, 147, 0));
@@ -70,12 +80,10 @@ public class jugadorvisual extends JFrame {
         lblID.setBounds(20, 20, 80, 25);
         contentPane.add(lblID);
 
-        txtID = new JTextField();
-        txtID.setBounds(100, 20, 260, 25);
+        txtID = new JTextField(idJugador == null ? generarIDUnico() : idJugador);
         txtID.setEditable(false);
-        txtID.setText(generarIDUnico());
+        txtID.setBounds(100, 20, 260, 25);
         contentPane.add(txtID);
-        txtID.setColumns(10);
 
         JLabel lblNombre = new JLabel("NOMBRE:");
         lblNombre.setFont(new Font("Arial", Font.BOLD, 14));
@@ -85,7 +93,6 @@ public class jugadorvisual extends JFrame {
         txtNombre = new JTextField();
         txtNombre.setBounds(100, 60, 260, 25);
         contentPane.add(txtNombre);
-        txtNombre.setColumns(10);
 
         JLabel lblEdad = new JLabel("EDAD:");
         lblEdad.setFont(new Font("Arial", Font.BOLD, 14));
@@ -95,15 +102,17 @@ public class jugadorvisual extends JFrame {
         txtEdad = new JTextField();
         txtEdad.setBounds(100, 100, 260, 25);
         contentPane.add(txtEdad);
-        txtEdad.setColumns(10);
-        
+
         JLabel lblPosicion = new JLabel("POSICIÓN:");
         lblPosicion.setFont(new Font("Arial", Font.BOLD, 14));
         lblPosicion.setBounds(20, 140, 80, 25);
         contentPane.add(lblPosicion);
 
+        cmbPosicion = new JComboBox<>();
         String[] posiciones = {"Base", "Escolta", "Alero", "Ala-Pívot", "Pívot"};
-        cmbPosicion = new JComboBox(posiciones);
+        for (String posicion : posiciones) {
+            cmbPosicion.addItem(posicion);
+        }
         cmbPosicion.setBounds(100, 140, 260, 25);
         contentPane.add(cmbPosicion);
 
@@ -115,32 +124,36 @@ public class jugadorvisual extends JFrame {
         txtNacionalidad = new JTextField();
         txtNacionalidad.setBounds(100, 180, 260, 25);
         contentPane.add(txtNacionalidad);
-        txtNacionalidad.setColumns(10);
 
         JLabel lblFechaNacimiento = new JLabel("FECHA NAC.:");
         lblFechaNacimiento.setFont(new Font("Arial", Font.BOLD, 14));
         lblFechaNacimiento.setBounds(20, 220, 80, 25);
         contentPane.add(lblFechaNacimiento);
 
+        cmbDia = new JComboBox<>();
         String[] dias = new String[31];
-        for (int i = 0; i < 31; i++) {
-            dias[i] = String.valueOf(i + 1);
+        for (int i = 0; i < 31; i++) dias[i] = String.valueOf(i + 1);
+        for (String dia : dias) {
+            cmbDia.addItem(dia);
         }
-        cmbDia = new JComboBox(dias);
         cmbDia.setBounds(100, 220, 60, 25);
         contentPane.add(cmbDia);
 
+        cmbMes = new JComboBox<>();
         String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
                           "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-        cmbMes = new JComboBox(meses);
+        for (String mes : meses) {
+            cmbMes.addItem(mes);
+        }
         cmbMes.setBounds(170, 220, 100, 25);
         contentPane.add(cmbMes);
 
+        cmbAnio = new JComboBox<>();
         String[] anios = new String[46];
-        for (int i = 0; i < 46; i++) {
-            anios[i] = String.valueOf(1980 + i);
+        for (int i = 0; i < 46; i++) anios[i] = String.valueOf(1980 + i);
+        for (String anio : anios) {
+            cmbAnio.addItem(anio);
         }
-        cmbAnio = new JComboBox(anios);
         cmbAnio.setBounds(280, 220, 80, 25);
         contentPane.add(cmbAnio);
 
@@ -152,7 +165,6 @@ public class jugadorvisual extends JFrame {
         txtPeso = new JTextField();
         txtPeso.setBounds(100, 260, 260, 25);
         contentPane.add(txtPeso);
-        txtPeso.setColumns(10);
 
         JLabel lblAltura = new JLabel("ALTURA (m):");
         lblAltura.setFont(new Font("Arial", Font.BOLD, 14));
@@ -162,7 +174,6 @@ public class jugadorvisual extends JFrame {
         txtAltura = new JTextField();
         txtAltura.setBounds(100, 300, 260, 25);
         contentPane.add(txtAltura);
-        txtAltura.setColumns(10);
 
         JLabel lblNumero = new JLabel("NÚMERO:");
         lblNumero.setFont(new Font("Arial", Font.BOLD, 14));
@@ -172,57 +183,83 @@ public class jugadorvisual extends JFrame {
         txtNumero = new JTextField();
         txtNumero.setBounds(100, 340, 260, 25);
         contentPane.add(txtNumero);
-        txtNumero.setColumns(10);
 
-        JButton btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setBounds(20, 380, 100, 30);
-        contentPane.add(btnRegistrar);
+        JButton btnGuardar = new JButton(idJugador == null ? "Registrar" : "Guardar");
+        btnGuardar.setBounds(20, 380, 100, 30);
+        contentPane.add(btnGuardar);
 
         JButton btnCancelar = new JButton("Cancelar");
         btnCancelar.setBounds(130, 380, 100, 30);
         contentPane.add(btnCancelar);
 
-        btnRegistrar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String id = txtID.getText();
-                    String nombre = txtNombre.getText();
-                    int edad = Integer.parseInt(txtEdad.getText());
-                    String posicion = (String) cmbPosicion.getSelectedItem();
-                    String nacionalidad = txtNacionalidad.getText();
-                    
-                    String dia = (String) cmbDia.getSelectedItem();
-                    int mesIndex = cmbMes.getSelectedIndex() + 1;
-                    String mes = String.format("%02d", mesIndex);
-                    String anio = (String) cmbAnio.getSelectedItem();
-                    String fechaNacimientoStr = dia + "/" + mes + "/" + anio;
+        btnGuardar.addActionListener(e -> guardarJugador());
+        btnCancelar.addActionListener(e -> dispose());
+    }
 
-                    float peso = Float.parseFloat(txtPeso.getText());
-                    float altura = Float.parseFloat(txtAltura.getText());
-                    int numero = Integer.parseInt(txtNumero.getText());
+    private void cargarDatosJugador() {
+        Jugador jugador = controladora.buscarJugador(idJugador);
+        if (jugador != null) {
+            txtNombre.setText(jugador.getNombre());
+            txtEdad.setText(String.valueOf(jugador.getEdad()));
+            cmbPosicion.setSelectedItem(jugador.getPosicion());
+            txtNacionalidad.setText(jugador.getNacionalidad());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            String fecha = sdf.format(jugador.getFechaDeNacimiento());
+            cmbDia.setSelectedItem(fecha.split("/")[0]);
+            cmbMes.setSelectedIndex(Integer.parseInt(fecha.split("/")[1]) - 1);
+            cmbAnio.setSelectedItem(fecha.split("/")[2]);
+            txtPeso.setText(String.valueOf(jugador.getPeso()));
+            txtAltura.setText(String.valueOf(jugador.getAltura()));
+            txtNumero.setText(String.valueOf(jugador.getNumero()));
+        }
+    }
 
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    Date fechaNacimiento = formatter.parse(fechaNacimientoStr);
+    private void guardarJugador() {
+        try {
+            String nombre = txtNombre.getText().trim();
+            int edad = Integer.parseInt(txtEdad.getText().trim());
+            String posicion = (String) cmbPosicion.getSelectedItem();
+            String nacionalidad = txtNacionalidad.getText().trim();
+            String dia = (String) cmbDia.getSelectedItem();
+            int mesIndex = cmbMes.getSelectedIndex() + 1;
+            String mes = String.format("%02d", mesIndex);
+            String anio = (String) cmbAnio.getSelectedItem();
+            String fechaNacimientoStr = dia + "/" + mes + "/" + anio;
+            float peso = Float.parseFloat(txtPeso.getText().trim());
+            float altura = Float.parseFloat(txtAltura.getText().trim());
+            int numero = Integer.parseInt(txtNumero.getText().trim());
 
-                    Jugador jugador = new Jugador(id, nombre, edad, posicion, nacionalidad, fechaNacimiento, peso, altura, numero);
-
-                    controladora.agregarJugador(jugador);
-
-                    JOptionPane.showMessageDialog(null, "Jugador registrado con éxito. ID: " + id);
-                    dispose();
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Error: Verifique que los campos numéricos (edad, peso, altura, número) sean correctos.");
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Error al registrar el jugador: " + ex.getMessage());
-                }
+            if (nombre.isEmpty() || nacionalidad.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Nombre y nacionalidad son obligatorios.");
+                return;
             }
-        });
-
-        btnCancelar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
+            if (edad <= 0 || peso <= 0 || altura <= 0 || numero < 0) {
+                JOptionPane.showMessageDialog(this, "Edad, peso, altura y número deben ser positivos.");
+                return;
             }
-        });
+
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Date fechaNacimiento = formatter.parse(fechaNacimientoStr);
+
+            if (idJugador == null) { 
+                Jugador jugador = new Jugador(txtID.getText(), nombre, edad, posicion, nacionalidad, fechaNacimiento, peso, altura, numero);
+                controladora.agregarJugador(jugador);
+                JOptionPane.showMessageDialog(this, "Jugador registrado con éxito. ID: " + txtID.getText());
+            } else { 
+                controladora.modificarJugador(idJugador, nombre, edad, posicion, numero);
+                Jugador jugador = controladora.buscarJugador(idJugador);
+                jugador.setNacionalidad(nacionalidad);
+                jugador.setFechaDeNacimiento(fechaNacimiento);
+                jugador.setPeso(peso);
+                jugador.setAltura(altura);
+                JOptionPane.showMessageDialog(this, "Jugador modificado con éxito.");
+            }
+            dispose();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Verifique los campos numéricos.");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
     }
 
     private String generarIDUnico() {
