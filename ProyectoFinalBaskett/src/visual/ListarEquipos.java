@@ -7,7 +7,6 @@ import logico.Equipo;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ListarEquipos extends JDialog {
     

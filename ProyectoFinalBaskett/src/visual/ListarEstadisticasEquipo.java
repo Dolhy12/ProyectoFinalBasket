@@ -2,35 +2,33 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import logico.ControladoraLiga;
 import logico.Equipo;
 import logico.EstadisticasEquipo;
 
-public class ListEstadisticasEquipo extends JFrame {
+public class ListarEstadisticasEquipo extends JDialog {
 
     private JTable tablaEstadisticas;
     private DefaultTableModel model;
 
-    public ListEstadisticasEquipo(ControladoraLiga controladora) {
+    public ListarEstadisticasEquipo(ControladoraLiga controladora) {
         setTitle("Estadísticas de Equipos");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(800, 400);
+        setModal(true);
+        setSize(1080, 500);
         setLocationRelativeTo(null);
         
         JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contentPane.setBackground(new Color(70, 70, 70));
+        contentPane.setBackground(new Color(240, 240, 240));
         contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
 
-        String[] columnNames = {"Equipo", "Partidos", "Victorias", "Derrotas", "% Victorias", "Puntos/Partido", "Robos", "Bloqueos", "Asistencias"};
+        String[] columnNames = {"Equipo", "Partidos", "Victorias", "Derrotas", "% Victorias", "Puntos Por Partido", "Robos", "Bloqueos", "Asistencias"};
         model = new DefaultTableModel(columnNames, 0);
         
         tablaEstadisticas = new JTable(model);
@@ -41,10 +39,18 @@ public class ListEstadisticasEquipo extends JFrame {
         cargarDatos(controladora.getMisEquipos());
         
         JScrollPane scrollPane = new JScrollPane(tablaEstadisticas);
-        scrollPane.getViewport().setBackground(new Color(70, 70, 70));
+        scrollPane.getViewport().setBackground(new Color(240, 240, 240));
         contentPane.add(scrollPane, BorderLayout.CENTER);
         
-        setVisible(true);
+        JPanel buttonPane = new JPanel();
+        buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonPane.setBackground(new Color(240, 240, 240));
+        
+        JButton btnCerrar = new JButton("Cerrar");
+        btnCerrar.addActionListener(e -> dispose());
+        buttonPane.add(btnCerrar);
+        
+        contentPane.add(buttonPane, BorderLayout.SOUTH);
     }
 
     private void cargarDatos(ArrayList<Equipo> equipos) {
@@ -63,6 +69,17 @@ public class ListEstadisticasEquipo extends JFrame {
                 stats.getAsistenciasTotales()
             };
             model.addRow(row);
+        }
+    }
+    
+    public static void main(String[] args) {
+        try {
+            ControladoraLiga controladora = new ControladoraLiga();
+            ListarEstadisticasEquipo dialog = new ListarEstadisticasEquipo(controladora);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

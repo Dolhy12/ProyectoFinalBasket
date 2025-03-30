@@ -8,8 +8,6 @@ import logico.Jugador;
 import logico.Lesion;
 import java.awt.*;
 import java.util.ArrayList;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class ListarLesiones extends JDialog {
     
@@ -30,11 +28,9 @@ public class ListarLesiones extends JDialog {
         contentPanel.setLayout(new BorderLayout());
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
-        // Panel superior para filtros
         JPanel panelFiltros = new JPanel();
         panelFiltros.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        // ComboBox de jugadores
         cmbJugadores = new JComboBox<>();
         cmbJugadores.addItem("Todos");
         for (Jugador j : controladora.getMisJugadores()) {
@@ -43,11 +39,9 @@ public class ListarLesiones extends JDialog {
         panelFiltros.add(new JLabel("Jugador:"));
         panelFiltros.add(cmbJugadores);
 
-        // Botón para filtrar por jugador
         btnFiltrarJugador = new JButton("Filtrar por Jugador");
         panelFiltros.add(btnFiltrarJugador);
 
-        // ComboBox de equipos
         cmbEquipos = new JComboBox<>();
         cmbEquipos.addItem("Todos");
         for (Equipo e : controladora.getMisEquipos()) {
@@ -56,13 +50,11 @@ public class ListarLesiones extends JDialog {
         panelFiltros.add(new JLabel("Equipo:"));
         panelFiltros.add(cmbEquipos);
 
-        // Botón para filtrar por equipo
         btnFiltrarEquipo = new JButton("Filtrar por Equipo");
         panelFiltros.add(btnFiltrarEquipo);
 
         getContentPane().add(panelFiltros, BorderLayout.NORTH);
 
-        // Tabla de lesiones
         String[] columnas = {"Jugador", "Equipo", "Tipo de Lesión", "Tratamiento", "Fecha de Lesión", "Duración", "Estado"};
         DefaultTableModel model = new DefaultTableModel(columnas, 0);
         table = new JTable(model);
@@ -85,7 +77,6 @@ public class ListarLesiones extends JDialog {
         buttonPane.add(btnEliminar);
         buttonPane.add(btnCerrar);
 
-        // Eventos de filtrado
         btnFiltrarJugador.addActionListener(e -> aplicarFiltro());
         btnFiltrarEquipo.addActionListener(e -> aplicarFiltro());
 
@@ -97,19 +88,16 @@ public class ListarLesiones extends JDialog {
         String idJugador = null;
         String idEquipo = null;
 
-        // Obtener el ID del jugador seleccionado
         String seleccionJugador = (String) cmbJugadores.getSelectedItem();
         if (seleccionJugador != null && !seleccionJugador.equals("Todos")) {
             idJugador = seleccionJugador.split("\\(")[1].replace(")", "");
         }
 
-        // Obtener el ID del equipo seleccionado
         String seleccionEquipo = (String) cmbEquipos.getSelectedItem();
         if (seleccionEquipo != null && !seleccionEquipo.equals("Todos")) {
             idEquipo = seleccionEquipo.split("\\(")[1].replace(")", "");
         }
 
-        // Recargar la tabla con los filtros aplicados
         cargarLesiones(idJugador, idEquipo);
     }
 
