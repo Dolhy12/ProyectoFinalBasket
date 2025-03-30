@@ -169,6 +169,13 @@ public class PrincipalVisual extends JFrame {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 fondoLabel.setSize(getWidth(), getHeight());
             }
+        }); 
+
+        mntmRegistrarEquipo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                equipovisual ventanaEquipo = new equipovisual(controladora);
+                ventanaEquipo.setVisible(true);
+            }
         });
 
         mntmRegistrarJugador.addActionListener(new ActionListener() {
@@ -196,6 +203,27 @@ public class PrincipalVisual extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 equipovisual ventanaEquipo = new equipovisual(controladora);
                 ventanaEquipo.setVisible(true);
+            }
+        });
+
+        mntmRegistrarJugador.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                jugadorvisual ventanaJugador = new jugadorvisual(controladora);
+                ventanaJugador.setVisible(true);
+            }
+        });
+
+        mntmRegistrarLesion.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String idJugador = JOptionPane.showInputDialog("Ingrese el ID del jugador:");
+                if (idJugador != null && !idJugador.trim().isEmpty()) {
+                    if (controladora.existeJugador(idJugador)) {
+                        lesionvisual ventanaLesion = new lesionvisual(controladora, idJugador);
+                        ventanaLesion.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Jugador no encontrado.");
+                    }
+                }
             }
         });
 
