@@ -17,7 +17,7 @@ import logico.ControladoraLiga;
 import logico.Equipo;
 import logico.Juego;
 
-public class Juegovisual extends JFrame {
+public class JuegoVisual extends JFrame {
 
     private JPanel contentPane;
     private JComboBox<Equipo> cmbLocal;
@@ -27,9 +27,11 @@ public class Juegovisual extends JFrame {
     private ControladoraLiga controladora;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public Juegovisual(ControladoraLiga controladora) {
+    public JuegoVisual(ControladoraLiga controladora) {
         this.controladora = controladora;
         initialize();
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     private void initialize() {
@@ -42,7 +44,6 @@ public class Juegovisual extends JFrame {
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
-        
         JLabel lblLocal = new JLabel("Equipo Local:");
         lblLocal.setBounds(20, 20, 100, 20);
         contentPane.add(lblLocal);
@@ -61,7 +62,6 @@ public class Juegovisual extends JFrame {
         cmbVisitante.setBounds(130, 60, 200, 25);
         contentPane.add(cmbVisitante);
 
-        
         JLabel lblFecha = new JLabel("Fecha (YYYY-MM-DD):");
         lblFecha.setBounds(20, 100, 120, 20);
         contentPane.add(lblFecha);
@@ -103,14 +103,11 @@ public class Juegovisual extends JFrame {
             Equipo local = (Equipo) cmbLocal.getSelectedItem();
             Equipo visitante = (Equipo) cmbVisitante.getSelectedItem();
             
-            
             if (local.getID().equals(visitante.getID())) {
                 throw new Exception("¡Un equipo no puede jugar contra sí mismo!");
             }
 
-            
             LocalDate fecha = LocalDate.parse(txtFecha.getText(), dateFormatter);
-            
             String lugar = txtLugar.getText().trim();
             
             if (lugar.isEmpty()) {
