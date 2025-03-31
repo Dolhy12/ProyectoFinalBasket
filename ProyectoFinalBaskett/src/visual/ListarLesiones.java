@@ -19,6 +19,23 @@ public class ListarLesiones extends JDialog {
     private JButton btnFiltrarJugador;
     private JButton btnFiltrarEquipo;
     
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+        try {
+            ControladoraLiga controladora = ControladoraLiga.getInstance();
+            ListarLesiones dialog = new ListarLesiones(controladora);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * Create the dialog.
+	 */
     public ListarLesiones(ControladoraLiga controladora) {
         this.controladora = controladora;
 
@@ -135,18 +152,6 @@ public class ListarLesiones extends JDialog {
                 };
                 model.addRow(fila);
             }
-        }
-    }
-
-
-	public static void main(String[] args) {
-        try {
-            ControladoraLiga controladora = new ControladoraLiga();
-            ListarLesiones dialog = new ListarLesiones(controladora);
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

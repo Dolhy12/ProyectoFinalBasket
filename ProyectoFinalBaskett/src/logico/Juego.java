@@ -1,19 +1,20 @@
 package logico;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Juego {
     private String ID;
-    private LocalDate fecha;
+    private LocalDateTime fechaHora;
     private String lugar;
     private String estado;
     private Equipo equipoLocal;
     private Equipo equipoVisitante;
     private Resultado resultado;
 
-    public Juego(String ID, LocalDate fecha, String lugar, Equipo equipoLocal, Equipo equipoVisitante) {
+    public Juego(String ID, LocalDateTime fechaHora, String lugar, Equipo local, Equipo visitante)  {
         this.ID = ID;
-        this.fecha = fecha;
+        this.fechaHora = fechaHora;
         this.lugar = lugar;
         this.estado = "Programado";
         this.equipoLocal = equipoLocal;
@@ -24,8 +25,8 @@ public class Juego {
         return ID;
     }
 
-    public LocalDate getFecha() {
-        return fecha;
+    public LocalDateTime getFecha() {
+        return (LocalDateTime) fechaHora;
     }
 
     public String getLugar() {
@@ -52,8 +53,8 @@ public class Juego {
         ID = iD;
     }
 
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
+    public void setFecha(LocalDateTime fecha) {
+        this.fechaHora = fecha;
     }
 
     public void setLugar(String lugar) {

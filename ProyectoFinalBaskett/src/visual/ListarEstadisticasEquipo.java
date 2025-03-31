@@ -15,7 +15,24 @@ public class ListarEstadisticasEquipo extends JDialog {
 
     private JTable tablaEstadisticas;
     private DefaultTableModel model;
-
+    
+    /**
+	 * Launch the application.
+	 */
+    public static void main(String[] args) {
+        try {
+            ControladoraLiga controladora = ControladoraLiga.getInstance();
+            ListarEstadisticasEquipo dialog = new ListarEstadisticasEquipo(controladora);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+	/**
+	 * Create the dialog.
+	 */
     public ListarEstadisticasEquipo(ControladoraLiga controladora) {
         setTitle("Estadísticas de Equipos");
         setModal(true);
@@ -69,17 +86,6 @@ public class ListarEstadisticasEquipo extends JDialog {
                 stats.getAsistenciasTotales()
             };
             model.addRow(row);
-        }
-    }
-    
-    public static void main(String[] args) {
-        try {
-            ControladoraLiga controladora = new ControladoraLiga();
-            ListarEstadisticasEquipo dialog = new ListarEstadisticasEquipo(controladora);
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

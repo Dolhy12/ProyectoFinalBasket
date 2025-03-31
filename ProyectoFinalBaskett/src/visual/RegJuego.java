@@ -9,10 +9,14 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import logico.CalendarioJuegos;
 import logico.ControladoraLiga;
 import logico.Equipo;
+import logico.Juego;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Color;
 import java.awt.Dimension;
 
@@ -22,16 +26,23 @@ import javax.swing.SpinnerDateModel;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Calendar;
 import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.awt.event.ActionEvent;
+import java.util.Calendar;
 
 public class RegJuego extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtID;
 	private ControladoraLiga controladora;
+	private JComboBox<Equipo> cbxEquipoLocal;
+	private JComboBox<Equipo> cbxEquipoVisitante;
+	private JComboBox cbxUbicacion;
+	private static JSpinner spnFecha;
 	/**
 	 * Launch the application.
 	 */
@@ -49,6 +60,9 @@ public class RegJuego extends JDialog {
 	 * Create the dialog.
 	 */
 	public RegJuego() {
+		controladora = ControladoraLiga.getInstance();
+		setTitle("Registrar Juego");
+		setType(Type.POPUP);
 		setBounds(100, 100, 609, 324);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -91,13 +105,12 @@ public class RegJuego extends JDialog {
 					panelFecha.add(lblFecha);
 				}
 				
-				JSpinner spnFecha = new JSpinner(new SpinnerDateModel());
-				spnFecha.setBounds(74, 13, 170, 22);
-				panelFecha.add(spnFecha);
-				JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnFecha, "dd-MM-yyyy");
-				spnFecha.setEditor(dateEditor);
-				spnFecha.setPreferredSize(new Dimension(150, 25));
-				spnFecha.setValue(new Date());
+					spnFecha = new JSpinner(new SpinnerDateModel(new Date(),null,null,Calendar.HOUR_OF_DAY));
+					JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnFecha,"dd-MM-yyyy HH:mm");
+					spnFecha.setEditor(dateEditor);
+				    spnFecha.setBounds(69, 13, 174, 22);
+				    panelFecha.add(spnFecha);
+
 			}
 			{
 				JPanel EquipoLocal = new JPanel();
@@ -111,7 +124,7 @@ public class RegJuego extends JDialog {
 					EquipoLocal.add(lblEquipoLocal);
 				}
 				{
-					JComboBox cbxEquipoLocal = new JComboBox();
+					cbxEquipoLocal = new JComboBox();
 					cargarEquipos(cbxEquipoLocal);
 					cbxEquipoLocal.setBounds(12, 31, 231, 22);
 					EquipoLocal.add(cbxEquipoLocal);
@@ -129,7 +142,7 @@ public class RegJuego extends JDialog {
 					EquipoVisitante.add(lblEquipoVisitante);
 				}
 				{
-					JComboBox cbxEquipoVisitante = new JComboBox();
+					cbxEquipoVisitante = new JComboBox();
 					cargarEquipos(cbxEquipoVisitante);
 					cbxEquipoVisitante.setBounds(12, 31, 231, 22);
 					EquipoVisitante.add(cbxEquipoVisitante);
@@ -147,7 +160,7 @@ public class RegJuego extends JDialog {
 					panelUbicacion.add(lblUbicacion);
 				}
 				{
-					JComboBox cbxUbicacion = new JComboBox();
+					cbxUbicacion = new JComboBox();
 					cargarLugares(cbxUbicacion);
 					cbxUbicacion.setBounds(88, 10, 155, 22);
 					panelUbicacion.add(cbxUbicacion);
@@ -161,6 +174,53 @@ public class RegJuego extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton btnRegistrar = new JButton("Registrar");
+				btnRegistrar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						try {
+							if (cbxEquipoLocal.getSelectedItem() == null 
+					                || cbxEquipoVisitante.getSelectedItem() == null 
+					                || cbxUbicacion.getSelectedItem() == null) {
+					                throw new IllegalArgumentException("Seleccione todos los campos obligatorios");
+					            }
+
+		                    Equipo local = (Equipo) cbxEquipoLocal.getSelectedItem();
+		                    Equipo visitante = (Equipo) cbxEquipoVisitante.getSelectedItem();
+		                    
+		                    if (local.equals(visitante)) {
+		                        throw new IllegalArgumentException("Los equipos deben ser diferentes");
+		                    }
+
+		                    Date fechaSeleccionada = (Date) spnFecha.getValue();
+		                    LocalDateTime fechaHora = fechaSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+		                    String idJuego = txtID.getText();
+		                    String ubicacion = (String) cbxUbicacion.getSelectedItem();
+
+		                    Juego nuevoJuego = new Juego(
+		                        idJuego,
+		                        fechaHora,
+		                        ubicacion,
+		                        local,
+		                        visitante
+		                    );
+
+		                    controladora.agregarJuego(nuevoJuego);
+		                    
+		                    JOptionPane.showMessageDialog(RegJuego.this, 
+		                        "Juego registrado exitosamente", 
+		                        "Éxito", 
+		                        JOptionPane.INFORMATION_MESSAGE);
+		                    
+		                    dispose();
+		                    
+		                } catch (Exception ex) {
+		                    JOptionPane.showMessageDialog(RegJuego.this, 
+		                        "Error: " + ex.getMessage(), 
+		                        "Error", 
+		                        JOptionPane.ERROR_MESSAGE);
+		                }
+	            }
+				});
 				btnRegistrar.setActionCommand("OK");
 				buttonPane.add(btnRegistrar);
 				getRootPane().setDefaultButton(btnRegistrar);
@@ -179,27 +239,38 @@ public class RegJuego extends JDialog {
 	}
 
 	private void cargarLugares(JComboBox<String> comboBox) {
-        Set<String> lugares = new HashSet<>();
-        for (Equipo equipo : controladora.getMisEquipos()) {
-            lugares.add(equipo.getCiudad());
-        }
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(lugares.toArray(new String[0]));
-        comboBox.setModel(model);
-    }
+	    Set<String> lugares = new HashSet<>();
+	    if (controladora.getMisEquipos() != null) {
+	        for (Equipo equipo : controladora.getMisEquipos()) {
+	            if (equipo.getCiudad() != null) {
+	                lugares.add(equipo.getCiudad());
+	            }
+	        }
+	    }
+	    DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(lugares.toArray(new String[0]));
+	    comboBox.setModel(model);
+	}
 
 	private void cargarEquipos(JComboBox<Equipo> comboBox) {
-        DefaultComboBoxModel<Equipo> model = new DefaultComboBoxModel<>();
-        for (Equipo equipo : controladora.getMisEquipos()) {
-            model.addElement(equipo);
-        }
-        comboBox.setModel(model);
-    }
+	    DefaultComboBoxModel<Equipo> model = new DefaultComboBoxModel<>();
+	    if (controladora.getMisEquipos() != null) {
+	        for (Equipo equipo : controladora.getMisEquipos()) {
+	            model.addElement(equipo);
+	        }
+	    }
+	    comboBox.setModel(model);
+	}
 
 	private String generarNuevoId() {
-	    if (controladora == null) {
-	        controladora = new ControladoraLiga();
+	    controladora = ControladoraLiga.getInstance();
+	    CalendarioJuegos calendario = controladora.getCalendario();
+	    
+	    if (calendario == null) {
+	        calendario = new CalendarioJuegos();
+	        controladora.setCalendario(calendario); 
 	    }
-	    int numJuegos = controladora.getCalendario().getJuegos().size(); 
+	    
+	    int numJuegos = calendario.getJuegos().size();
 	    return "JUE-" + (numJuegos + 1);
 	}
 }

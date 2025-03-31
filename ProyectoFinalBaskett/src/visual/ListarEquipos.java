@@ -14,6 +14,23 @@ public class ListarEquipos extends JDialog {
     private JTable table;
     private ControladoraLiga controladora;
     
+    /**
+	 * Launch the application.
+	 */
+    public static void main(String[] args) {
+        try {
+            ControladoraLiga controladora = ControladoraLiga.getInstance();
+            ListarEquipos dialog = new ListarEquipos(controladora);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+	/**
+	 * Create the dialog.
+	 */
     public ListarEquipos(ControladoraLiga controladora) {
         this.controladora = controladora;
         
@@ -63,17 +80,6 @@ public class ListarEquipos extends JDialog {
                 equipo.getTiempoFundado()
             };
             model.addRow(row);
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            ControladoraLiga controladora = new ControladoraLiga();
-            ListarEquipos dialog = new ListarEquipos(controladora);
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

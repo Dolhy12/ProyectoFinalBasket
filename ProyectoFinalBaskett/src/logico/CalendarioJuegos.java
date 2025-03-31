@@ -1,13 +1,14 @@
 package logico;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class CalendarioJuegos {
     private ArrayList<Juego> juegos;
     private String temporada;
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
+    private LocalDateTime fechaInicio;
+    private LocalDateTime fechaFin;
     private String estado;
 
     public ArrayList<Juego> getJuegos() {
@@ -26,19 +27,19 @@ public class CalendarioJuegos {
         this.temporada = temporada;
     }
 
-    public LocalDate getFechaInicio() {
+    public LocalDateTime getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(LocalDate fechaInicio) {
+    public void setFechaInicio(LocalDateTime fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
 
-    public LocalDate getFechaFin() {
+    public LocalDateTime getFechaFin() {
         return fechaFin;
     }
 
-    public void setFechaFin(LocalDate fechaFin) {
+    public void setFechaFin(LocalDateTime fechaFin) {
         this.fechaFin = fechaFin;
     }
 
@@ -54,15 +55,21 @@ public class CalendarioJuegos {
         this.juegos = new ArrayList<>();
     }
 
-    public void agregarJuego(Juego juego) {
-        if (juego.getFecha().isBefore(this.fechaInicio) || juego.getFecha().isAfter(this.fechaFin)) {
-            throw new IllegalArgumentException("El juego está fuera de la temporada.");
+    public void agregarJuego(Juego juego) throws IllegalStateException, IllegalArgumentException {
+        validarFechasTemporada();
+        
+        if (juego.getFecha().isBefore(fechaInicio) || juego.getFecha().isAfter(fechaFin)) {
+            throw new IllegalArgumentException("El juego está fuera de la temporada (" + 
+                fechaInicio.toLocalDate() + " - " + fechaFin.toLocalDate() + ")");
         }
+        
         if (tieneConflicto(juego.getEquipoLocal(), juego.getFecha()) || 
             tieneConflicto(juego.getEquipoVisitante(), juego.getFecha())) {
-            throw new IllegalArgumentException("Un equipo ya tiene un juego programado en esa fecha.");
+            throw new IllegalArgumentException("Conflicto de horario para: " + 
+                juego.getEquipoLocal().getNombre() + " o " + 
+                juego.getEquipoVisitante().getNombre());
         }
-
+        
         juegos.add(juego);
     }
 
@@ -72,9 +79,20 @@ public class CalendarioJuegos {
 
     public void actualizarResultadoJuego(String idJuego, Resultado resultado) {
         Juego juego = buscarJuego(idJuego);
+        if (juego != null && "Finalizado".equals(juego.getEstado())) {
+            throw new IllegalStateException("El juego ya está finalizado");
+        }
+        
         if (juego != null) {
             juego.setResultado(resultado);
             actualizarEstadisticasEquipos(juego);
+            juego.setEstado("Finalizado");
+        }
+    }
+    
+    private void validarFechasTemporada() {
+        if (fechaInicio == null || fechaFin == null) {
+            throw new IllegalStateException("Temporada no configurada correctamente");
         }
     }
 
@@ -124,7 +142,7 @@ public class CalendarioJuegos {
                 .orElse(null);
     }
 
-    private boolean tieneConflicto(Equipo equipo, LocalDate fecha) {
+    private boolean tieneConflicto(Equipo equipo, LocalDateTime fecha) {
         return juegos.stream().anyMatch(j ->
             (j.getEquipoLocal().equals(equipo) || j.getEquipoVisitante().equals(equipo)) &&
             j.getFecha().equals(fecha)

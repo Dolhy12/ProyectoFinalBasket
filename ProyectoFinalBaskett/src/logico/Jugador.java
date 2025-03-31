@@ -94,4 +94,9 @@ public class Jugador {
         Jugador jugador = (Jugador) o;
         return ID.equals(jugador.ID);
     }
+    
+    @Override
+    public String toString() {
+        return nombre + " (" + ID + ") - " + posicion;
+    }
 }

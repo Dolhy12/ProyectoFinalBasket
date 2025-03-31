@@ -1,18 +1,27 @@
 package logico;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class ControladoraLiga {
-    private ArrayList<Equipo> misEquipos;
-    private ArrayList<Jugador> misJugadores;
-    private CalendarioJuegos calendario;
+	private static ControladoraLiga instance;
+	private ArrayList<Jugador> misJugadores = new ArrayList<>();
+    private ArrayList<Equipo> misEquipos = new ArrayList<>();
+    private CalendarioJuegos calendario = new CalendarioJuegos();
 
-    public ControladoraLiga() {
+    private ControladoraLiga() {
         this.misEquipos = new ArrayList<>();
         this.misJugadores = new ArrayList<>();
         this.calendario = new CalendarioJuegos();
+    }
+
+    public static ControladoraLiga getInstance() {
+        if (instance == null) {
+        	instance = new ControladoraLiga();
+        }
+        return instance;
     }
 
     public void agregarEquipo(Equipo equipo) {
@@ -82,9 +91,7 @@ public class ControladoraLiga {
     }
 
     public void agregarJuego(Juego juego) {
-        if (juego != null) {
-            calendario.agregarJuego(juego);
-        }
+    	calendario.getJuegos().add(juego);
     }
 
     public boolean eliminarJuego(String idJuego) {
@@ -224,7 +231,7 @@ public class ControladoraLiga {
             .collect(Collectors.toList());
     }
     
-    public void modificarEquipo(String idEquipo, String nombre, String ciudad, String entrenador, String capitan, String nombreDeLaMascota, int tiempoFundado) {
+    public void modificarEquipo(String idEquipo, String nombre, String ciudad, String entrenador, Jugador capitan, String nombreDeLaMascota, String tiempoFundado) {
         Equipo equipo = buscarEquipo(idEquipo);
         if (equipo != null) {
             equipo.setNombre(nombre);
@@ -309,4 +316,14 @@ public class ControladoraLiga {
     }
     return null;
 }
+
+	public void actualizarEquipo(Equipo actualizado) {
+    for (int i = 0; i < misEquipos.size(); i++) {
+        if (misEquipos.get(i).getID().equals(actualizado.getID())) {
+            misEquipos.set(i, actualizado);
+            break;
+        }
+    }
+}
+
 }

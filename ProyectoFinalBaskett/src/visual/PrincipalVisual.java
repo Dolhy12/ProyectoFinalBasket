@@ -21,7 +21,7 @@ import logico.ControladoraLiga;
 public class PrincipalVisual extends JFrame {
 
     private JPanel contentPane;
-    ControladoraLiga controladora = new ControladoraLiga();
+    ControladoraLiga controladora = ControladoraLiga.getInstance();
 
     /**
      * Launch the application.
@@ -59,6 +59,10 @@ public class PrincipalVisual extends JFrame {
         menuBar.add(mnCalendario);
 
         JMenuItem mntmVerCalendario = new JMenuItem("Ver Calendario");
+        mntmVerCalendario.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        	}
+        });
         mnCalendario.add(mntmVerCalendario);
 
         JMenuItem mntmAgregarJuego = new JMenuItem("Agregar Juego");
@@ -76,7 +80,7 @@ public class PrincipalVisual extends JFrame {
         JMenuItem mntmRegistrarEquipo = new JMenuItem("Registrar Equipo");
         mntmRegistrarEquipo.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		RegEquipo ventanaRegEquipo = new RegEquipo(controladora);
+        		RegEquipo ventanaRegEquipo = new RegEquipo();
         		ventanaRegEquipo.setVisible(true);
         	}
         });
@@ -89,6 +93,13 @@ public class PrincipalVisual extends JFrame {
         		ventanaListEquipos.setVisible(true);
         	}
         });
+        
+        JMenuItem mntmGestionarEquipo = new JMenuItem("Gestionar Equipo");
+        mntmGestionarEquipo.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        	}
+        });
+        mnEquipos.add(mntmGestionarEquipo);
         mnEquipos.add(mntmListarEquipos);
 
         JMenu mnJugadores = new JMenu("Jugadores");
@@ -97,7 +108,7 @@ public class PrincipalVisual extends JFrame {
         JMenuItem mntmRegistrarJugador = new JMenuItem("Registrar Jugador");
         mntmRegistrarJugador.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		RegJugador ventanaRegJugador = new RegJugador(controladora);
+        		RegJugador ventanaRegJugador = new RegJugador();
         		ventanaRegJugador.setVisible(true);
         	}
         });

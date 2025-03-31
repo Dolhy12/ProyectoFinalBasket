@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class ListEstadisticasJugador extends JFrame {
     private Jugador jugador;
     private ControladoraLiga controladora;
-    
     private JLabel lblPuntosTotales;
     private JLabel lblRebotes;
     private JLabel lblAsistencias;
@@ -18,7 +17,21 @@ public class ListEstadisticasJugador extends JFrame {
     private JLabel lblTriplesDobles;
     private JLabel lblLesionesActivas;
     private JList<String> lstPartidos;
-
+    
+	/**
+	 * Launch the application.
+	 */
+    public static void main(String[] args) {
+        ControladoraLiga controladora = ControladoraLiga.getInstance();
+        SwingUtilities.invokeLater(() -> {
+            ListEstadisticasJugador frame = new ListEstadisticasJugador(controladora, "001");
+            frame.setVisible(true);
+        });
+    }
+    
+	/**
+	 * Create the dialog.
+	 */
     public ListEstadisticasJugador(ControladoraLiga controladora, String idJugador) {
         this.controladora = controladora;
         this.jugador = controladora.buscarJugador(idJugador);
@@ -166,16 +179,5 @@ public class ListEstadisticasJugador extends JFrame {
             
             return new int[]{0, 0, 0};
         }
-    }
-
-    public static void main(String[] args) {
-       
-        ControladoraLiga controladora = new ControladoraLiga();
-        
-        
-        SwingUtilities.invokeLater(() -> {
-            ListEstadisticasJugador frame = new ListEstadisticasJugador(controladora, "001");
-            frame.setVisible(true);
-        });
     }
 }

@@ -6,7 +6,7 @@ import logico.Jugador;
 import logico.ControladoraLiga;
 
 import java.awt.*;
-import java.util.List;
+import java.util.ArrayList;
 
 public class ListarJugadores extends JDialog {
     
@@ -14,6 +14,23 @@ public class ListarJugadores extends JDialog {
     private JTable table;
     private ControladoraLiga controladora;
     
+	/**
+	 * Launch the application.
+	 */
+    public static void main(String[] args) {
+        try {
+            ControladoraLiga controladora = ControladoraLiga.getInstance();
+            ListarJugadores dialog = new ListarJugadores(controladora);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+	/**
+	 * Create the dialog.
+	 */
     public ListarJugadores(ControladoraLiga controladora) {
         this.controladora = controladora;
         
@@ -45,15 +62,24 @@ public class ListarJugadores extends JDialog {
         
         JButton btnCerrar = new JButton("Cerrar");
         btnCerrar.addActionListener(e -> dispose());
+        
+        JButton btnModificar = new JButton("Modificar");
+        buttonPane.add(btnModificar);
+        
+        JButton btnEliminar = new JButton("Eliminar");
+        buttonPane.add(btnEliminar);
         buttonPane.add(btnCerrar);
         
         cargarJugadores();
     }
     
     private void cargarJugadores() {
-        List<Jugador> jugadores = controladora.getMisJugadores();
-        
+        ArrayList<Jugador> jugadores = controladora.getMisJugadores();
         DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+
         for (Jugador jugador : jugadores) {
             Object[] row = {
                 jugador.getID(),
@@ -61,23 +87,12 @@ public class ListarJugadores extends JDialog {
                 jugador.getEdad(),
                 jugador.getPosicion(),
                 jugador.getNacionalidad(),
-                jugador.getFechaDeNacimiento(),
-                jugador.getPeso(),
-                jugador.getAltura(),
+                sdf.format(jugador.getFechaDeNacimiento()),
+                jugador.getPeso() + " kg",
+                jugador.getAltura() + " m",
                 jugador.getNumero()
             };
             model.addRow(row);
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            ControladoraLiga controladora = new ControladoraLiga();
-            ListarJugadores dialog = new ListarJugadores(controladora);
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
