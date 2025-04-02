@@ -14,9 +14,9 @@ public class ListarJugadores extends JDialog {
     private JTable table;
     private ControladoraLiga controladora;
     
-	/**
-	 * Launch the application.
-	 */
+    /**
+     * Launch the application.
+     */
     public static void main(String[] args) {
         try {
             ControladoraLiga controladora = ControladoraLiga.getInstance();
@@ -28,12 +28,19 @@ public class ListarJugadores extends JDialog {
         }
     }
     
-	/**
-	 * Create the dialog.
-	 */
+    /**
+     * Create the dialog.
+     */
     public ListarJugadores(ControladoraLiga controladora) {
         this.controladora = controladora;
         
+        // Aplicar tema Nimbus
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         setTitle("Listado de Jugadores");
         setBounds(100, 100, 800, 400);
         getContentPane().setLayout(new BorderLayout());
@@ -47,27 +54,39 @@ public class ListarJugadores extends JDialog {
         table = new JTable(model);
         
         table.setBackground(new Color(240, 240, 240));
-        
         table.setSelectionBackground(new Color(255, 165, 0)); 
         table.setSelectionForeground(Color.WHITE);
-        
-        table.setBackground(new Color(230, 230, 230));
         
         JScrollPane scrollPane = new JScrollPane(table);
         contentPanel.add(scrollPane, BorderLayout.CENTER);
         
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonPane.setBackground(new Color(240, 240, 240));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
         
-        JButton btnCerrar = new JButton("Cerrar");
-        btnCerrar.addActionListener(e -> dispose());
-        
+        JButton btnEstadisticas = new JButton("Ver Estadísticas");
+        btnEstadisticas.setIcon(new ImageIcon("Imagenes/stats_icon.png")); // Ajusta la ruta según tu proyecto
+        btnEstadisticas.addActionListener(e -> {
+            int fila = table.getSelectedRow();
+            if (fila >= 0) {
+                String id = (String) table.getValueAt(fila, 0);
+                ListEstadisticasJugador ventana = new ListEstadisticasJugador(controladora, id);
+                ventana.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione un jugador.");
+            }
+        });
+        buttonPane.add(btnEstadisticas);
+
         JButton btnModificar = new JButton("Modificar");
         buttonPane.add(btnModificar);
         
         JButton btnEliminar = new JButton("Eliminar");
         buttonPane.add(btnEliminar);
+        
+        JButton btnCerrar = new JButton("Cerrar");
+        btnCerrar.addActionListener(e -> dispose());
         buttonPane.add(btnCerrar);
         
         cargarJugadores();

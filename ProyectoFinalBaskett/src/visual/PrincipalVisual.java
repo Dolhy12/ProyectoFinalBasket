@@ -136,6 +136,12 @@ public class PrincipalVisual extends JFrame {
         mnEstadisticas.add(mntmEstadisticasEquipos);
 
         JMenuItem mntmEstadisticasJugadores = new JMenuItem("Estadísticas de Jugadores");
+        mntmEstadisticasJugadores.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ListarJugadores ventanaListJugadores = new ListarJugadores(controladora);
+                ventanaListJugadores.setVisible(true);
+            }
+        });
         mnEstadisticas.add(mntmEstadisticasJugadores);
 
         JMenu mnLesiones = new JMenu("Lesiones");

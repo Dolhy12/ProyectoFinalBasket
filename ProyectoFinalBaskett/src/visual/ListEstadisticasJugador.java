@@ -1,13 +1,19 @@
 package visual;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import javax.swing.*;
-import logico.*;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class ListEstadisticasJugador extends JFrame {
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
+import logico.*;
+
+public class ListEstadisticasJugador extends JDialog {
     private Jugador jugador;
     private ControladoraLiga controladora;
     private JLabel lblPuntosTotales;
@@ -17,81 +23,128 @@ public class ListEstadisticasJugador extends JFrame {
     private JLabel lblTriplesDobles;
     private JLabel lblLesionesActivas;
     private JList<String> lstPartidos;
-    
-	/**
-	 * Launch the application.
-	 */
+    private JList<String> lstLesiones;
+
+    /**
+     * Launch the application.
+     */
     public static void main(String[] args) {
         ControladoraLiga controladora = ControladoraLiga.getInstance();
         SwingUtilities.invokeLater(() -> {
-            ListEstadisticasJugador frame = new ListEstadisticasJugador(controladora, "001");
-            frame.setVisible(true);
+            ListEstadisticasJugador dialog = new ListEstadisticasJugador(controladora, "001");
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
         });
     }
-    
-	/**
-	 * Create the dialog.
-	 */
+
+    /**
+     * Create the dialog.
+     */
     public ListEstadisticasJugador(ControladoraLiga controladora, String idJugador) {
         this.controladora = controladora;
         this.jugador = controladora.buscarJugador(idJugador);
+
+        // Validar que el jugador exista
+        if (jugador == null) {
+            JOptionPane.showMessageDialog(null, "Jugador no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+            dispose();
+            return;
+        }
+
+        // Aplicar tema Nimbus
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         initializeUI();
     }
 
     private void initializeUI() {
         setTitle("Estadísticas de " + jugador.getNombre());
         setSize(800, 600);
-        setLayout(new BorderLayout());
+        setModal(true);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+        getContentPane().setLayout(new BorderLayout());
 
+        // Panel superior con ícono
+        JPanel topPanel = new JPanel();
+        topPanel.setBackground(new Color(255, 147, 30));
+        JLabel lblIcono = new JLabel();
+        lblIcono.setIcon(new ImageIcon("Imagenes/jugador_icon.png")); // Ajusta la ruta según tu proyecto
+        topPanel.add(lblIcono);
+        add(topPanel, BorderLayout.NORTH);
+
+        // Pestañas
         JTabbedPane tabbedPane = new JTabbedPane();
-        
-        
+        tabbedPane.setBackground(new Color(255, 147, 30));
+
+        // Pestaña de estadísticas
         JPanel statsPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        statsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        statsPanel.setBackground(new Color(240, 240, 240));
         agregarComponentesEstadisticas(statsPanel);
         tabbedPane.addTab("Estadísticas", statsPanel);
 
-        
+        // Pestaña de lesiones
         JPanel lesionesPanel = new JPanel(new BorderLayout());
+        lesionesPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        lesionesPanel.setBackground(new Color(240, 240, 240));
         agregarComponentesLesiones(lesionesPanel);
         tabbedPane.addTab("Lesiones", lesionesPanel);
 
-        
+        // Pestaña de partidos
         JPanel partidosPanel = new JPanel(new BorderLayout());
+        partidosPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        partidosPanel.setBackground(new Color(240, 240, 240));
         agregarComponentesPartidos(partidosPanel);
         tabbedPane.addTab("Partidos", partidosPanel);
 
         add(tabbedPane, BorderLayout.CENTER);
-        
-        JButton btnActualizar = new JButton("Actualizar Datos");
-        btnActualizar.addActionListener(e -> actualizarDatos());
-        add(btnActualizar, BorderLayout.SOUTH);
 
-        setLocationRelativeTo(null);
+        // Panel inferior con botones
+        JPanel buttonPane = new JPanel();
+        buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonPane.setBackground(new Color(240, 240, 240));
+
+        JButton btnActualizar = new JButton("Actualizar Datos");
+        btnActualizar.setIcon(new ImageIcon("Imagenes/refresh_icon.png")); // Ajusta la ruta según tu proyecto
+        btnActualizar.addActionListener(e -> actualizarDatos());
+        buttonPane.add(btnActualizar);
+
+        JButton btnCerrar = new JButton("Cerrar");
+        btnCerrar.setIcon(new ImageIcon("Imagenes/close_icon.png")); // Ajusta la ruta según tu proyecto
+        btnCerrar.addActionListener(e -> dispose());
+        buttonPane.add(btnCerrar);
+
+        add(buttonPane, BorderLayout.SOUTH);
     }
 
     private void agregarComponentesEstadisticas(JPanel panel) {
         EstadisticasJugador stats = jugador.getEstadisticas();
-        
+
         panel.add(new JLabel("Puntos totales:"));
         lblPuntosTotales = new JLabel(String.valueOf(stats.getPuntosTotales()));
         panel.add(lblPuntosTotales);
-        
+
         panel.add(new JLabel("Rebotes:"));
         lblRebotes = new JLabel(String.valueOf(stats.getRebotes()));
         panel.add(lblRebotes);
-        
+
         panel.add(new JLabel("Asistencias:"));
         lblAsistencias = new JLabel(String.valueOf(stats.getAsistencias()));
         panel.add(lblAsistencias);
-        
+
         panel.add(new JLabel("Dobles-dobles:"));
         lblDoblesDobles = new JLabel(String.valueOf(stats.getDoblesDobles()));
         panel.add(lblDoblesDobles);
-        
+
         panel.add(new JLabel("Triples-dobles:"));
         lblTriplesDobles = new JLabel(String.valueOf(stats.getTriplesDobles()));
         panel.add(lblTriplesDobles);
-        
+
         panel.add(new JLabel("Lesiones activas:"));
         lblLesionesActivas = new JLabel(String.valueOf(jugador.getLesionesActivas().size()));
         panel.add(lblLesionesActivas);
@@ -99,44 +152,57 @@ public class ListEstadisticasJugador extends JFrame {
 
     private void agregarComponentesLesiones(JPanel panel) {
         DefaultListModel<String> modeloLesiones = new DefaultListModel<>();
-        for (Lesion lesion : jugador.getLesionesActivas()) {
-            modeloLesiones.addElement(
-                lesion.getTipo() + " - " + 
-                lesion.getParteCuerpo() + " - " +
-                lesion.getDuracionEstimada() + " días restantes"
-            );
+        ArrayList<Lesion> lesionesActivas = jugador.getLesionesActivas();
+        if (lesionesActivas.isEmpty()) {
+            modeloLesiones.addElement("No hay lesiones activas.");
+        } else {
+            for (Lesion lesion : lesionesActivas) {
+                modeloLesiones.addElement(
+                    lesion.getTipo() + " - " +
+                    lesion.getParteCuerpo() + " - " +
+                    lesion.getDuracionEstimada() + " días restantes"
+                );
+            }
         }
-        
-        JList<String> listaLesiones = new JList<>(modeloLesiones);
-        panel.add(new JScrollPane(listaLesiones), BorderLayout.CENTER);
+
+        lstLesiones = new JList<>(modeloLesiones);
+        lstLesiones.setBackground(new Color(90, 90, 90));
+        lstLesiones.setForeground(Color.WHITE);
+        panel.add(new JScrollPane(lstLesiones), BorderLayout.CENTER);
     }
 
     private void agregarComponentesPartidos(JPanel panel) {
         DefaultListModel<String> modeloPartidos = new DefaultListModel<>();
         ArrayList<Juego> partidos = controladora.getJuegosPorJugador(jugador.getID());
-        
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        for (Juego juego : partidos) {
-            String info = juego.getFecha().format(formatter) + " - " +
-                          juego.getEquipoLocal().getNombre() + " vs " +
-                          juego.getEquipoVisitante().getNombre();
-            modeloPartidos.addElement(info);
+        if (partidos.isEmpty()) {
+            modeloPartidos.addElement("No hay partidos registrados.");
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            for (Juego juego : partidos) {
+                String info = juego.getFecha().format(formatter) + " - " +
+                              juego.getEquipoLocal().getNombre() + " vs " +
+                              juego.getEquipoVisitante().getNombre();
+                modeloPartidos.addElement(info);
+            }
         }
-        
+
         lstPartidos = new JList<>(modeloPartidos);
+        lstPartidos.setBackground(new Color(90, 90, 90));
+        lstPartidos.setForeground(Color.WHITE);
         lstPartidos.addListSelectionListener(e -> mostrarDetallesPartido());
         panel.add(new JScrollPane(lstPartidos), BorderLayout.CENTER);
     }
 
     private void mostrarDetallesPartido() {
         int index = lstPartidos.getSelectedIndex();
-        if (index != -1) {
+        if (index != -1 && !lstPartidos.getModel().getElementAt(index).equals("No hay partidos registrados.")) {
             Juego juego = controladora.getJuegosPorJugador(jugador.getID()).get(index);
             new DetallePartidoDialog(this, juego, jugador).setVisible(true);
         }
     }
 
     private void actualizarDatos() {
+        // Actualizar estadísticas
         EstadisticasJugador stats = jugador.getEstadisticas();
         lblPuntosTotales.setText(String.valueOf(stats.getPuntosTotales()));
         lblRebotes.setText(String.valueOf(stats.getRebotes()));
@@ -144,17 +210,51 @@ public class ListEstadisticasJugador extends JFrame {
         lblDoblesDobles.setText(String.valueOf(stats.getDoblesDobles()));
         lblTriplesDobles.setText(String.valueOf(stats.getTriplesDobles()));
         lblLesionesActivas.setText(String.valueOf(jugador.getLesionesActivas().size()));
+
+        // Actualizar lista de lesiones
+        DefaultListModel<String> modeloLesiones = new DefaultListModel<>();
+        ArrayList<Lesion> lesionesActivas = jugador.getLesionesActivas();
+        if (lesionesActivas.isEmpty()) {
+            modeloLesiones.addElement("No hay lesiones activas.");
+        } else {
+            for (Lesion lesion : lesionesActivas) {
+                modeloLesiones.addElement(
+                    lesion.getTipo() + " - " +
+                    lesion.getParteCuerpo() + " - " +
+                    lesion.getDuracionEstimada() + " días restantes"
+                );
+            }
+        }
+        lstLesiones.setModel(modeloLesiones);
+
+        // Actualizar lista de partidos
+        DefaultListModel<String> modeloPartidos = new DefaultListModel<>();
+        ArrayList<Juego> partidos = controladora.getJuegosPorJugador(jugador.getID());
+        if (partidos.isEmpty()) {
+            modeloPartidos.addElement("No hay partidos registrados.");
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            for (Juego juego : partidos) {
+                String info = juego.getFecha().format(formatter) + " - " +
+                              juego.getEquipoLocal().getNombre() + " vs " +
+                              juego.getEquipoVisitante().getNombre();
+                modeloPartidos.addElement(info);
+            }
+        }
+        lstPartidos.setModel(modeloPartidos);
     }
 
-   
     class DetallePartidoDialog extends JDialog {
-        public DetallePartidoDialog(JFrame parent, Juego juego, Jugador jugador) {
+        public DetallePartidoDialog(JDialog parent, Juego juego, Jugador jugador) {
             super(parent, "Estadísticas en el partido", true);
             setSize(400, 300);
-            
+            setLocationRelativeTo(parent);
+
             JPanel panel = new JPanel(new GridLayout(0, 2));
+            panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+            panel.setBackground(new Color(240, 240, 240));
+
             Resultado resultado = juego.getResultado();
-            
             if (resultado != null) {
                 int[] stats = obtenerStatsJugadorEnPartido(juego, jugador);
                 panel.add(new JLabel("Puntos:"));
@@ -163,20 +263,22 @@ public class ListEstadisticasJugador extends JFrame {
                 panel.add(new JLabel(String.valueOf(stats[1])));
                 panel.add(new JLabel("Asistencias:"));
                 panel.add(new JLabel(String.valueOf(stats[2])));
+            } else {
+                panel.add(new JLabel("Sin datos disponibles"));
+                panel.add(new JLabel(""));
             }
-            
+
             add(panel);
-            setLocationRelativeTo(parent);
         }
 
         private int[] obtenerStatsJugadorEnPartido(Juego juego, Jugador jugador) {
             Resultado resultado = juego.getResultado();
             int index = resultado.getJugadoresLocales().indexOf(jugador);
             if (index != -1) return resultado.getStatsLocales().get(index);
-            
+
             index = resultado.getJugadoresVisitantes().indexOf(jugador);
             if (index != -1) return resultado.getStatsVisitantes().get(index);
-            
+
             return new int[]{0, 0, 0};
         }
     }
