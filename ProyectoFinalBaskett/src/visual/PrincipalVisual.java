@@ -99,6 +99,9 @@ public class PrincipalVisual extends JFrame {
         JMenuItem mntmGestionarEquipo = new JMenuItem("Gestionar Equipo");
         mntmGestionarEquipo.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		
+        		GestionarEquipo ventana = new GestionarEquipo(controladora);
+        		                ventana.setVisible(true);
         	}
         });
         mnEquipos.add(mntmGestionarEquipo);
