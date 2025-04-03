@@ -41,6 +41,7 @@ public class ListarLesiones extends JDialog {
 
         setTitle("Listado de Lesiones");
         setBounds(100, 100, 800, 400);
+        setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setLayout(new BorderLayout());
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -75,7 +76,9 @@ public class ListarLesiones extends JDialog {
         String[] columnas = {"Jugador", "Equipo", "Tipo de Lesión", "Tratamiento", "Fecha de Lesión", "Duración", "Estado"};
         DefaultTableModel model = new DefaultTableModel(columnas, 0);
         table = new JTable(model);
-        table.setBackground(new Color(255, 147, 30));
+        table.setBackground(new Color(240, 240, 240));
+        table.setSelectionBackground(new Color(212, 122, 25)); 
+        table.setSelectionForeground(Color.WHITE);
 
         JScrollPane scrollPane = new JScrollPane(table);
         contentPanel.add(scrollPane, BorderLayout.CENTER);

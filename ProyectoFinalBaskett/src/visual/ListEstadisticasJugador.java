@@ -44,14 +44,12 @@ public class ListEstadisticasJugador extends JDialog {
         this.controladora = controladora;
         this.jugador = controladora.buscarJugador(idJugador);
 
-        // Validar que el jugador exista
         if (jugador == null) {
             JOptionPane.showMessageDialog(null, "Jugador no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
             dispose();
             return;
         }
 
-        // Aplicar tema Nimbus
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
@@ -69,33 +67,28 @@ public class ListEstadisticasJugador extends JDialog {
         setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
 
-        // Panel superior con ícono
         JPanel topPanel = new JPanel();
         topPanel.setBackground(new Color(255, 147, 30));
         JLabel lblIcono = new JLabel();
-        lblIcono.setIcon(new ImageIcon("Imagenes/jugador_icon.png")); // Ajusta la ruta según tu proyecto
+        lblIcono.setIcon(new ImageIcon("Imagenes/jugador_icon.png"));
         topPanel.add(lblIcono);
         add(topPanel, BorderLayout.NORTH);
 
-        // Pestañas
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setBackground(new Color(255, 147, 30));
 
-        // Pestaña de estadísticas
         JPanel statsPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         statsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         statsPanel.setBackground(new Color(240, 240, 240));
         agregarComponentesEstadisticas(statsPanel);
         tabbedPane.addTab("Estadísticas", statsPanel);
 
-        // Pestaña de lesiones
         JPanel lesionesPanel = new JPanel(new BorderLayout());
         lesionesPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         lesionesPanel.setBackground(new Color(240, 240, 240));
         agregarComponentesLesiones(lesionesPanel);
         tabbedPane.addTab("Lesiones", lesionesPanel);
 
-        // Pestaña de partidos
         JPanel partidosPanel = new JPanel(new BorderLayout());
         partidosPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         partidosPanel.setBackground(new Color(240, 240, 240));
@@ -104,18 +97,17 @@ public class ListEstadisticasJugador extends JDialog {
 
         add(tabbedPane, BorderLayout.CENTER);
 
-        // Panel inferior con botones
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         buttonPane.setBackground(new Color(240, 240, 240));
 
         JButton btnActualizar = new JButton("Actualizar Datos");
-        btnActualizar.setIcon(new ImageIcon("Imagenes/refresh_icon.png")); // Ajusta la ruta según tu proyecto
+        btnActualizar.setIcon(new ImageIcon("Imagenes/refresh_icon.png"));
         btnActualizar.addActionListener(e -> actualizarDatos());
         buttonPane.add(btnActualizar);
 
         JButton btnCerrar = new JButton("Cerrar");
-        btnCerrar.setIcon(new ImageIcon("Imagenes/close_icon.png")); // Ajusta la ruta según tu proyecto
+        btnCerrar.setIcon(new ImageIcon("Imagenes/close_icon.png"));
         btnCerrar.addActionListener(e -> dispose());
         buttonPane.add(btnCerrar);
 
@@ -202,7 +194,6 @@ public class ListEstadisticasJugador extends JDialog {
     }
 
     private void actualizarDatos() {
-        // Actualizar estadísticas
         EstadisticasJugador stats = jugador.getEstadisticas();
         lblPuntosTotales.setText(String.valueOf(stats.getPuntosTotales()));
         lblRebotes.setText(String.valueOf(stats.getRebotes()));
@@ -211,7 +202,6 @@ public class ListEstadisticasJugador extends JDialog {
         lblTriplesDobles.setText(String.valueOf(stats.getTriplesDobles()));
         lblLesionesActivas.setText(String.valueOf(jugador.getLesionesActivas().size()));
 
-        // Actualizar lista de lesiones
         DefaultListModel<String> modeloLesiones = new DefaultListModel<>();
         ArrayList<Lesion> lesionesActivas = jugador.getLesionesActivas();
         if (lesionesActivas.isEmpty()) {
@@ -227,7 +217,6 @@ public class ListEstadisticasJugador extends JDialog {
         }
         lstLesiones.setModel(modeloLesiones);
 
-        // Actualizar lista de partidos
         DefaultListModel<String> modeloPartidos = new DefaultListModel<>();
         ArrayList<Juego> partidos = controladora.getJuegosPorJugador(jugador.getID());
         if (partidos.isEmpty()) {

@@ -120,6 +120,8 @@ public class CalendarioJuegos {
             jugador.getEstadisticas().agregarPuntos(stats[0]);
             jugador.getEstadisticas().agregarRebotes(stats[1]);
             jugador.getEstadisticas().agregarAsistencias(stats[2]);
+            jugador.getEstadisticas().agregarRobos(stats[3]);
+            jugador.getEstadisticas().agregarBloqueos(stats[4]);
             jugador.getEstadisticas().verificarDoblesDobles();
         }
 
@@ -131,6 +133,8 @@ public class CalendarioJuegos {
             jugador.getEstadisticas().agregarPuntos(stats[0]);
             jugador.getEstadisticas().agregarRebotes(stats[1]);
             jugador.getEstadisticas().agregarAsistencias(stats[2]);
+            jugador.getEstadisticas().agregarRobos(stats[3]);
+            jugador.getEstadisticas().agregarBloqueos(stats[4]);
             jugador.getEstadisticas().verificarDoblesDobles();
         }
     }

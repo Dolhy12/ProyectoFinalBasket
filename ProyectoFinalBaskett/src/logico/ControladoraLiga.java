@@ -101,12 +101,6 @@ public class ControladoraLiga {
     public void actualizarResultadoJuego(String idJuego, Resultado resultado) {
         Juego juego = calendario.buscarJuego(idJuego);
         if (juego != null) {
-            Jugador jugadorLocal = juego.getEquipoLocal().getJugadores().get(0);
-            resultado.agregarEstadisticaLocal(jugadorLocal, 20, 5, 3);
-
-            Jugador jugadorVisitante = juego.getEquipoVisitante().getJugadores().get(0);
-            resultado.agregarEstadisticaVisitante(jugadorVisitante, 15, 4, 2);
-
             juego.setResultado(resultado);
         }
     }
@@ -307,23 +301,23 @@ public class ControladoraLiga {
 	}
 
 	public Equipo buscarEquipoPorJugador(String idJugador) {
-    for (Equipo equipo : misEquipos) {
-        for (Jugador jugador : equipo.getJugadores()) {
-            if (jugador.getID().equals(idJugador)) {
-                return equipo;
-            }
-        }
-    }
-    return null;
-}
+	    for (Equipo equipo : misEquipos) {
+	        for (Jugador jugador : equipo.getJugadores()) {
+	            if (jugador.getID().equals(idJugador)) {
+	                return equipo;
+	            }
+	        }
+	    }
+	    return null;
+	}
 
 	public void actualizarEquipo(Equipo actualizado) {
-    for (int i = 0; i < misEquipos.size(); i++) {
-        if (misEquipos.get(i).getID().equals(actualizado.getID())) {
-            misEquipos.set(i, actualizado);
-            break;
-        }
-    }
-}
+		for (int i = 0; i < misEquipos.size(); i++) {
+        	if (misEquipos.get(i).getID().equals(actualizado.getID())) {
+        		misEquipos.set(i, actualizado);
+        		break;
+        	}
+    	}
+	}
 
 }

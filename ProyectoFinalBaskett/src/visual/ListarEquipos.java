@@ -33,9 +33,9 @@ public class ListarEquipos extends JDialog {
 	 */
     public ListarEquipos(ControladoraLiga controladora) {
         this.controladora = controladora;
-        
         setTitle("Listado de Equipos");
         setBounds(100, 100, 800, 400);
+        setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setLayout(new BorderLayout());
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -43,7 +43,9 @@ public class ListarEquipos extends JDialog {
         String[] columnas = {"ID", "Nombre", "Ciudad", "Entrenador", "Capitán", "Mascota", "Año de Fundación"};
         DefaultTableModel model = new DefaultTableModel(columnas, 0);
         table = new JTable(model);
-        table.setBackground(new Color(255, 147, 30));
+        table.setBackground(new Color(240, 240, 240));
+        table.setSelectionBackground(new Color(212, 122, 25)); 
+        table.setSelectionForeground(Color.WHITE);
         
         JScrollPane scrollPane = new JScrollPane(table);
         contentPanel.add(scrollPane, BorderLayout.CENTER);

@@ -38,7 +38,6 @@ public class ListarEstadisticasEquipo extends JDialog {
         setModal(true);
         setSize(1080, 500);
         setLocationRelativeTo(null);
-        
         JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentPane.setBackground(new Color(240, 240, 240));
@@ -47,6 +46,10 @@ public class ListarEstadisticasEquipo extends JDialog {
 
         String[] columnNames = {"Equipo", "Partidos", "Victorias", "Derrotas", "% Victorias", "Puntos Por Partido", "Robos", "Bloqueos", "Asistencias"};
         model = new DefaultTableModel(columnNames, 0);
+        JTable table = new JTable(model);
+        table.setBackground(new Color(240, 240, 240));
+        table.setSelectionBackground(new Color(212, 122, 25)); 
+        table.setSelectionForeground(Color.WHITE);
         
         tablaEstadisticas = new JTable(model);
         tablaEstadisticas.setBackground(new Color(90, 90, 90));

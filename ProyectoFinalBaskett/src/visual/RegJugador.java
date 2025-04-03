@@ -29,6 +29,8 @@ import javax.swing.border.BevelBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Window.Type;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class RegJugador extends JDialog {
 
@@ -37,12 +39,12 @@ public class RegJugador extends JDialog {
 	private JTextField txtNombre;
 	private JTextField txtNacionalidad;
 	private ControladoraLiga controladora;
-	private JSpinner spnEdad;
 	private JComboBox cbxPosicion;
 	private JSpinner spnFecha;
 	private JSpinner spnPeso;
 	private JSpinner spnAltura;
 	private JSpinner spnNumero;
+	private JTextField textField;
 	
 	
 	public RegJugador(ControladoraLiga controladora) {
@@ -69,7 +71,8 @@ public class RegJugador extends JDialog {
 	public RegJugador() {
 		setType(Type.POPUP);
 		setTitle("Registrar Jugador");
-		setBounds(100, 100, 385, 596);
+		setBounds(100, 100, 520, 431);
+		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -103,7 +106,7 @@ public class RegJugador extends JDialog {
 			{
 				JPanel panelNombre = new JPanel();
 				panelNombre.setBackground(new Color(169, 169, 169));
-				panelNombre.setBounds(12, 68, 310, 42);
+				panelNombre.setBounds(12, 68, 474, 42);
 				panel.add(panelNombre);
 				panelNombre.setLayout(null);
 				{
@@ -113,7 +116,7 @@ public class RegJugador extends JDialog {
 				}
 				{
 					txtNombre = new JTextField();
-					txtNombre.setBounds(67, 10, 225, 22);
+					txtNombre.setBounds(67, 10, 395, 22);
 					panelNombre.add(txtNombre);
 					txtNombre.setColumns(10);
 				}
@@ -121,7 +124,7 @@ public class RegJugador extends JDialog {
 			{
 				JPanel panelEdad = new JPanel();
 				panelEdad.setBackground(new Color(169, 169, 169));
-				panelEdad.setBounds(12, 123, 196, 42);
+				panelEdad.setBounds(284, 123, 202, 42);
 				panel.add(panelEdad);
 				panelEdad.setLayout(null);
 				{
@@ -129,17 +132,17 @@ public class RegJugador extends JDialog {
 					lblEdad.setBounds(12, 13, 56, 16);
 					panelEdad.add(lblEdad);
 				}
-				{
-					spnEdad = new JSpinner();
-					spnEdad.setModel(new SpinnerNumberModel(new Integer(18), new Integer(18), null, new Integer(1)));
-					spnEdad.setBounds(69, 10, 114, 22);
-					panelEdad.add(spnEdad);
-				}
+				
+				textField = new JTextField();
+				textField.setEditable(false);
+				textField.setBounds(68, 10, 122, 22);
+				panelEdad.add(textField);
+				textField.setColumns(10);
 			}
 			{
 				JPanel panelPosicion = new JPanel();
 				panelPosicion.setBackground(new Color(169, 169, 169));
-				panelPosicion.setBounds(12, 178, 244, 42);
+				panelPosicion.setBounds(12, 178, 193, 42);
 				panel.add(panelPosicion);
 				panelPosicion.setLayout(null);
 				{
@@ -150,14 +153,14 @@ public class RegJugador extends JDialog {
 				{
 					cbxPosicion = new JComboBox();
 					cbxPosicion.setModel(new DefaultComboBoxModel(new String[] {"<Seleccionar>", "Base", "Escolta", "Alero", "Ala-P\u00EDvot", "P\u00EDvot"}));
-					cbxPosicion.setBounds(69, 10, 161, 22);
+					cbxPosicion.setBounds(69, 10, 112, 22);
 					panelPosicion.add(cbxPosicion);
 				}
 			}
 			{
 				JPanel panelNacionalidad = new JPanel();
 				panelNacionalidad.setBackground(new Color(169, 169, 169));
-				panelNacionalidad.setBounds(12, 233, 299, 42);
+				panelNacionalidad.setBounds(217, 178, 269, 42);
 				panel.add(panelNacionalidad);
 				panelNacionalidad.setLayout(null);
 				{
@@ -167,15 +170,19 @@ public class RegJugador extends JDialog {
 				}
 				{
 					txtNacionalidad = new JTextField();
-					txtNacionalidad.setBounds(100, 10, 183, 22);
+					txtNacionalidad.setBounds(100, 10, 157, 22);
 					panelNacionalidad.add(txtNacionalidad);
 					txtNacionalidad.setColumns(10);
 				}
 			}
 			{
+				Calendar calendar = Calendar.getInstance();
+		        calendar.add(Calendar.YEAR, -18);
+		        Date fechaInicial = calendar.getTime();
+		        
 				JPanel panelFecha = new JPanel();
 				panelFecha.setBackground(new Color(169, 169, 169));
-				panelFecha.setBounds(12, 288, 254, 42);
+				panelFecha.setBounds(12, 123, 254, 42);
 				panel.add(panelFecha);
 				panelFecha.setLayout(null);
 				{
@@ -184,19 +191,25 @@ public class RegJugador extends JDialog {
 					panelFecha.add(lblFecha);
 				}
 				{
+					
 					spnFecha = new JSpinner(new SpinnerDateModel());
+					spnFecha.addChangeListener(new ChangeListener() {
+						public void stateChanged(ChangeEvent e) {
+							actualizarEdad();
+						}
+					});
 					spnFecha.setBounds(74, 13, 170, 22);
 					panelFecha.add(spnFecha);
 					JSpinner.DateEditor de_spnFecha = new JSpinner.DateEditor(spnFecha, "dd-MM-yyyy");
 					spnFecha.setEditor(de_spnFecha);
 					spnFecha.setPreferredSize(new Dimension(150, 25));
-					spnFecha.setValue(new Date());
+					spnFecha.setValue(fechaInicial);
 				}
 			}
 			{
 				JPanel panelPeso = new JPanel();
 				panelPeso.setBackground(new Color(169, 169, 169));
-				panelPeso.setBounds(12, 343, 178, 42);
+				panelPeso.setBounds(12, 233, 221, 42);
 				panel.add(panelPeso);
 				panelPeso.setLayout(null);
 				{
@@ -207,14 +220,14 @@ public class RegJugador extends JDialog {
 				{
 					spnPeso = new JSpinner();
 					spnPeso.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
-					spnPeso.setBounds(89, 10, 77, 22);
+					spnPeso.setBounds(89, 10, 120, 22);
 					panelPeso.add(spnPeso);
 				}
 			}
 			{
 				JPanel panelAltura = new JPanel();
 				panelAltura.setBackground(new Color(169, 169, 169));
-				panelAltura.setBounds(12, 398, 178, 42);
+				panelAltura.setBounds(271, 233, 215, 42);
 				panel.add(panelAltura);
 				panelAltura.setLayout(null);
 				{
@@ -225,14 +238,14 @@ public class RegJugador extends JDialog {
 				{
 					spnAltura = new JSpinner();
 					spnAltura.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
-					spnAltura.setBounds(89, 10, 77, 22);
+					spnAltura.setBounds(89, 10, 114, 22);
 					panelAltura.add(spnAltura);
 				}
 			}
 			{
 				JPanel panelNumero = new JPanel();
 				panelNumero.setBackground(new Color(169, 169, 169));
-				panelNumero.setBounds(12, 453, 178, 42);
+				panelNumero.setBounds(12, 288, 178, 42);
 				panel.add(panelNumero);
 				panelNumero.setLayout(null);
 				{
@@ -266,14 +279,14 @@ public class RegJugador extends JDialog {
 
 				            String id = txtID.getText();
 				            String nombre = txtNombre.getText();
-				            int edad = (int) spnEdad.getValue();
 				            String posicion = cbxPosicion.getSelectedItem().toString();
 				            String nacionalidad = txtNacionalidad.getText();
 				            Date fechaNac = (Date) spnFecha.getValue();
 				            float peso = ((Number) spnPeso.getValue()).floatValue();
 				            float altura = ((Number) spnAltura.getValue()).floatValue();
 				            int numero = (int) spnNumero.getValue();
-
+				            int edad = Integer.parseInt(textField.getText());
+				            
 				            if (peso <= 0 || altura <= 0) {
 				                throw new IllegalArgumentException("Peso y altura deben ser mayores a 0");
 				            }
@@ -325,6 +338,26 @@ public class RegJugador extends JDialog {
 	}
 	
 
+	private void actualizarEdad() {
+		Date birthDate = (Date) spnFecha.getValue();
+        int age = calcularEdad(birthDate);
+        textField.setText(Integer.toString(age));
+	}
+	
+	private int calcularEdad(Date birthDate) {
+        Calendar birthCal = Calendar.getInstance();
+        birthCal.setTime(birthDate);
+        Calendar nowCal = Calendar.getInstance();
+
+        int age = nowCal.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR);
+
+        if (nowCal.get(Calendar.DAY_OF_YEAR) < birthCal.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+
+        return age;
+    }
+	
 	private String generarNuevoId() {
 		if (controladora == null) {
 	        controladora = ControladoraLiga.getInstance();
@@ -332,5 +365,4 @@ public class RegJugador extends JDialog {
 	    int numJugador = controladora.getMisJugadores().size(); 
 	    return "JUG-" + (numJugador + 1);
 	}
-
 }

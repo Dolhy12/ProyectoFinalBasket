@@ -33,9 +33,7 @@ public class ListarJugadores extends JDialog {
      */
     public ListarJugadores(ControladoraLiga controladora) {
         this.controladora = controladora;
-        
-        // Aplicar tema Nimbus
-        try {
+                try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,6 +41,7 @@ public class ListarJugadores extends JDialog {
 
         setTitle("Listado de Jugadores");
         setBounds(100, 100, 800, 400);
+        setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setLayout(new BorderLayout());
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -52,9 +51,8 @@ public class ListarJugadores extends JDialog {
         };
         DefaultTableModel model = new DefaultTableModel(columnas, 0);
         table = new JTable(model);
-        
         table.setBackground(new Color(240, 240, 240));
-        table.setSelectionBackground(new Color(255, 165, 0)); 
+        table.setSelectionBackground(new Color(212, 122, 25)); 
         table.setSelectionForeground(Color.WHITE);
         
         JScrollPane scrollPane = new JScrollPane(table);
@@ -66,7 +64,7 @@ public class ListarJugadores extends JDialog {
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
         
         JButton btnEstadisticas = new JButton("Ver Estadísticas");
-        btnEstadisticas.setIcon(new ImageIcon("Imagenes/stats_icon.png")); // Ajusta la ruta según tu proyecto
+        btnEstadisticas.setIcon(new ImageIcon("Imagenes/stats_icon.png"));
         btnEstadisticas.addActionListener(e -> {
             int fila = table.getSelectedRow();
             if (fila >= 0) {

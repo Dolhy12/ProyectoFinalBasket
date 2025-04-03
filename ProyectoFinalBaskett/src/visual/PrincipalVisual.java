@@ -61,6 +61,8 @@ public class PrincipalVisual extends JFrame {
         JMenuItem mntmVerCalendario = new JMenuItem("Ver Calendario");
         mntmVerCalendario.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		VerCalendario ventanaVerCalendario = new VerCalendario(controladora);
+                ventanaVerCalendario.setVisible(true);
         	}
         });
         mnCalendario.add(mntmVerCalendario);
@@ -99,8 +101,6 @@ public class PrincipalVisual extends JFrame {
         	public void actionPerformed(ActionEvent e) {
         	}
         });
-        GestionarEquipo ventana = new GestionarEquipo(controladora);
-        ventana.setVisible(true);
         mnEquipos.add(mntmGestionarEquipo);
         mnEquipos.add(mntmListarEquipos);
 

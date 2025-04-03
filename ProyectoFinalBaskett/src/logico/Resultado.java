@@ -43,13 +43,21 @@ public class Resultado {
         return statsVisitantes;
     }
     
-    public void agregarEstadisticaLocal(Jugador jugador, int puntos, int rebotes, int asistencias) {
-        jugadoresLocales.add(jugador);
-        statsLocales.add(new int[]{puntos, rebotes, asistencias});
+    public void setPuntosLocal(int puntos) {
+        this.puntosLocal = puntos;
     }
 
-    public void agregarEstadisticaVisitante(Jugador jugador, int puntos, int rebotes, int asistencias) {
+    public void setPuntosVisitante(int puntos) {
+        this.puntosVisitante = puntos;
+    }
+    
+    public void agregarEstadisticaLocal(Jugador jugador, int puntos, int rebotes, int asistencias, int robos, int bloqueos) {
+        jugadoresLocales.add(jugador);
+        statsLocales.add(new int[]{puntos, rebotes, asistencias, robos, bloqueos});
+    }
+
+    public void agregarEstadisticaVisitante(Jugador jugador, int puntos, int rebotes, int asistencias, int robos, int bloqueos) {
         jugadoresVisitantes.add(jugador);
-        statsVisitantes.add(new int[]{puntos, rebotes, asistencias});
+        statsVisitantes.add(new int[]{puntos, rebotes, asistencias, robos, bloqueos});
     }
 }

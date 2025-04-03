@@ -34,7 +34,6 @@ public class RegEquipo extends JDialog {
 	private JTextField txtEntrenador;
 	private JTextField txtMascota;
 	private ControladoraLiga controladora;
-	private JComboBox<Jugador> cbxCapitan;
 	private JSpinner spnFundacion;
 
 
@@ -59,13 +58,14 @@ public class RegEquipo extends JDialog {
 		setType(Type.POPUP);
 		setTitle("Registrar Equipo");
 		setBounds(100, 100, 590, 466);
+		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
 			JPanel panel = new JPanel();
-			panel.setBackground(new Color(255, 147, 30));
+			panel.setBackground(new Color(212, 122, 25));
 			contentPanel.add(panel, BorderLayout.CENTER);
 			panel.setLayout(null);
 			{
@@ -92,7 +92,7 @@ public class RegEquipo extends JDialog {
 				JPanel panelNombre = new JPanel();
 				panelNombre.setBackground(new Color(169, 169, 169));
 				panelNombre.setLayout(null);
-				panelNombre.setBounds(12, 83, 299, 41);
+				panelNombre.setBounds(12, 83, 315, 41);
 				panel.add(panelNombre);
 				{
 					JLabel lblNombre = new JLabel("Nombre:");
@@ -101,7 +101,7 @@ public class RegEquipo extends JDialog {
 				}
 				{
 					txtNombre = new JTextField();
-					txtNombre.setBounds(67, 10, 220, 22);
+					txtNombre.setBounds(67, 10, 236, 22);
 					panelNombre.add(txtNombre);
 					txtNombre.setColumns(10);
 				}
@@ -128,7 +128,7 @@ public class RegEquipo extends JDialog {
 				JPanel panelEntrenador = new JPanel();
 				panelEntrenador.setBackground(new Color(169, 169, 169));
 				panelEntrenador.setLayout(null);
-				panelEntrenador.setBounds(12, 219, 283, 41);
+				panelEntrenador.setBounds(12, 219, 538, 41);
 				panel.add(panelEntrenador);
 				{
 					JLabel lblEntrenador = new JLabel("Entrenador:");
@@ -137,7 +137,7 @@ public class RegEquipo extends JDialog {
 				}
 				{
 					txtEntrenador = new JTextField();
-					txtEntrenador.setBounds(85, 10, 186, 22);
+					txtEntrenador.setBounds(85, 10, 441, 22);
 					panelEntrenador.add(txtEntrenador);
 					txtEntrenador.setColumns(10);
 				}
@@ -146,7 +146,7 @@ public class RegEquipo extends JDialog {
 				JPanel panelMascota = new JPanel();
 				panelMascota.setBackground(new Color(169, 169, 169));
 				panelMascota.setLayout(null);
-				panelMascota.setBounds(12, 288, 459, 41);
+				panelMascota.setBounds(12, 288, 538, 41);
 				panel.add(panelMascota);
 				{
 					JLabel lblMascota = new JLabel("Nombre de la Mascota:");
@@ -155,7 +155,7 @@ public class RegEquipo extends JDialog {
 				}
 				{
 					txtMascota = new JTextField();
-					txtMascota.setBounds(170, 10, 277, 22);
+					txtMascota.setBounds(163, 10, 363, 22);
 					panelMascota.add(txtMascota);
 					txtMascota.setColumns(10);
 				}
@@ -164,7 +164,7 @@ public class RegEquipo extends JDialog {
 				JPanel panelFundacion = new JPanel();
 				panelFundacion.setBackground(new Color(169, 169, 169));
 				panelFundacion.setLayout(null);
-				panelFundacion.setBounds(323, 83, 227, 41);
+				panelFundacion.setBounds(339, 83, 211, 41);
 				panel.add(panelFundacion);
 				{
 					JLabel lblFundacion = new JLabel("Fundaci\u00F3n:");
@@ -181,20 +181,6 @@ public class RegEquipo extends JDialog {
 					spnFundacion.setValue(new Date());
 				}
 			}
-			
-			JPanel panelCapitan = new JPanel();
-			panelCapitan.setLayout(null);
-			panelCapitan.setBackground(new Color(169, 169, 169));
-			panelCapitan.setBounds(307, 219, 243, 41);
-			panel.add(panelCapitan);
-			
-			JLabel lblCapitan = new JLabel("Capit\u00E1n:");
-			lblCapitan.setBounds(12, 13, 80, 16);
-			panelCapitan.add(lblCapitan);
-			
-			cbxCapitan = new JComboBox();
-			cbxCapitan.setBounds(71, 10, 160, 22);
-			panelCapitan.add(cbxCapitan);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -216,21 +202,20 @@ public class RegEquipo extends JDialog {
 				            String ciudad = txtCiudad.getText();
 				            String entrenador = txtEntrenador.getText();
 				            String mascota = txtMascota.getText();
-				            Jugador capitan = (Jugador) cbxCapitan.getSelectedItem();
 
 				            java.util.Date fechaUtil = (java.util.Date) spnFundacion.getValue();
 				            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
 				            String fechaFundacion = sdf.format(fechaUtil);
 
 				            Equipo nuevoEquipo = new Equipo(
-				                id,
-				                fechaFundacion,
-				                capitan,      
-				                mascota,     
-				                nombre,       
-				                ciudad,
-				                entrenador     
-				            );
+				                    id,
+				                    fechaFundacion,
+				                    null,
+				                    mascota,     
+				                    nombre,       
+				                    ciudad,
+				                    entrenador     
+				                );
 
 				            controladora.agregarEquipo(nuevoEquipo);
 				            
@@ -264,16 +249,6 @@ public class RegEquipo extends JDialog {
 				buttonPane.add(btnCancelar);
 			}
 		}
-		cargarCapitanes();
-	}
-	
-	private void cargarCapitanes() {
-	    cbxCapitan.removeAllItems();
-	    cbxCapitan.addItem(null);
-	    
-	    for (Jugador jugador : controladora.getMisJugadores()) {
-	        cbxCapitan.addItem(jugador);
-	    }
 	}
 	
 	private String generarNuevoId() {

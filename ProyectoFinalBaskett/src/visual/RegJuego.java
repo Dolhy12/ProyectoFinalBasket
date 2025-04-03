@@ -64,13 +64,14 @@ public class RegJuego extends JDialog {
 		setTitle("Registrar Juego");
 		setType(Type.POPUP);
 		setBounds(100, 100, 609, 324);
+		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
 			JPanel panel = new JPanel();
-			panel.setBackground(new Color(255, 147, 30));
+			panel.setBackground(new Color(212, 122, 25));
 			contentPanel.add(panel, BorderLayout.CENTER);
 			panel.setLayout(null);
 			{

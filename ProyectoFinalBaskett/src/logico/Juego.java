@@ -17,8 +17,8 @@ public class Juego {
         this.fechaHora = fechaHora;
         this.lugar = lugar;
         this.estado = "Programado";
-        this.equipoLocal = equipoLocal;
-        this.equipoVisitante = equipoVisitante;
+        this.equipoLocal = local;
+        this.equipoVisitante = visitante;
     }
 
     public String getID() {
