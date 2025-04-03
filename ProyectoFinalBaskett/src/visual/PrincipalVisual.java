@@ -99,6 +99,8 @@ public class PrincipalVisual extends JFrame {
         	public void actionPerformed(ActionEvent e) {
         	}
         });
+        GestionarEquipo ventana = new GestionarEquipo(controladora);
+        ventana.setVisible(true);
         mnEquipos.add(mntmGestionarEquipo);
         mnEquipos.add(mntmListarEquipos);
 
