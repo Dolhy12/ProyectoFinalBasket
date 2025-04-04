@@ -81,13 +81,11 @@ public class ControladoraLiga {
         return false;
     }
 
-    public Jugador buscarJugador(String idJugador) {
-        for (Jugador jugador : misJugadores) {
-            if (jugador.getID().equals(idJugador)) {
-                return jugador;
-            }
-        }
-        return null;
+    public Jugador buscarJugador(String id) {
+        return misJugadores.stream()
+            .filter(j -> j.getID().equals(id))
+            .findFirst()
+            .orElse(null);
     }
 
     public void agregarJuego(Juego juego) {
@@ -295,10 +293,16 @@ public class ControladoraLiga {
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
-	public ArrayList<Juego> getJuegosPorJugador(String id) {
-		
-		return null;
-	}
+    public ArrayList<Juego> getJuegosPorJugador(String idJugador) {
+        ArrayList<Juego> juegosDelJugador = new ArrayList<>();
+        for (Juego juego : calendario.getJuegos()) {
+            if (juego.getEquipoLocal().buscarJugador(idJugador) != null ||
+                juego.getEquipoVisitante().buscarJugador(idJugador) != null) {
+                juegosDelJugador.add(juego);
+            }
+        }
+        return juegosDelJugador;
+    }
 
 	public Equipo buscarEquipoPorJugador(String idJugador) {
 	    for (Equipo equipo : misEquipos) {
@@ -319,5 +323,5 @@ public class ControladoraLiga {
         	}
     	}
 	}
-
+	
 }

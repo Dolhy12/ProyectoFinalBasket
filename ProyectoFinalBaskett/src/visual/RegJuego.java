@@ -207,13 +207,23 @@ public class RegJuego extends JDialog {
 
 		                    controladora.agregarJuego(nuevoJuego);
 		                    
-		                    JOptionPane.showMessageDialog(RegJuego.this, 
-		                        "Juego registrado exitosamente", 
-		                        "Éxito", 
-		                        JOptionPane.INFORMATION_MESSAGE);
-		                    
-		                    dispose();
-		                    
+		                    int respuesta = JOptionPane.showConfirmDialog(
+		                            RegJuego.this,
+		                            "¿Desea agregar otro juego?",
+		                            "Registro exitoso",
+		                            JOptionPane.YES_NO_OPTION,
+		                            JOptionPane.QUESTION_MESSAGE
+		                        );
+
+		                        if (respuesta == JOptionPane.YES_OPTION) {
+		                            txtID.setText(generarNuevoId());
+		                            spnFecha.setValue(new Date());
+		                            cbxEquipoLocal.setSelectedIndex(-1);
+		                            cbxEquipoVisitante.setSelectedIndex(-1);
+		                            cbxUbicacion.setSelectedIndex(-1);
+		                        } else {
+		                            dispose();
+		                        }
 		                } catch (Exception ex) {
 		                    JOptionPane.showMessageDialog(RegJuego.this, 
 		                        "Error: " + ex.getMessage(), 

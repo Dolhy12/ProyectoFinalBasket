@@ -102,13 +102,10 @@ public class SimulacionDeJuego extends JDialog {
 
     private Jugador obtenerJugadorDesdeTabla(JTable tabla, int fila) {
         String nombre = (String) tabla.getValueAt(fila, 0);
-        for (Jugador j : juego.getEquipoLocal().getJugadores()) {
-            if (j.getNombre().equals(nombre)) return j;
-        }
-        for (Jugador j : juego.getEquipoVisitante().getJugadores()) {
-            if (j.getNombre().equals(nombre)) return j;
-        }
-        return null;
+        return controladora.getMisJugadores().stream()
+            .filter(j -> j.getNombre().equals(nombre))
+            .findFirst()
+            .orElse(null);
     }
 
     private void mostrarDialogoEstadisticas(Jugador jugador, boolean esLocal) {
@@ -164,8 +161,20 @@ public class SimulacionDeJuego extends JDialog {
         resultado.setPuntosLocal(puntosLocal);
         resultado.setPuntosVisitante(puntosVisitante);
         
+        String mensaje = "Resultado final:\n" +
+                         juego.getEquipoLocal().getNombre() + ": " + puntosLocal + "\n" +
+                         juego.getEquipoVisitante().getNombre() + ": " + puntosVisitante + "\n\n";
+        
+        if(puntosLocal > puntosVisitante) {
+            mensaje += "Ganador: " + juego.getEquipoLocal().getNombre();
+        } else if(puntosVisitante > puntosLocal) {
+            mensaje += "Ganador: " + juego.getEquipoVisitante().getNombre();
+        } else {
+            mensaje += "¡Empate!";
+        }
+        
         controladora.actualizarResultadoJuego(juego.getID(), resultado);
-        JOptionPane.showMessageDialog(this, "Resultado guardado exitosamente!");
+        JOptionPane.showMessageDialog(this, mensaje, "Resultado del Juego", JOptionPane.INFORMATION_MESSAGE);
         dispose();
     }
 

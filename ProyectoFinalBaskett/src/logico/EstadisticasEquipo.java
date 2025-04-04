@@ -21,12 +21,12 @@ public class EstadisticasEquipo {
 
     public void agregarVictoria() {
         this.victorias++;
-        this.partidosJugados++;
+        incrementarPartidosJugados();
     }
 
     public void agregarDerrota() {
         this.derrotas++;
-        this.partidosJugados++;
+        incrementarPartidosJugados();
     }
 
     public double getPorcentajeVictorias() {
@@ -89,5 +89,9 @@ public class EstadisticasEquipo {
         if (bloqueos > 0) {
             this.bloqueosTotales += bloqueos;
         }
+    }
+    
+    public void incrementarPartidosJugados() {
+        partidosJugados++;
     }
 }

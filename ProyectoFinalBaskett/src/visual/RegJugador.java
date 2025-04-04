@@ -27,6 +27,9 @@ import java.awt.Dimension;
 
 import javax.swing.border.BevelBorder;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.awt.event.ActionEvent;
 import java.awt.Window.Type;
 import javax.swing.event.ChangeListener;
@@ -44,7 +47,7 @@ public class RegJugador extends JDialog {
 	private JSpinner spnPeso;
 	private JSpinner spnAltura;
 	private JSpinner spnNumero;
-	private JTextField textField;
+	private JTextField txtEdad;
 	
 	
 	public RegJugador(ControladoraLiga controladora) {
@@ -133,11 +136,11 @@ public class RegJugador extends JDialog {
 					panelEdad.add(lblEdad);
 				}
 				
-				textField = new JTextField();
-				textField.setEditable(false);
-				textField.setBounds(68, 10, 122, 22);
-				panelEdad.add(textField);
-				textField.setColumns(10);
+				txtEdad = new JTextField();
+				txtEdad.setEditable(false);
+				txtEdad.setBounds(68, 10, 122, 22);
+				panelEdad.add(txtEdad);
+				txtEdad.setColumns(10);
 			}
 			{
 				JPanel panelPosicion = new JPanel();
@@ -285,7 +288,7 @@ public class RegJugador extends JDialog {
 				            float peso = ((Number) spnPeso.getValue()).floatValue();
 				            float altura = ((Number) spnAltura.getValue()).floatValue();
 				            int numero = (int) spnNumero.getValue();
-				            int edad = Integer.parseInt(textField.getText());
+				            int edad = Integer.parseInt(txtEdad.getText());
 				            
 				            if (peso <= 0 || altura <= 0) {
 				                throw new IllegalArgumentException("Peso y altura deben ser mayores a 0");
@@ -305,12 +308,28 @@ public class RegJugador extends JDialog {
 
 				            controladora.agregarJugador(jugador);
 				            
-				            JOptionPane.showMessageDialog(RegJugador.this, 
-				                "Jugador registrado exitosamente", 
-				                "Éxito", 
-				                JOptionPane.INFORMATION_MESSAGE);
-				            
-				            dispose();
+				            int respuesta = JOptionPane.showConfirmDialog(
+				                    RegJugador.this,
+				                    "¿Desea agregar otro jugador?",
+				                    "Registro exitoso",
+				                    JOptionPane.YES_NO_OPTION,
+				                    JOptionPane.QUESTION_MESSAGE
+				                );
+
+				                if (respuesta == JOptionPane.YES_OPTION) {
+				                    txtID.setText(generarNuevoId());
+				                    txtNombre.setText("");
+				                    spnFecha.setValue(new Date());
+				                    txtEdad.setText("");
+				                    cbxPosicion.setSelectedIndex(-1);
+				                    txtNacionalidad.setText("");
+				                    spnAltura.setValue(0);
+				                    spnPeso.setValue(0);
+				                    spnNumero.setValue(0);
+				                    
+				                } else {
+				                    dispose();
+				                }
 				            
 				        } catch (Exception ex) {
 				            JOptionPane.showMessageDialog(RegJugador.this, 
@@ -339,24 +358,11 @@ public class RegJugador extends JDialog {
 	
 
 	private void actualizarEdad() {
-		Date birthDate = (Date) spnFecha.getValue();
-        int age = calcularEdad(birthDate);
-        textField.setText(Integer.toString(age));
+	    Date birthDate = (Date) spnFecha.getValue();
+	    LocalDate birthLocalDate = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	    int age = Period.between(birthLocalDate, LocalDate.now()).getYears();
+	    txtEdad.setText(String.valueOf(age));
 	}
-	
-	private int calcularEdad(Date birthDate) {
-        Calendar birthCal = Calendar.getInstance();
-        birthCal.setTime(birthDate);
-        Calendar nowCal = Calendar.getInstance();
-
-        int age = nowCal.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR);
-
-        if (nowCal.get(Calendar.DAY_OF_YEAR) < birthCal.get(Calendar.DAY_OF_YEAR)) {
-            age--;
-        }
-
-        return age;
-    }
 	
 	private String generarNuevoId() {
 		if (controladora == null) {

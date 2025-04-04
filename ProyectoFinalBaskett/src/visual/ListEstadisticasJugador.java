@@ -262,10 +262,10 @@ public class ListEstadisticasJugador extends JDialog {
 
         private int[] obtenerStatsJugadorEnPartido(Juego juego, Jugador jugador) {
             Resultado resultado = juego.getResultado();
-            int index = resultado.getJugadoresLocales().indexOf(jugador);
+            int index = resultado.getIdsJugadoresLocales().indexOf(jugador);
             if (index != -1) return resultado.getStatsLocales().get(index);
 
-            index = resultado.getJugadoresVisitantes().indexOf(jugador);
+            index = resultado.getIdsJugadoresVisitantes().indexOf(jugador);
             if (index != -1) return resultado.getStatsVisitantes().get(index);
 
             return new int[]{0, 0, 0};

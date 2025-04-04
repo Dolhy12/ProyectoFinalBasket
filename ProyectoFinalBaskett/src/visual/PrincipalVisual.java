@@ -155,15 +155,8 @@ public class PrincipalVisual extends JFrame {
         JMenuItem mntmRegistrarLesion = new JMenuItem("Registrar Lesión");
         mntmRegistrarLesion.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-                String idJugador = JOptionPane.showInputDialog("Ingrese el ID del jugador:");
-                if (idJugador != null && !idJugador.trim().isEmpty()) {
-                    if (controladora.existeJugador(idJugador)) {
-                        RegLesion ventanaLesion = new RegLesion(controladora, idJugador);
-                        ventanaLesion.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Jugador no encontrado.");
-                    }
-                }
+        		RegLesion ventanaLesion = new RegLesion(controladora);
+                ventanaLesion.setVisible(true);
         	}
         });
         mnLesiones.add(mntmRegistrarLesion);

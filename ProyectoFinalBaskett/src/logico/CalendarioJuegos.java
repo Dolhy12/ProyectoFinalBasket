@@ -89,12 +89,6 @@ public class CalendarioJuegos {
             juego.setEstado("Finalizado");
         }
     }
-    
-    private void validarFechasTemporada() {
-        if (fechaInicio == null || fechaFin == null) {
-            throw new IllegalStateException("Temporada no configurada correctamente");
-        }
-    }
 
     private void actualizarEstadisticasEquipos(Juego juego) {
         Equipo local = juego.getEquipoLocal();
@@ -112,32 +106,63 @@ public class CalendarioJuegos {
             visitante.getEstadisticas().agregarVictoria();
         }
 
-        ArrayList<Jugador> jugadoresLocales = resultado.getJugadoresLocales();
+        ControladoraLiga controladora = ControladoraLiga.getInstance();
+        
+        ArrayList<String> idsLocales = resultado.getIdsJugadoresLocales();
         ArrayList<int[]> statsLocales = resultado.getStatsLocales();
-        for (int i = 0; i < jugadoresLocales.size(); i++) {
-            Jugador jugador = jugadoresLocales.get(i);
-            int[] stats = statsLocales.get(i);
-            jugador.getEstadisticas().agregarPuntos(stats[0]);
-            jugador.getEstadisticas().agregarRebotes(stats[1]);
-            jugador.getEstadisticas().agregarAsistencias(stats[2]);
-            jugador.getEstadisticas().agregarRobos(stats[3]);
-            jugador.getEstadisticas().agregarBloqueos(stats[4]);
-            jugador.getEstadisticas().verificarDoblesDobles();
+        
+        for (int i = 0; i < idsLocales.size(); i++) {
+            Jugador jugador = controladora.buscarJugador(idsLocales.get(i));
+            if (jugador != null) {
+                int[] stats = statsLocales.get(i);
+                
+                jugador.getEstadisticas().agregarPuntos(stats[0]);
+                jugador.getEstadisticas().agregarRebotes(stats[1]);
+                jugador.getEstadisticas().agregarAsistencias(stats[2]);
+                jugador.getEstadisticas().agregarRobos(stats[3]);
+                jugador.getEstadisticas().agregarBloqueos(stats[4]);
+                
+                jugador.getEstadisticas().verificarDoblesDobles();
+                
+                local.getEstadisticas().agregarRobos(stats[3]);
+                local.getEstadisticas().agregarBloqueos(stats[4]);
+                local.getEstadisticas().agregarAsistencias(stats[2]);
+            }
         }
 
-        ArrayList<Jugador> jugadoresVisitantes = resultado.getJugadoresVisitantes();
+        ArrayList<String> idsVisitantes = resultado.getIdsJugadoresVisitantes();
         ArrayList<int[]> statsVisitantes = resultado.getStatsVisitantes();
-        for (int i = 0; i < jugadoresVisitantes.size(); i++) {
-            Jugador jugador = jugadoresVisitantes.get(i);
-            int[] stats = statsVisitantes.get(i);
-            jugador.getEstadisticas().agregarPuntos(stats[0]);
-            jugador.getEstadisticas().agregarRebotes(stats[1]);
-            jugador.getEstadisticas().agregarAsistencias(stats[2]);
-            jugador.getEstadisticas().agregarRobos(stats[3]);
-            jugador.getEstadisticas().agregarBloqueos(stats[4]);
-            jugador.getEstadisticas().verificarDoblesDobles();
+        
+        for (int i = 0; i < idsVisitantes.size(); i++) {
+            Jugador jugador = controladora.buscarJugador(idsVisitantes.get(i));
+            if (jugador != null) {
+                int[] stats = statsVisitantes.get(i);
+                
+                jugador.getEstadisticas().agregarPuntos(stats[0]);
+                jugador.getEstadisticas().agregarRebotes(stats[1]);
+                jugador.getEstadisticas().agregarAsistencias(stats[2]);
+                jugador.getEstadisticas().agregarRobos(stats[3]);
+                jugador.getEstadisticas().agregarBloqueos(stats[4]);
+                
+                jugador.getEstadisticas().verificarDoblesDobles();
+                
+                visitante.getEstadisticas().agregarRobos(stats[3]);
+                visitante.getEstadisticas().agregarBloqueos(stats[4]);
+                visitante.getEstadisticas().agregarAsistencias(stats[2]);
+            }
+        }
+
+        local.getEstadisticas().incrementarPartidosJugados();
+        visitante.getEstadisticas().incrementarPartidosJugados();
+    }
+    
+    private void validarFechasTemporada() {
+        if (fechaInicio == null || fechaFin == null) {
+            throw new IllegalStateException("Temporada no configurada correctamente");
         }
     }
+
+    
     
     public Juego buscarJuego(String idJuego) {
         return juegos.stream()

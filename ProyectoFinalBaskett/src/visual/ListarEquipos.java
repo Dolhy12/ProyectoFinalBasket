@@ -105,12 +105,21 @@ public class ListarEquipos extends JDialog {
                 equipo.getTiempoFundado()
             });
         }
+        
+        model.fireTableDataChanged();
     }
 
     private void modificarEquipo() {
         int fila = table.getSelectedRow();
-        if(fila != -1) {
-            JOptionPane.showMessageDialog(this, "Función en desarrollo", "Próximamente", JOptionPane.INFORMATION_MESSAGE);
+        if (fila != -1) {
+            String id = (String) table.getValueAt(fila, 0);
+            Equipo equipo = controladora.buscarEquipo(id);
+            if (equipo != null) {
+                RegEquipo dialog = new RegEquipo(equipo);
+                dialog.setModal(true);
+                dialog.setVisible(true);
+                cargarEquipos();
+            }
         } else {
             JOptionPane.showMessageDialog(this, 
                 "Seleccione un equipo de la tabla", 

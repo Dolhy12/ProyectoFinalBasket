@@ -3,6 +3,7 @@ package visual;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -22,6 +23,8 @@ import java.awt.Dimension;
 import java.awt.Window.Type;
 import java.util.Date;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 
@@ -35,8 +38,9 @@ public class RegEquipo extends JDialog {
 	private JTextField txtMascota;
 	private ControladoraLiga controladora;
 	private JSpinner spnFundacion;
-
-
+	private Equipo equipoExistente;
+	private JButton btnRegistrar;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -48,6 +52,31 @@ public class RegEquipo extends JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public RegEquipo(Equipo equipoEditar) {
+        this();
+        setTitle("Modificar Equipo");
+        equipoExistente = equipoEditar;
+        btnRegistrar.setText("Modificar");
+        cargarDatosEquipo(equipoEditar);
+    }
+	
+	private void cargarDatosEquipo(Equipo equipo) {
+	    equipoExistente = equipo;
+	    txtID.setText(equipo.getID());
+	    txtNombre.setText(equipo.getNombre());
+	    txtCiudad.setText(equipo.getCiudad());
+	    txtEntrenador.setText(equipo.getEntrenador());
+	    txtMascota.setText(equipo.getNombreDeLaMascota());
+	    
+	    try {
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+	        Date fechaFundacion = sdf.parse(equipo.getTiempoFundado());
+	        spnFundacion.setValue(fechaFundacion);
+	    } catch (ParseException e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	/**
@@ -187,7 +216,7 @@ public class RegEquipo extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton btnRegistrar = new JButton("Registrar");
+				btnRegistrar = new JButton("Registrar");
 				btnRegistrar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
@@ -207,25 +236,44 @@ public class RegEquipo extends JDialog {
 				            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
 				            String fechaFundacion = sdf.format(fechaUtil);
 
-				            Equipo nuevoEquipo = new Equipo(
+				            if (equipoExistente == null) {
+				                Equipo nuevoEquipo = new Equipo(
 				                    id,
 				                    fechaFundacion,
 				                    null,
-				                    mascota,     
-				                    nombre,       
+				                    mascota,
+				                    nombre,
 				                    ciudad,
-				                    entrenador     
+				                    entrenador
+				                );
+				                controladora.agregarEquipo(nuevoEquipo);
+				            } else {
+				                equipoExistente.setNombre(nombre);
+				                equipoExistente.setCiudad(ciudad);
+				                equipoExistente.setEntrenador(entrenador);
+				                equipoExistente.setNombreDeLaMascota(mascota);
+				                equipoExistente.setTiempoFundado(fechaFundacion);
+				                controladora.actualizarEquipo(equipoExistente);
+				            }
+
+				            int respuesta = JOptionPane.showConfirmDialog(RegEquipo.this,
+				                    "¿Desea agregar otro equipo?",
+				                    "Registro exitoso",
+				                    JOptionPane.YES_NO_OPTION,
+				                    JOptionPane.QUESTION_MESSAGE
 				                );
 
-				            controladora.agregarEquipo(nuevoEquipo);
-				            
-				            JOptionPane.showMessageDialog(RegEquipo.this, 
-				                "Equipo registrado exitosamente", 
-				                "Éxito", 
-				                JOptionPane.INFORMATION_MESSAGE);
-				            
-				            dispose();
-				            
+				                if (respuesta == JOptionPane.YES_OPTION) {
+				                    txtNombre.setText("");
+				                    txtCiudad.setText("");
+				                    txtEntrenador.setText("");
+				                    txtMascota.setText("");
+				                    spnFundacion.setValue(new Date());
+				                    
+				                    txtID.setText(generarNuevoId());
+				                } else {
+				                    dispose();
+				                }
 				        } catch (Exception ex) {
 				            JOptionPane.showMessageDialog(RegEquipo.this, 
 				                "Error: " + ex.getMessage(), 

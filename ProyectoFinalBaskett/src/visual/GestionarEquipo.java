@@ -99,7 +99,7 @@ public class GestionarEquipo extends JDialog {
         panelBotones.add(btnQuitar);
         panelCentral.add(panelBotones);
 
-        JList<Jugador> lstJugadoresEquipo = new JList<>(modelEquipo);
+        lstJugadoresEquipo = new JList<>(modelEquipo);
         lstJugadoresEquipo.setBackground(new Color(245, 245, 245));
         lstJugadoresEquipo.setForeground(new Color(60, 60, 60));
         lstJugadoresEquipo.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -121,14 +121,14 @@ public class GestionarEquipo extends JDialog {
         btnGuardar.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
         btnGuardar.setFocusPainted(false);
         btnGuardar.addActionListener(e -> {
-            Equipo equipo = (Equipo) cbxEquipos.getSelectedItem();
-            if (equipo != null) {
-                ArrayList<Jugador> nuevosJugadores = new ArrayList<>();
-                for (int i = 0; i < modelEquipo.size(); i++) {
-                    nuevosJugadores.add(modelEquipo.getElementAt(i));
-                }
-                equipo.setJugadores(nuevosJugadores);
-                controladora.actualizarEquipo(equipo);
+        	Equipo equipo = (Equipo) cbxEquipos.getSelectedItem();
+        	if (equipo != null) {
+        	    ArrayList<Jugador> nuevosJugadores = new ArrayList<>();
+        	    for (int i = 0; i < modelEquipo.getSize(); i++) {
+        	        nuevosJugadores.add(modelEquipo.getElementAt(i));
+        	    }
+        	    equipo.setJugadores(nuevosJugadores);
+        	    controladora.actualizarEquipo(equipo);
                 JOptionPane.showMessageDialog(this,
                     "Cambios guardados exitosamente!",
                     "Éxito",
