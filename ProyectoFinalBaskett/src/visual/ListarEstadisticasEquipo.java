@@ -1,8 +1,6 @@
 package visual;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,71 +11,81 @@ import logico.EstadisticasEquipo;
 
 public class ListarEstadisticasEquipo extends JDialog {
 
-    private JTable tablaEstadisticas;
+    private JTable tabla;
     private DefaultTableModel model;
     
-    /**
-	 * Launch the application.
-	 */
-    public static void main(String[] args) {
-        try {
-            ControladoraLiga controladora = ControladoraLiga.getInstance();
-            ListarEstadisticasEquipo dialog = new ListarEstadisticasEquipo(controladora);
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-	/**
-	 * Create the dialog.
-	 */
     public ListarEstadisticasEquipo(ControladoraLiga controladora) {
-        setTitle("Estadísticas de Equipos");
-        setModal(true);
-        setSize(1080, 500);
-        setLocationRelativeTo(null);
-        JPanel contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contentPane.setBackground(new Color(240, 240, 240));
-        contentPane.setLayout(new BorderLayout());
-        setContentPane(contentPane);
-
-        String[] columnNames = {"Equipo", "Partidos", "Victorias", "Derrotas", "% Victorias", "Puntos Por Partido", "Robos", "Bloqueos", "Asistencias"};
-        model = new DefaultTableModel(columnNames, 0);
-        JTable table = new JTable(model);
-        table.setBackground(new Color(240, 240, 240));
-        table.setSelectionBackground(new Color(212, 122, 25)); 
-        table.setSelectionForeground(Color.WHITE);
-        
-        tablaEstadisticas = new JTable(model);
-        tablaEstadisticas.setBackground(new Color(90, 90, 90));
-        tablaEstadisticas.setForeground(Color.WHITE);
-        tablaEstadisticas.setGridColor(Color.DARK_GRAY);
-        
+        configurarVentana();
+        initComponents(controladora);
         cargarDatos(controladora.getMisEquipos());
+    }
+
+    private void configurarVentana() {
+        setTitle("Estadísticas de Equipos");
+        setSize(1200, 600);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout(10, 10));
+        getContentPane().setBackground(Color.WHITE);
+    }
+
+    private void initComponents(ControladoraLiga controladora) {
+        String[] columnas = {
+            "Equipo", "Partidos", "Victorias", "Derrotas", 
+            "% Victorias", "Puntos/Partido", "Robos", 
+            "Bloqueos", "Asistencias"
+        };
         
-        JScrollPane scrollPane = new JScrollPane(tablaEstadisticas);
-        scrollPane.getViewport().setBackground(new Color(240, 240, 240));
-        contentPane.add(scrollPane, BorderLayout.CENTER);
+        model = new DefaultTableModel(columnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         
-        JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        buttonPane.setBackground(new Color(240, 240, 240));
+        tabla = new JTable(model);
+        personalizarTabla();
+        
+        JScrollPane scrollPane = new JScrollPane(tabla);
+        scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+        add(scrollPane, BorderLayout.CENTER);
+        
+        configurarBotones();
+    }
+
+    private void personalizarTabla() {
+        tabla.setRowHeight(30);
+        tabla.setFont(new Font("Arial", Font.PLAIN, 14));
+        tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        tabla.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tabla.setFillsViewportHeight(true);
+        tabla.setSelectionBackground(new Color(255, 147, 30));
+        tabla.setSelectionForeground(Color.WHITE);
+        tabla.setGridColor(new Color(220, 220, 220));
+        tabla.setBackground(Color.WHITE);
+        tabla.setForeground(new Color(60, 60, 60));
+    }
+
+    private void configurarBotones() {
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 15));
+        panelBotones.setBackground(Color.WHITE);
         
         JButton btnCerrar = new JButton("Cerrar");
         btnCerrar.addActionListener(e -> dispose());
-        buttonPane.add(btnCerrar);
         
-        contentPane.add(buttonPane, BorderLayout.SOUTH);
+        btnCerrar.setBackground(new Color(255, 147, 30));
+        btnCerrar.setForeground(Color.WHITE);
+        btnCerrar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnCerrar.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
+        
+        panelBotones.add(btnCerrar);
+        add(panelBotones, BorderLayout.SOUTH);
     }
 
     private void cargarDatos(ArrayList<Equipo> equipos) {
         model.setRowCount(0);
         for (Equipo equipo : equipos) {
             EstadisticasEquipo stats = equipo.getEstadisticas();
-            Object[] row = {
+            model.addRow(new Object[]{
                 equipo.getNombre(),
                 stats.getPartidosJugados(),
                 stats.getVictorias(),
@@ -87,8 +95,14 @@ public class ListarEstadisticasEquipo extends JDialog {
                 stats.getRobosTotales(),
                 stats.getBloqueosTotales(),
                 stats.getAsistenciasTotales()
-            };
-            model.addRow(row);
+            });
         }
+    }
+
+    public static void main(String[] args) {
+        ControladoraLiga controladora = ControladoraLiga.getInstance();
+        ListarEstadisticasEquipo dialog = new ListarEstadisticasEquipo(controladora);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
     }
 }
