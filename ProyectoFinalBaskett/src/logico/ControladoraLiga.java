@@ -99,7 +99,9 @@ public class ControladoraLiga {
     public void actualizarResultadoJuego(String idJuego, Resultado resultado) {
         Juego juego = calendario.buscarJuego(idJuego);
         if (juego != null) {
-            juego.setResultado(resultado);
+            calendario.actualizarResultadoJuego(idJuego, resultado);
+            actualizarEquipo(juego.getEquipoLocal());
+            actualizarEquipo(juego.getEquipoVisitante());
         }
     }
 
@@ -147,9 +149,11 @@ public class ControladoraLiga {
     }
 
     public CalendarioJuegos getCalendario() {
+        if (calendario == null) {
+            calendario = new CalendarioJuegos();
+        }
         return calendario;
     }
-
     public void setCalendario(CalendarioJuegos calendario) {
         this.calendario = calendario;
     }
@@ -315,13 +319,13 @@ public class ControladoraLiga {
 	    return null;
 	}
 
-	public void actualizarEquipo(Equipo actualizado) {
-		for (int i = 0; i < misEquipos.size(); i++) {
-        	if (misEquipos.get(i).getID().equals(actualizado.getID())) {
-        		misEquipos.set(i, actualizado);
-        		break;
-        	}
-    	}
+	public void actualizarEquipo(Equipo equipoActualizado) {
+	    for (int i = 0; i < misEquipos.size(); i++) {
+	        if (misEquipos.get(i).getID().equals(equipoActualizado.getID())) {
+	            misEquipos.set(i, equipoActualizado);
+	            break;
+	        }
+	    }
 	}
 	
 }

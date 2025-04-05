@@ -1,274 +1,149 @@
 package visual;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
+import javax.swing.table.DefaultTableModel;
 import logico.*;
+import java.awt.*;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class ListEstadisticasJugador extends JDialog {
     private Jugador jugador;
     private ControladoraLiga controladora;
-    private JLabel lblPuntosTotales;
-    private JLabel lblRebotes;
-    private JLabel lblAsistencias;
-    private JLabel lblDoblesDobles;
-    private JLabel lblTriplesDobles;
-    private JLabel lblLesionesActivas;
-    private JList<String> lstPartidos;
-    private JList<String> lstLesiones;
+    private JTabbedPane tabbedPane;
+    private JTable tablaEstadisticas;
+    private JTable tablaLesiones;
+    private JTable tablaPartidos;
 
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        ControladoraLiga controladora = ControladoraLiga.getInstance();
-        SwingUtilities.invokeLater(() -> {
-            ListEstadisticasJugador dialog = new ListEstadisticasJugador(controladora, "001");
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        });
-    }
-
-    /**
-     * Create the dialog.
-     */
     public ListEstadisticasJugador(ControladoraLiga controladora, String idJugador) {
         this.controladora = controladora;
         this.jugador = controladora.buscarJugador(idJugador);
-
         if (jugador == null) {
-            JOptionPane.showMessageDialog(null, "Jugador no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Jugador no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
             dispose();
             return;
         }
-
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        initializeUI();
+        configurarVentana();
+        initComponentes();
+        cargarDatos();
     }
 
-    private void initializeUI() {
+    private void configurarVentana() {
         setTitle("Estadísticas de " + jugador.getNombre());
-        setSize(800, 600);
-        setModal(true);
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setSize(900, 500);
         setLocationRelativeTo(null);
-        getContentPane().setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
+        setModal(true);
+    }
 
-        JPanel topPanel = new JPanel();
-        topPanel.setBackground(new Color(255, 147, 30));
-        JLabel lblIcono = new JLabel();
-        lblIcono.setIcon(new ImageIcon("Imagenes/jugador_icon.png"));
-        topPanel.add(lblIcono);
-        add(topPanel, BorderLayout.NORTH);
+    private void initComponentes() {
+        tabbedPane = new JTabbedPane();
+        
+        JPanel pnlEstadisticas = new JPanel(new BorderLayout());
+        pnlEstadisticas.add(crearPanelEstadisticas(), BorderLayout.NORTH);
+        pnlEstadisticas.add(crearTablaEstadisticas(), BorderLayout.CENTER);
+        tabbedPane.addTab("Estadísticas", pnlEstadisticas);
 
-        JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.setBackground(new Color(255, 147, 30));
+        tablaLesiones = new JTable(new DefaultTableModel(
+            new String[]{"Tipo", "Parte del cuerpo", "Fecha", "Duración (días)", "Estado"}, 0
+        ));
+        tabbedPane.addTab("Lesiones", new JScrollPane(tablaLesiones));
 
-        JPanel statsPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-        statsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        statsPanel.setBackground(new Color(240, 240, 240));
-        agregarComponentesEstadisticas(statsPanel);
-        tabbedPane.addTab("Estadísticas", statsPanel);
-
-        JPanel lesionesPanel = new JPanel(new BorderLayout());
-        lesionesPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        lesionesPanel.setBackground(new Color(240, 240, 240));
-        agregarComponentesLesiones(lesionesPanel);
-        tabbedPane.addTab("Lesiones", lesionesPanel);
-
-        JPanel partidosPanel = new JPanel(new BorderLayout());
-        partidosPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        partidosPanel.setBackground(new Color(240, 240, 240));
-        agregarComponentesPartidos(partidosPanel);
-        tabbedPane.addTab("Partidos", partidosPanel);
+        tablaPartidos = new JTable(new DefaultTableModel(
+            new String[]{"Fecha", "Equipo Local", "Equipo Visitante", "Puntos", "Rebotes", "Asistencias"}, 0
+        ));
+        tabbedPane.addTab("Partidos", new JScrollPane(tablaPartidos));
 
         add(tabbedPane, BorderLayout.CENTER);
-
-        JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        buttonPane.setBackground(new Color(240, 240, 240));
-
-        JButton btnActualizar = new JButton("Actualizar Datos");
-        btnActualizar.setIcon(new ImageIcon("Imagenes/refresh_icon.png"));
-        btnActualizar.addActionListener(e -> actualizarDatos());
-        buttonPane.add(btnActualizar);
-
-        JButton btnCerrar = new JButton("Cerrar");
-        btnCerrar.setIcon(new ImageIcon("Imagenes/close_icon.png"));
-        btnCerrar.addActionListener(e -> dispose());
-        buttonPane.add(btnCerrar);
-
-        add(buttonPane, BorderLayout.SOUTH);
     }
 
-    private void agregarComponentesEstadisticas(JPanel panel) {
+    private JPanel crearPanelEstadisticas() {
+        JPanel panel = new JPanel(new GridLayout(0, 2, 10, 5));
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         EstadisticasJugador stats = jugador.getEstadisticas();
-
-        panel.add(new JLabel("Puntos totales:"));
-        lblPuntosTotales = new JLabel(String.valueOf(stats.getPuntosTotales()));
-        panel.add(lblPuntosTotales);
-
-        panel.add(new JLabel("Rebotes:"));
-        lblRebotes = new JLabel(String.valueOf(stats.getRebotes()));
-        panel.add(lblRebotes);
-
-        panel.add(new JLabel("Asistencias:"));
-        lblAsistencias = new JLabel(String.valueOf(stats.getAsistencias()));
-        panel.add(lblAsistencias);
-
-        panel.add(new JLabel("Dobles-dobles:"));
-        lblDoblesDobles = new JLabel(String.valueOf(stats.getDoblesDobles()));
-        panel.add(lblDoblesDobles);
-
-        panel.add(new JLabel("Triples-dobles:"));
-        lblTriplesDobles = new JLabel(String.valueOf(stats.getTriplesDobles()));
-        panel.add(lblTriplesDobles);
-
-        panel.add(new JLabel("Lesiones activas:"));
-        lblLesionesActivas = new JLabel(String.valueOf(jugador.getLesionesActivas().size()));
-        panel.add(lblLesionesActivas);
+        
+        agregarMetrica(panel, "Puntos totales:", String.valueOf(stats.getPuntosTotales()));
+        agregarMetrica(panel, "Rebotes:", String.valueOf(stats.getRebotes()));
+        agregarMetrica(panel, "Asistencias:", String.valueOf(stats.getAsistencias()));
+        agregarMetrica(panel, "Robos:", String.valueOf(stats.getRobos()));
+        agregarMetrica(panel, "Bloqueos:", String.valueOf(stats.getBloqueos()));
+        agregarMetrica(panel, "Dobles-dobles:", String.valueOf(stats.getDoblesDobles()));
+        agregarMetrica(panel, "Triples-dobles:", String.valueOf(stats.getTriplesDobles()));
+        agregarMetrica(panel, "Minutos jugados:", String.valueOf(stats.getMinutosJugados()));
+        
+        return panel;
     }
 
-    private void agregarComponentesLesiones(JPanel panel) {
-        DefaultListModel<String> modeloLesiones = new DefaultListModel<>();
-        ArrayList<Lesion> lesionesActivas = jugador.getLesionesActivas();
-        if (lesionesActivas.isEmpty()) {
-            modeloLesiones.addElement("No hay lesiones activas.");
-        } else {
-            for (Lesion lesion : lesionesActivas) {
-                modeloLesiones.addElement(
-                    lesion.getTipo() + " - " +
-                    lesion.getParteCuerpo() + " - " +
-                    lesion.getDuracionEstimada() + " días restantes"
-                );
-            }
-        }
-
-        lstLesiones = new JList<>(modeloLesiones);
-        lstLesiones.setBackground(new Color(90, 90, 90));
-        lstLesiones.setForeground(Color.WHITE);
-        panel.add(new JScrollPane(lstLesiones), BorderLayout.CENTER);
+    private void agregarMetrica(JPanel panel, String titulo, String valor) {
+        JLabel lblTitulo = new JLabel(titulo);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 12));
+        JLabel lblValor = new JLabel(valor);
+        
+        JPanel contenedor = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        contenedor.add(lblTitulo);
+        contenedor.add(lblValor);
+        panel.add(contenedor);
     }
 
-    private void agregarComponentesPartidos(JPanel panel) {
-        DefaultListModel<String> modeloPartidos = new DefaultListModel<>();
-        ArrayList<Juego> partidos = controladora.getJuegosPorJugador(jugador.getID());
-        if (partidos.isEmpty()) {
-            modeloPartidos.addElement("No hay partidos registrados.");
-        } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            for (Juego juego : partidos) {
-                String info = juego.getFecha().format(formatter) + " - " +
-                              juego.getEquipoLocal().getNombre() + " vs " +
-                              juego.getEquipoVisitante().getNombre();
-                modeloPartidos.addElement(info);
-            }
-        }
-
-        lstPartidos = new JList<>(modeloPartidos);
-        lstPartidos.setBackground(new Color(90, 90, 90));
-        lstPartidos.setForeground(Color.WHITE);
-        lstPartidos.addListSelectionListener(e -> mostrarDetallesPartido());
-        panel.add(new JScrollPane(lstPartidos), BorderLayout.CENTER);
+    private JScrollPane crearTablaEstadisticas() {
+        DefaultTableModel model = new DefaultTableModel(new String[]{"Métrica", "Valor"}, 0);
+        tablaEstadisticas = new JTable(model);
+        return new JScrollPane(tablaEstadisticas);
     }
 
-    private void mostrarDetallesPartido() {
-        int index = lstPartidos.getSelectedIndex();
-        if (index != -1 && !lstPartidos.getModel().getElementAt(index).equals("No hay partidos registrados.")) {
-            Juego juego = controladora.getJuegosPorJugador(jugador.getID()).get(index);
-            new DetallePartidoDialog(this, juego, jugador).setVisible(true);
+    private void cargarDatos() {
+        cargarLesiones();
+        cargarPartidos();
+    }
+
+    private void cargarLesiones() {
+        DefaultTableModel model = (DefaultTableModel) tablaLesiones.getModel();
+        model.setRowCount(0);
+        
+        for (Lesion lesion : jugador.getLesiones()) {
+            model.addRow(new Object[]{
+                lesion.getTipo(),
+                lesion.getParteCuerpo(),
+                lesion.getFechaLesion().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                lesion.getDuracionEstimada(),
+                lesion.getEstado()
+            });
         }
     }
 
-    private void actualizarDatos() {
-        EstadisticasJugador stats = jugador.getEstadisticas();
-        lblPuntosTotales.setText(String.valueOf(stats.getPuntosTotales()));
-        lblRebotes.setText(String.valueOf(stats.getRebotes()));
-        lblAsistencias.setText(String.valueOf(stats.getAsistencias()));
-        lblDoblesDobles.setText(String.valueOf(stats.getDoblesDobles()));
-        lblTriplesDobles.setText(String.valueOf(stats.getTriplesDobles()));
-        lblLesionesActivas.setText(String.valueOf(jugador.getLesionesActivas().size()));
-
-        DefaultListModel<String> modeloLesiones = new DefaultListModel<>();
-        ArrayList<Lesion> lesionesActivas = jugador.getLesionesActivas();
-        if (lesionesActivas.isEmpty()) {
-            modeloLesiones.addElement("No hay lesiones activas.");
-        } else {
-            for (Lesion lesion : lesionesActivas) {
-                modeloLesiones.addElement(
-                    lesion.getTipo() + " - " +
-                    lesion.getParteCuerpo() + " - " +
-                    lesion.getDuracionEstimada() + " días restantes"
-                );
+    private void cargarPartidos() {
+        DefaultTableModel model = (DefaultTableModel) tablaPartidos.getModel();
+        model.setRowCount(0);
+        
+        for (Juego juego : controladora.getJuegosPorJugador(jugador.getID())) {
+            int[] stats = obtenerStatsJugador(juego);
+            if (stats != null) {
+                model.addRow(new Object[]{
+                    juego.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
+                    juego.getEquipoLocal().getNombre(),
+                    juego.getEquipoVisitante().getNombre(),
+                    stats[0],
+                    stats[1],
+                    stats[2]
+                });
             }
         }
-        lstLesiones.setModel(modeloLesiones);
-
-        DefaultListModel<String> modeloPartidos = new DefaultListModel<>();
-        ArrayList<Juego> partidos = controladora.getJuegosPorJugador(jugador.getID());
-        if (partidos.isEmpty()) {
-            modeloPartidos.addElement("No hay partidos registrados.");
-        } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            for (Juego juego : partidos) {
-                String info = juego.getFecha().format(formatter) + " - " +
-                              juego.getEquipoLocal().getNombre() + " vs " +
-                              juego.getEquipoVisitante().getNombre();
-                modeloPartidos.addElement(info);
-            }
-        }
-        lstPartidos.setModel(modeloPartidos);
     }
 
-    class DetallePartidoDialog extends JDialog {
-        public DetallePartidoDialog(JDialog parent, Juego juego, Jugador jugador) {
-            super(parent, "Estadísticas en el partido", true);
-            setSize(400, 300);
-            setLocationRelativeTo(parent);
-
-            JPanel panel = new JPanel(new GridLayout(0, 2));
-            panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-            panel.setBackground(new Color(240, 240, 240));
-
-            Resultado resultado = juego.getResultado();
-            if (resultado != null) {
-                int[] stats = obtenerStatsJugadorEnPartido(juego, jugador);
-                panel.add(new JLabel("Puntos:"));
-                panel.add(new JLabel(String.valueOf(stats[0])));
-                panel.add(new JLabel("Rebotes:"));
-                panel.add(new JLabel(String.valueOf(stats[1])));
-                panel.add(new JLabel("Asistencias:"));
-                panel.add(new JLabel(String.valueOf(stats[2])));
-            } else {
-                panel.add(new JLabel("Sin datos disponibles"));
-                panel.add(new JLabel(""));
-            }
-
-            add(panel);
+    private int[] obtenerStatsJugador(Juego juego) {
+        if (juego.getResultado() == null) return null;
+        
+        int index = juego.getResultado().getIdsJugadoresLocales().indexOf(jugador.getID());
+        if (index != -1) {
+            return juego.getResultado().getStatsLocales().get(index);
         }
-
-        private int[] obtenerStatsJugadorEnPartido(Juego juego, Jugador jugador) {
-            Resultado resultado = juego.getResultado();
-            int index = resultado.getIdsJugadoresLocales().indexOf(jugador);
-            if (index != -1) return resultado.getStatsLocales().get(index);
-
-            index = resultado.getIdsJugadoresVisitantes().indexOf(jugador);
-            if (index != -1) return resultado.getStatsVisitantes().get(index);
-
-            return new int[]{0, 0, 0};
+        
+        index = juego.getResultado().getIdsJugadoresVisitantes().indexOf(jugador.getID());
+        if (index != -1) {
+            return juego.getResultado().getStatsVisitantes().get(index);
         }
+        
+        return null;
     }
 }

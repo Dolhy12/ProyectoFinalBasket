@@ -116,17 +116,20 @@ public class CalendarioJuegos {
             if (jugador != null) {
                 int[] stats = statsLocales.get(i);
                 
-                jugador.getEstadisticas().agregarPuntos(stats[0]);
+                jugador.getEstadisticas().agregarPuntosNormales(stats[5]);
+                jugador.getEstadisticas().agregarPuntosTriples(stats[6]);
+                jugador.getEstadisticas().agregarPuntosTirosLibres(stats[7]);
                 jugador.getEstadisticas().agregarRebotes(stats[1]);
                 jugador.getEstadisticas().agregarAsistencias(stats[2]);
                 jugador.getEstadisticas().agregarRobos(stats[3]);
                 jugador.getEstadisticas().agregarBloqueos(stats[4]);
-                
-                jugador.getEstadisticas().verificarDoblesDobles();
+                jugador.getEstadisticas().agregarMinutosJugados(stats[8]);
                 
                 local.getEstadisticas().agregarRobos(stats[3]);
                 local.getEstadisticas().agregarBloqueos(stats[4]);
                 local.getEstadisticas().agregarAsistencias(stats[2]);
+                
+                jugador.getEstadisticas().verificarDoblesDobles();
             }
         }
 
@@ -138,17 +141,20 @@ public class CalendarioJuegos {
             if (jugador != null) {
                 int[] stats = statsVisitantes.get(i);
                 
-                jugador.getEstadisticas().agregarPuntos(stats[0]);
+                jugador.getEstadisticas().agregarPuntosNormales(stats[5]);
+                jugador.getEstadisticas().agregarPuntosTriples(stats[6]);
+                jugador.getEstadisticas().agregarPuntosTirosLibres(stats[7]);
                 jugador.getEstadisticas().agregarRebotes(stats[1]);
                 jugador.getEstadisticas().agregarAsistencias(stats[2]);
                 jugador.getEstadisticas().agregarRobos(stats[3]);
                 jugador.getEstadisticas().agregarBloqueos(stats[4]);
-                
-                jugador.getEstadisticas().verificarDoblesDobles();
+                jugador.getEstadisticas().agregarMinutosJugados(stats[8]);
                 
                 visitante.getEstadisticas().agregarRobos(stats[3]);
                 visitante.getEstadisticas().agregarBloqueos(stats[4]);
                 visitante.getEstadisticas().agregarAsistencias(stats[2]);
+                
+                jugador.getEstadisticas().verificarDoblesDobles();
             }
         }
 
@@ -162,8 +168,6 @@ public class CalendarioJuegos {
         }
     }
 
-    
-    
     public Juego buscarJuego(String idJuego) {
         return juegos.stream()
                 .filter(j -> j.getID().equals(idJuego))

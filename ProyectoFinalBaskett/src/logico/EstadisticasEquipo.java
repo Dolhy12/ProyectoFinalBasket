@@ -21,12 +21,10 @@ public class EstadisticasEquipo {
 
     public void agregarVictoria() {
         this.victorias++;
-        incrementarPartidosJugados();
     }
 
     public void agregarDerrota() {
         this.derrotas++;
-        incrementarPartidosJugados();
     }
 
     public double getPorcentajeVictorias() {

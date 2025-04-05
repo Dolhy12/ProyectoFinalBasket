@@ -51,13 +51,25 @@ public class Resultado {
         this.puntosVisitante = puntos;
     }
     
-    public void agregarEstadisticaLocal(Jugador jugador, int puntos, int rebotes, int asistencias, int robos, int bloqueos) {
-		this.idsJugadoresLocales.add(jugador.getID());
-		this.statsLocales.add(new int[]{puntos, rebotes, asistencias, robos, bloqueos});
-	}
+    public void agregarEstadisticaLocal(Jugador jugador, int[] stats) {
+        int index = idsJugadoresLocales.indexOf(jugador.getID());
+        if (index == -1) {
+            idsJugadoresLocales.add(jugador.getID());
+            statsLocales.add(stats);
+        } else {
+            statsLocales.set(index, stats);
+        }
+        puntosLocal += stats[0];
+    }
 
-	public void agregarEstadisticaVisitante(Jugador jugador, int puntos, int rebotes, int asistencias, int robos, int bloqueos) {
-		this.idsJugadoresVisitantes.add(jugador.getID());
-		this.statsVisitantes.add(new int[]{puntos, rebotes, asistencias, robos, bloqueos});
-	}
+    public void agregarEstadisticaVisitante(Jugador jugador, int[] stats) {
+        int index = idsJugadoresVisitantes.indexOf(jugador.getID());
+        if (index == -1) {
+            idsJugadoresVisitantes.add(jugador.getID());
+            statsVisitantes.add(stats);
+        } else {
+            statsVisitantes.set(index, stats);
+        }
+        puntosVisitante += stats[0];
+    }
 }

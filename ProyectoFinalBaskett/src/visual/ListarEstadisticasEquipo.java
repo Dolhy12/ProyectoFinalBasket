@@ -12,7 +12,8 @@ import logico.EstadisticasEquipo;
 public class ListarEstadisticasEquipo extends JDialog {
 
     private JTable tabla;
-    private DefaultTableModel model;
+    private static DefaultTableModel model;
+    private static ControladoraLiga controladora;
     
     public ListarEstadisticasEquipo(ControladoraLiga controladora) {
         configurarVentana();
@@ -81,7 +82,7 @@ public class ListarEstadisticasEquipo extends JDialog {
         add(panelBotones, BorderLayout.SOUTH);
     }
 
-    private void cargarDatos(ArrayList<Equipo> equipos) {
+    private static void cargarDatos(ArrayList<Equipo> equipos) {
         model.setRowCount(0);
         for (Equipo equipo : equipos) {
             EstadisticasEquipo stats = equipo.getEstadisticas();
@@ -98,7 +99,11 @@ public class ListarEstadisticasEquipo extends JDialog {
             });
         }
     }
-
+    
+    public static void refrescarDatos() {
+        cargarDatos(controladora.getMisEquipos());
+    }
+    
     public static void main(String[] args) {
         ControladoraLiga controladora = ControladoraLiga.getInstance();
         ListarEstadisticasEquipo dialog = new ListarEstadisticasEquipo(controladora);
