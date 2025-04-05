@@ -11,7 +11,7 @@ public class ListarEquipos extends JDialog {
 
     private JTable table;
     private ControladoraLiga controladora;
-    
+
     public ListarEquipos(ControladoraLiga controladora) {
         this.controladora = controladora;
         configurarVentana();
@@ -40,10 +40,10 @@ public class ListarEquipos extends JDialog {
                 return false;
             }
         };
-        
+
         table = new JTable(model);
         personalizarTabla();
-        
+
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(scrollPane, BorderLayout.CENTER);
@@ -64,19 +64,22 @@ public class ListarEquipos extends JDialog {
     private void configurarBotones() {
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 15));
         panelBotones.setBackground(Color.WHITE);
-        
+
+        JButton btnVerDetalles = crearBoton("Ver Detalles", new Color(32, 136, 203));
         JButton btnModificar = crearBoton("Modificar", new Color(255, 147, 30));
         JButton btnEliminar = crearBoton("Eliminar", new Color(178, 34, 34));
         JButton btnCerrar = crearBoton("Cerrar", new Color(255, 147, 30));
-        
+
+        btnVerDetalles.addActionListener(e -> verDetallesEquipo());
         btnModificar.addActionListener(e -> modificarEquipo());
         btnEliminar.addActionListener(e -> eliminarEquipo());
         btnCerrar.addActionListener(e -> dispose());
-        
+
+        panelBotones.add(btnVerDetalles);
         panelBotones.add(btnModificar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnCerrar);
-        
+
         add(panelBotones, BorderLayout.SOUTH);
     }
 
@@ -93,7 +96,7 @@ public class ListarEquipos extends JDialog {
     private void cargarEquipos() {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
-        
+
         for (Equipo equipo : controladora.getMisEquipos()) {
             model.addRow(new Object[]{
                 equipo.getID(),
@@ -105,8 +108,25 @@ public class ListarEquipos extends JDialog {
                 equipo.getTiempoFundado()
             });
         }
-        
         model.fireTableDataChanged();
+    }
+
+    private void verDetallesEquipo() {
+        int fila = table.getSelectedRow();
+        if (fila != -1) {
+            String id = (String) table.getValueAt(fila, 0);
+            Equipo equipo = controladora.buscarEquipo(id);
+            if (equipo != null) {
+                DetalleEquipo dialog = new DetalleEquipo(controladora, equipo);
+                dialog.setModal(true);
+                dialog.setVisible(true);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                "Seleccione un equipo de la tabla",
+                "Sin selección",
+                JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     private void modificarEquipo() {
@@ -121,31 +141,31 @@ public class ListarEquipos extends JDialog {
                 cargarEquipos();
             }
         } else {
-            JOptionPane.showMessageDialog(this, 
-                "Seleccione un equipo de la tabla", 
-                "Sin selección", 
+            JOptionPane.showMessageDialog(this,
+                "Seleccione un equipo de la tabla",
+                "Sin selección",
                 JOptionPane.WARNING_MESSAGE);
         }
     }
 
     private void eliminarEquipo() {
         int fila = table.getSelectedRow();
-        if(fila != -1) {
-            int confirmacion = JOptionPane.showConfirmDialog(this, 
-                "¿Está seguro de eliminar este equipo?", 
-                "Confirmar eliminación", 
+        if (fila != -1) {
+            int confirmacion = JOptionPane.showConfirmDialog(this,
+                "¿Está seguro de eliminar este equipo?",
+                "Confirmar eliminación",
                 JOptionPane.YES_NO_OPTION);
-            
-            if(confirmacion == JOptionPane.YES_OPTION) {
+
+            if (confirmacion == JOptionPane.YES_OPTION) {
                 String id = (String) table.getValueAt(fila, 0);
                 controladora.eliminarEquipo(id);
                 ((DefaultTableModel) table.getModel()).removeRow(fila);
                 JOptionPane.showMessageDialog(this, "Equipo eliminado exitosamente");
             }
         } else {
-            JOptionPane.showMessageDialog(this, 
-                "Seleccione un equipo de la tabla", 
-                "Sin selección", 
+            JOptionPane.showMessageDialog(this,
+                "Seleccione un equipo de la tabla",
+                "Sin selección",
                 JOptionPane.WARNING_MESSAGE);
         }
     }
