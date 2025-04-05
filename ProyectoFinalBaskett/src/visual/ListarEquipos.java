@@ -51,7 +51,6 @@ public class ListarEquipos extends JDialog {
                 equipo.getNombre(),
                 equipo.getCiudad(),
                 equipo.getEntrenador(),
-                (equipo.getCapitan() != null) ? equipo.getCapitan().getNombre() : "Sin capitán",
                 equipo.getNombreDeLaMascota(),
                 equipo.getTiempoFundado()
             });
@@ -121,7 +120,6 @@ public class ListarEquipos extends JDialog {
                                 eq.getNombre(),
                                 eq.getCiudad(),
                                 eq.getEntrenador(),
-                                (eq.getCapitan() != null) ? eq.getCapitan().getNombre() : "Sin capitán",
                                 eq.getNombreDeLaMascota(),
                                 eq.getTiempoFundado()
                             });

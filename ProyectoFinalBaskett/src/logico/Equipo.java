@@ -9,7 +9,6 @@ public class Equipo {
     private String nombre;
     private String ciudad;
     private String entrenador;
-    private Jugador capitan;
     private String nombreDeLaMascota;
     private String tiempoFundado; 
     private ArrayList<Jugador> jugadores;
@@ -18,7 +17,6 @@ public class Equipo {
     public Equipo(String ID, String tiempoFundado, Jugador capitan, String nombreDeLaMascota, String nombre, String ciudad, String entrenador) {
         this.ID = ID;
         this.tiempoFundado = tiempoFundado;
-        this.capitan = capitan;
         this.nombreDeLaMascota = nombreDeLaMascota;
         this.nombre = nombre;
         this.ciudad = ciudad;
@@ -27,16 +25,38 @@ public class Equipo {
         this.estadisticas = new EstadisticasEquipo();
     }
 
-    public String getID() { return ID; }
-    public String getNombre() { return nombre; }
-    public String getCiudad() { return ciudad; }
-    public String getEntrenador() { return entrenador; }
-    public Jugador getCapitan() { return capitan; }
-    public String getNombreDeLaMascota() { return nombreDeLaMascota; }
-    public String getTiempoFundado() { return tiempoFundado; }
-    public ArrayList<Jugador> getJugadores() { return jugadores; }
-    public EstadisticasEquipo getEstadisticas() { return estadisticas; }
-
+    public String getID() { 
+    	return ID; 
+    }
+    
+    public String getNombre() { 
+    	return nombre; 
+    
+    }
+    public String getCiudad() { 
+    	return ciudad; 
+    }
+    
+    public String getEntrenador() { 
+    	return entrenador; 
+    }
+    
+    public String getNombreDeLaMascota() { 
+    	return nombreDeLaMascota; 
+    }
+    
+    public String getTiempoFundado() { 
+    	return tiempoFundado; 
+    }
+    
+    public ArrayList<Jugador> getJugadores() { 
+    	return jugadores; 
+    }
+    
+    public EstadisticasEquipo getEstadisticas() { 
+    	return estadisticas; 
+    }
+    
     public void setID(String ID) {
     	this.ID = ID;
     }
@@ -53,9 +73,6 @@ public class Equipo {
     	this.entrenador = entrenador; 
     }
     
-    public void setCapitan(Jugador capitan) {
-    	this.capitan = capitan; 
-    }
     public void setNombreDeLaMascota(String nombreDeLaMascota) { 
     	this.nombreDeLaMascota = nombreDeLaMascota; 
     }

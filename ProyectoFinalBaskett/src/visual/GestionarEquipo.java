@@ -8,6 +8,7 @@ import logico.Jugador;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.awt.event.ActionListener;
 
 public class GestionarEquipo extends JDialog {
     private ControladoraLiga controladora;
@@ -22,7 +23,7 @@ public class GestionarEquipo extends JDialog {
         setTitle("Gestión de Equipos");
         setSize(1000, 600);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout(10, 10));
+        getContentPane().setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(Color.WHITE);
 
         JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
@@ -47,7 +48,7 @@ public class GestionarEquipo extends JDialog {
         
         panelSuperior.add(lblEquipo);
         panelSuperior.add(cbxEquipos);
-        add(panelSuperior, BorderLayout.NORTH);
+        getContentPane().add(panelSuperior, BorderLayout.NORTH);
 
         JPanel panelCentral = new JPanel(new GridLayout(1, 3, 20, 0));
         panelCentral.setBorder(new EmptyBorder(15, 15, 15, 15));
@@ -108,7 +109,7 @@ public class GestionarEquipo extends JDialog {
         lstJugadoresEquipo.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
         panelCentral.add(new JScrollPane(lstJugadoresEquipo));
 
-        add(panelCentral, BorderLayout.CENTER);
+        getContentPane().add(panelCentral, BorderLayout.CENTER);
 
         JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 15));
         panelInferior.setBorder(new EmptyBorder(0, 15, 15, 15));
@@ -133,7 +134,6 @@ public class GestionarEquipo extends JDialog {
                     "Cambios guardados exitosamente!",
                     "Éxito",
                     JOptionPane.INFORMATION_MESSAGE);
-                dispose();
             }
         });
         
@@ -143,21 +143,36 @@ public class GestionarEquipo extends JDialog {
         btnCancelar.setForeground(Color.WHITE);
         btnCancelar.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
         btnCancelar.setFocusPainted(false);
-        btnCancelar.addActionListener(e -> dispose());
-        
+        btnCancelar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		dispose();
+        	}
+        });
+
         panelInferior.add(btnGuardar);
         panelInferior.add(btnCancelar);
-        add(panelInferior, BorderLayout.SOUTH);
+        getContentPane().add(panelInferior, BorderLayout.SOUTH);
 
         for (Equipo equipo : controladora.getMisEquipos()) {
             cbxEquipos.addItem(equipo);
         }
         for (Jugador jugador : controladora.getMisJugadores()) {
-            modelTodos.addElement(jugador);
+            if (!estaEnAlgunEquipo(jugador)) {
+                modelTodos.addElement(jugador);
+            }
         }
     }
 
-    public static void main(String[] args) {
+    private boolean estaEnAlgunEquipo(Jugador jugador) {
+        for (Equipo equipo : controladora.getMisEquipos()) {
+            if (equipo.getJugadores().contains(jugador)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+	public static void main(String[] args) {
         ControladoraLiga controladora = ControladoraLiga.getInstance();
         GestionarEquipo dialog = new GestionarEquipo(controladora);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

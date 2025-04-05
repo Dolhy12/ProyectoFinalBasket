@@ -233,7 +233,6 @@ public class ControladoraLiga {
             equipo.setNombre(nombre);
             equipo.setCiudad(ciudad);
             equipo.setEntrenador(entrenador);
-            equipo.setCapitan(capitan);
             equipo.setNombreDeLaMascota(nombreDeLaMascota);
             equipo.setTiempoFundado(tiempoFundado);
         }
