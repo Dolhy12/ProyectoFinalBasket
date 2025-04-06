@@ -326,5 +326,10 @@ public class ControladoraLiga {
 	        }
 	    }
 	}
+
+	public void actualizarJugador(Jugador jugadorEditando) {
+		
+		
+	}
 	
 }
