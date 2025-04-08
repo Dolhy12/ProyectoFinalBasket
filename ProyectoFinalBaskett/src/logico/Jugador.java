@@ -33,29 +33,93 @@ public class Jugador implements Serializable {
         this.lesiones = new ArrayList<>();
     }
 
-    // Getters y Setters
-    public String getID() { return ID; }
-    public void setID(String ID) { this.ID = ID; }
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-    public int getEdad() { return edad; }
-    public void setEdad(int edad) { this.edad = edad; }
-    public String getPosicion() { return posicion; }
-    public void setPosicion(String posicion) { this.posicion = posicion; }
-    public String getNacionalidad() { return nacionalidad; }
-    public void setNacionalidad(String nacionalidad) { this.nacionalidad = nacionalidad; }
-    public Date getFechaDeNacimiento() { return fechaDeNacimiento; }
-    public void setFechaDeNacimiento(Date fechaDeNacimiento) { this.fechaDeNacimiento = fechaDeNacimiento; }
-    public float getPeso() { return peso; }
-    public void setPeso(float peso) { this.peso = peso; }
-    public float getAltura() { return altura; }
-    public void setAltura(float altura) { this.altura = altura; }
-    public int getNumero() { return numero; }
-    public void setNumero(int numero) { this.numero = numero; }
-    public EstadisticasJugador getEstadisticas() { return estadisticas; }
-    public void setEstadisticas(EstadisticasJugador estadisticas) { this.estadisticas = estadisticas; }
-    public ArrayList<Lesion> getLesiones() { return lesiones; }
-    public void setLesiones(ArrayList<Lesion> lesiones) { this.lesiones = lesiones; }
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+
+    public String getPosicion() {
+        return posicion;
+    }
+
+    public void setPosicion(String posicion) {
+        this.posicion = posicion;
+    }
+
+    public String getNacionalidad() {
+        return nacionalidad;
+    }
+
+    public void setNacionalidad(String nacionalidad) {
+        this.nacionalidad = nacionalidad;
+    }
+
+    public Date getFechaDeNacimiento() {
+        return fechaDeNacimiento;
+    }
+
+    public void setFechaDeNacimiento(Date fechaDeNacimiento) {
+        this.fechaDeNacimiento = fechaDeNacimiento;
+    }
+
+    public float getPeso() {
+        return peso;
+    }
+
+    public void setPeso(float peso) {
+        this.peso = peso;
+    }
+
+    public float getAltura() {
+        return altura;
+    }
+
+    public void setAltura(float altura) {
+        this.altura = altura;
+    }
+
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
+    }
+
+    public EstadisticasJugador getEstadisticas() {
+        return estadisticas;
+    }
+
+    public void setEstadisticas(EstadisticasJugador estadisticas) {
+        this.estadisticas = estadisticas;
+    }
+
+    public ArrayList<Lesion> getLesiones() {
+        return lesiones;
+    }
+
+    public void setLesiones(ArrayList<Lesion> lesiones) {
+        this.lesiones = lesiones;
+    }
 
     public ArrayList<Lesion> getLesionesActivas() {
         ArrayList<Lesion> activas = new ArrayList<>();

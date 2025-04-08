@@ -21,19 +21,53 @@ public class Resultado implements Serializable {
         this.statsVisitantes = new ArrayList<>();
     }
 
-    // Getters y Setters
-    public int getPuntosLocal() { return puntosLocal; }
-    public void setPuntosLocal(int puntosLocal) { this.puntosLocal = puntosLocal; }
-    public int getPuntosVisitante() { return puntosVisitante; }
-    public void setPuntosVisitante(int puntosVisitante) { this.puntosVisitante = puntosVisitante; }
-    public ArrayList<String> getIdsJugadoresLocales() { return idsJugadoresLocales; }
-    public void setIdsJugadoresLocales(ArrayList<String> idsJugadoresLocales) { this.idsJugadoresLocales = idsJugadoresLocales; }
-    public ArrayList<String> getIdsJugadoresVisitantes() { return idsJugadoresVisitantes; }
-    public void setIdsJugadoresVisitantes(ArrayList<String> idsJugadoresVisitantes) { this.idsJugadoresVisitantes = idsJugadoresVisitantes; }
-    public ArrayList<int[]> getStatsLocales() { return statsLocales; }
-    public void setStatsLocales(ArrayList<int[]> statsLocales) { this.statsLocales = statsLocales; }
-    public ArrayList<int[]> getStatsVisitantes() { return statsVisitantes; }
-    public void setStatsVisitantes(ArrayList<int[]> statsVisitantes) { this.statsVisitantes = statsVisitantes; }
+    public int getPuntosLocal() { 
+    	return puntosLocal; 
+    }
+    
+    public void setPuntosLocal(int puntosLocal) { 
+    	this.puntosLocal = puntosLocal; 
+    }
+    
+    public int getPuntosVisitante() { 
+    	return puntosVisitante; 
+    }
+    
+    public void setPuntosVisitante(int puntosVisitante) { 
+    	this.puntosVisitante = puntosVisitante; 
+    }
+    
+    public ArrayList<String> getIdsJugadoresLocales() {
+    	return idsJugadoresLocales; 
+    }
+    
+    public void setIdsJugadoresLocales(ArrayList<String> idsJugadoresLocales) { 
+    	this.idsJugadoresLocales = idsJugadoresLocales; 
+    }
+    
+    public ArrayList<String> getIdsJugadoresVisitantes() { 
+    	return idsJugadoresVisitantes; 
+    }
+    
+    public void setIdsJugadoresVisitantes(ArrayList<String> idsJugadoresVisitantes) { 
+    	this.idsJugadoresVisitantes = idsJugadoresVisitantes; 
+    }
+    
+    public ArrayList<int[]> getStatsLocales() { 
+    	return statsLocales; 
+    }
+    
+    public void setStatsLocales(ArrayList<int[]> statsLocales) { 
+    	this.statsLocales = statsLocales; 
+    }
+    
+    public ArrayList<int[]> getStatsVisitantes() { 
+    	return statsVisitantes; 
+    }
+    
+    public void setStatsVisitantes(ArrayList<int[]> statsVisitantes) { 
+    	this.statsVisitantes = statsVisitantes; 
+    }
 
     public void agregarEstadisticaLocal(Jugador jugador, int[] stats) {
         idsJugadoresLocales.add(jugador.getID());

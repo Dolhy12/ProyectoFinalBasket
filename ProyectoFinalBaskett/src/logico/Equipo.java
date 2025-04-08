@@ -26,23 +26,69 @@ public class Equipo implements Serializable {
         this.estadisticas = new EstadisticasEquipo();
     }
 
-    // Getters y Setters
-    public String getID() { return ID; }
-    public void setID(String ID) { this.ID = ID; }
-    public String getTiempoFundado() { return tiempoFundado; }
-    public void setTiempoFundado(String tiempoFundado) { this.tiempoFundado = tiempoFundado; }
-    public ArrayList<Jugador> getJugadores() { return jugadores; }
-    public void setJugadores(ArrayList<Jugador> jugadores) { this.jugadores = jugadores; }
-    public String getNombreDeLaMascota() { return nombreDeLaMascota; }
-    public void setNombreDeLaMascota(String nombreDeLaMascota) { this.nombreDeLaMascota = nombreDeLaMascota; }
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-    public String getCiudad() { return ciudad; }
-    public void setCiudad(String ciudad) { this.ciudad = ciudad; }
-    public String getEntrenador() { return entrenador; }
-    public void setEntrenador(String entrenador) { this.entrenador = entrenador; }
-    public EstadisticasEquipo getEstadisticas() { return estadisticas; }
-    public void setEstadisticas(EstadisticasEquipo estadisticas) { this.estadisticas = estadisticas; }
+    public String getID() {
+    	return ID; 
+    }
+    
+    public void setID(String ID) {
+    	this.ID = ID; 
+    }
+    
+    public String getTiempoFundado() {
+    	return tiempoFundado; 
+    }
+    
+    public void setTiempoFundado(String tiempoFundado) { 
+    	this.tiempoFundado = tiempoFundado; 
+    }
+    
+    public ArrayList<Jugador> getJugadores() { 
+    	return jugadores; 
+    }
+    
+    public void setJugadores(ArrayList<Jugador> jugadores) { 
+    	this.jugadores = jugadores; 
+    }
+    
+    public String getNombreDeLaMascota() { 
+    	return nombreDeLaMascota; 
+    }
+    
+    public void setNombreDeLaMascota(String nombreDeLaMascota) { 
+    	this.nombreDeLaMascota = nombreDeLaMascota;
+    }
+    
+    public String getNombre() { 
+    	return nombre; 
+    }
+    
+    public void setNombre(String nombre) { 
+    	this.nombre = nombre;
+    }
+    
+    public String getCiudad() { 
+    	return ciudad; 
+    }
+    
+    public void setCiudad(String ciudad) { 
+    	this.ciudad = ciudad; 
+    }
+    
+    public String getEntrenador() { 
+    	return entrenador; 
+    }
+    
+    public void setEntrenador(String entrenador) { 
+    	this.entrenador = entrenador; 
+    }
+    
+    public EstadisticasEquipo getEstadisticas() { 
+    	return estadisticas; 
+    }
+    
+    public void setEstadisticas(EstadisticasEquipo estadisticas) { 
+    	this.estadisticas = estadisticas;
+    }
 
     @Override
     public String toString() {

@@ -30,23 +30,90 @@ public class EstadisticasJugador implements Serializable {
         this.minutosJugados = 0;
     }
 
-    // Getters y Setters
-    public int getPuntosTotales() { return puntosTotales; }
-    public void setPuntosTotales(int puntosTotales) { this.puntosTotales = puntosTotales; }
-    public int getRebotes() { return rebotes; }
-    public void setRebotes(int rebotes) { this.rebotes = rebotes; }
-    public int getAsistencias() { return asistencias; }
-    public void setAsistencias(int asistencias) { this.asistencias = asistencias; }
-    public int getRobos() { return robos; }
-    public void setRobos(int robos) { this.robos = robos; }
-    public int getBloqueos() { return bloqueos; }
-    public void setBloqueos(int bloqueos) { this.bloqueos = bloqueos; }
-    public int getDoblesDobles() { return doblesDobles; }
-    public void setDoblesDobles(int doblesDobles) { this.doblesDobles = doblesDobles; }
-    public int getTriplesDobles() { return triplesDobles; }
-    public void setTriplesDobles(int triplesDobles) { this.triplesDobles = triplesDobles; }
-    public int getMinutosJugados() { return minutosJugados; }
-    public void setMinutosJugados(int minutosJugados) { this.minutosJugados = minutosJugados; }
+    public int getPuntosTotales() {
+        return puntosTotales;
+    }
+
+    public void setPuntosTotales(int puntosTotales) {
+        this.puntosTotales = puntosTotales;
+    }
+
+    public int getRebotes() {
+        return rebotes;
+    }
+
+    public void setRebotes(int rebotes) {
+        this.rebotes = rebotes;
+    }
+
+    public int getAsistencias() {
+        return asistencias;
+    }
+
+    public void setAsistencias(int asistencias) {
+        this.asistencias = asistencias;
+    }
+
+    public int getRobos() {
+        return robos;
+    }
+
+    public void setRobos(int robos) {
+        this.robos = robos;
+    }
+
+    public int getBloqueos() {
+        return bloqueos;
+    }
+
+    public void setBloqueos(int bloqueos) {
+        this.bloqueos = bloqueos;
+    }
+
+    public int getDoblesDobles() {
+        return doblesDobles;
+    }
+
+    public void setDoblesDobles(int doblesDobles) {
+        this.doblesDobles = doblesDobles;
+    }
+
+    public int getTriplesDobles() {
+        return triplesDobles;
+    }
+
+    public void setTriplesDobles(int triplesDobles) {
+        this.triplesDobles = triplesDobles;
+    }
+
+    public int getMinutosJugados() {
+        return minutosJugados;
+    }
+
+    public void setMinutosJugados(int minutosJugados) {
+        this.minutosJugados = minutosJugados;
+    }
+
+    public void agregarRebotes(int rebotes) {
+        this.rebotes += rebotes;
+    }
+
+    public void agregarAsistencias(int asistencias) {
+        this.asistencias += asistencias;
+    }
+
+    public void agregarRobos(int robos) {
+        this.robos += robos;
+    }
+
+    public void agregarBloqueos(int bloqueos) {
+        this.bloqueos += bloqueos;
+    }
+
+    public void agregarMinutosJugados(int minutos) {
+        this.minutosJugados += minutos;
+    }
+
 
     public void agregarPuntosNormales(int puntos) { 
         this.puntosNormales += puntos; 
@@ -60,11 +127,6 @@ public class EstadisticasJugador implements Serializable {
         this.puntosTirosLibres += tiros; 
         this.puntosTotales += tiros; 
     }
-    public void agregarRebotes(int rebotes) { this.rebotes += rebotes; }
-    public void agregarAsistencias(int asistencias) { this.asistencias += asistencias; }
-    public void agregarRobos(int robos) { this.robos += robos; }
-    public void agregarBloqueos(int bloqueos) { this.bloqueos += bloqueos; }
-    public void agregarMinutosJugados(int minutos) { this.minutosJugados += minutos; }
 
     public void verificarDoblesDobles() {
         int categoriasDobleDigito = 0;

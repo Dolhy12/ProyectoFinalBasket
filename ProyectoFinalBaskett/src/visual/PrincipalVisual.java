@@ -24,6 +24,14 @@ public class PrincipalVisual extends JFrame {
 
     private JPanel contentPane;
     ControladoraLiga controladora = ControladoraLiga.getInstance();
+    private String rolUsuario;
+    private JMenu mnCalendario;
+    private JMenuItem mntmVerCalendario;
+    private JMenuItem mntmAgregarJuego;
+    private JMenu mnEquipos;
+    private JMenu mnJugadores;
+    private JMenu mnEstadisticas;
+    private JMenu mnLesiones;
 
     /**
      * Launch the application.
@@ -32,8 +40,15 @@ public class PrincipalVisual extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    PrincipalVisual frame = new PrincipalVisual();
-                    frame.setVisible(true);
+                    Login login = new Login();
+                    login.setVisible(true);
+                    
+                    if (login.estaAutenticado()) {
+                        PrincipalVisual frame = new PrincipalVisual(login.getRol());
+                        frame.setVisible(true);
+                    } else {
+                        System.exit(0);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -42,10 +57,12 @@ public class PrincipalVisual extends JFrame {
     }
 
     /**
-     * Create the frame.
+     * Create the frame 
      */
-    public PrincipalVisual() {
-        setTitle("Serie Nacional de Basketball");
+    public PrincipalVisual(String rol) {
+        this.rolUsuario = rol;
+        
+        setTitle("Serie Nacional de Basketball - [" + rolUsuario + "]");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 900, 600);
         Dimension dim = getToolkit().getScreenSize();
@@ -57,88 +74,84 @@ public class PrincipalVisual extends JFrame {
         
         menuBar.setBackground(new Color(70, 70, 70));
         
-        JMenu mnCalendario = new JMenu("Calendario");
+        mnCalendario = new JMenu("Calendario");
         menuBar.add(mnCalendario);
 
-        JMenuItem mntmVerCalendario = new JMenuItem("Ver Calendario");
+        mntmVerCalendario = new JMenuItem("Ver Calendario");
         mntmVerCalendario.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		VerCalendario ventanaVerCalendario = new VerCalendario(controladora);
+            public void actionPerformed(ActionEvent e) {
+                VerCalendario ventanaVerCalendario = new VerCalendario(controladora, rolUsuario);
                 ventanaVerCalendario.setVisible(true);
-        	}
+            }
         });
         mnCalendario.add(mntmVerCalendario);
 
-        JMenuItem mntmAgregarJuego = new JMenuItem("Agregar Juego");
+        mntmAgregarJuego = new JMenuItem("Agregar Juego");
         mntmAgregarJuego.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		RegJuego ventanaJuego = new RegJuego();
-        		ventanaJuego.setVisible(true);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                RegJuego ventanaJuego = new RegJuego();
+                ventanaJuego.setVisible(true);
+            }
         });
         mnCalendario.add(mntmAgregarJuego);
-
-        JMenu mnEquipos = new JMenu("Equipos");
+        mnEquipos = new JMenu("Equipos");
         menuBar.add(mnEquipos);
 
         JMenuItem mntmRegistrarEquipo = new JMenuItem("Registrar Equipo");
         mntmRegistrarEquipo.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		RegEquipo ventanaRegEquipo = new RegEquipo();
-        		ventanaRegEquipo.setVisible(true);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                RegEquipo ventanaRegEquipo = new RegEquipo();
+                ventanaRegEquipo.setVisible(true);
+            }
         });
         mnEquipos.add(mntmRegistrarEquipo);
 
         JMenuItem mntmListarEquipos = new JMenuItem("Listar Equipos");
         mntmListarEquipos.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		ListarEquipos ventanaListEquipos = new ListarEquipos(controladora);
-        		ventanaListEquipos.setVisible(true);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                ListarEquipos ventanaListEquipos = new ListarEquipos(controladora);
+                ventanaListEquipos.setVisible(true);
+            }
         });
         
         JMenuItem mntmGestionarEquipo = new JMenuItem("Gestionar Equipo");
         mntmGestionarEquipo.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		
-        		GestionarEquipo ventana = new GestionarEquipo(controladora);
-        		                ventana.setVisible(true);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                GestionarEquipo ventana = new GestionarEquipo(controladora);
+                ventana.setVisible(true);
+            }
         });
         mnEquipos.add(mntmGestionarEquipo);
         mnEquipos.add(mntmListarEquipos);
-
-        JMenu mnJugadores = new JMenu("Jugadores");
+        mnJugadores = new JMenu("Jugadores");
         menuBar.add(mnJugadores);
 
         JMenuItem mntmRegistrarJugador = new JMenuItem("Registrar Jugador");
         mntmRegistrarJugador.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		RegJugador ventanaRegJugador = new RegJugador();
-        		ventanaRegJugador.setVisible(true);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                RegJugador ventanaRegJugador = new RegJugador();
+                ventanaRegJugador.setVisible(true);
+            }
         });
         mnJugadores.add(mntmRegistrarJugador);
 
         JMenuItem mntmListarJugadores = new JMenuItem("Listar Jugadores");
         mntmListarJugadores.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		ListarJugadores ventanaListJugadores = new ListarJugadores(controladora);
-        		ventanaListJugadores.setVisible(true);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                ListarJugadores ventanaListJugadores = new ListarJugadores(controladora);
+                ventanaListJugadores.setVisible(true);
+            }
         });
         mnJugadores.add(mntmListarJugadores);
-
-        JMenu mnEstadisticas = new JMenu("Estadísticas");
+        mnEstadisticas = new JMenu("Estadísticas");
         menuBar.add(mnEstadisticas);
 
         JMenuItem mntmEstadisticasEquipos = new JMenuItem("Estadísticas de Equipos");
         mntmEstadisticasEquipos.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 ListarEstadisticasEquipo ventanaEst = new ListarEstadisticasEquipo(controladora);
                 ventanaEst.setVisible(true);
-        	}
+            }
         });
         mnEstadisticas.add(mntmEstadisticasEquipos);
 
@@ -150,76 +163,28 @@ public class PrincipalVisual extends JFrame {
             }
         });
         mnEstadisticas.add(mntmEstadisticasJugadores);
-
-        JMenu mnLesiones = new JMenu("Lesiones");
+        mnLesiones = new JMenu("Lesiones");
         menuBar.add(mnLesiones);
 
         JMenuItem mntmRegistrarLesion = new JMenuItem("Registrar Lesión");
         mntmRegistrarLesion.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		RegLesion ventanaLesion = new RegLesion(controladora);
+            public void actionPerformed(ActionEvent e) {
+                RegLesion ventanaLesion = new RegLesion(controladora);
                 ventanaLesion.setVisible(true);
-        	}
+            }
         });
         mnLesiones.add(mntmRegistrarLesion);
 
         JMenuItem mntmListarLesiones = new JMenuItem("Listar Lesiones");
         mntmListarLesiones.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		ListarLesiones ventanaListLesiones = new ListarLesiones(controladora);
-        		ventanaListLesiones.setVisible(true);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                ListarLesiones ventanaListLesiones = new ListarLesiones(controladora);
+                ventanaListLesiones.setVisible(true);
+            }
         });
         mnLesiones.add(mntmListarLesiones);
-        
-        for (int i = 0; i < menuBar.getMenuCount(); i++) {
-            JMenu menu = menuBar.getMenu(i);
-            menu.setOpaque(true);
-            menu.setBackground(new Color(70, 70, 70));
-            menu.setForeground(Color.WHITE);
-        }
-        
-        for (int i = 0; i < mnCalendario.getItemCount(); i++) {
-            JMenuItem item = mnCalendario.getItem(i);
-            item.setOpaque(true);
-            item.setBackground(new Color(90, 90, 90)); 
-            item.setForeground(Color.WHITE);
-        }
-        
-        for (int i = 0; i < mnEquipos.getItemCount(); i++) {
-            JMenuItem item = mnEquipos.getItem(i);
-            item.setOpaque(true);
-            item.setBackground(new Color(90, 90, 90)); 
-            item.setForeground(Color.WHITE);
-        }
-        
-        for (int i = 0; i < mnEquipos.getItemCount(); i++) {
-            JMenuItem item = mnEquipos.getItem(i);
-            item.setOpaque(true);
-            item.setBackground(new Color(90, 90, 90)); 
-            item.setForeground(Color.WHITE);
-        }
-        
-        for (int i = 0; i < mnJugadores.getItemCount(); i++) {
-            JMenuItem item = mnJugadores.getItem(i);
-            item.setOpaque(true);
-            item.setBackground(new Color(90, 90, 90)); 
-            item.setForeground(Color.WHITE);
-        }
-        
-        for (int i = 0; i < mnEstadisticas.getItemCount(); i++) {
-            JMenuItem item = mnEstadisticas.getItem(i);
-            item.setOpaque(true);
-            item.setBackground(new Color(90, 90, 90)); 
-            item.setForeground(Color.WHITE);
-        }
-        
-        for (int i = 0; i < mnLesiones.getItemCount(); i++) {
-            JMenuItem item = mnLesiones.getItem(i);
-            item.setOpaque(true);
-            item.setBackground(new Color(90, 90, 90)); 
-            item.setForeground(Color.WHITE);
-        }
+        configurarColoresMenu(menuBar);
+        configurarAccesoSegunRol();
         
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -241,7 +206,7 @@ public class PrincipalVisual extends JFrame {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 fondoLabel.setSize(getWidth(), getHeight());
             }
-        }); 
+        });
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -250,5 +215,41 @@ public class PrincipalVisual extends JFrame {
                 System.exit(0); 
             }
         });
+    }
+    
+    private void configurarAccesoSegunRol() {
+        if (rolUsuario.equals("Anotador")) {
+            mnEquipos.setEnabled(false);
+            mnJugadores.setEnabled(false);
+            mnEstadisticas.setEnabled(false);
+            mnLesiones.setEnabled(false);
+            mntmAgregarJuego.setEnabled(false);
+        }
+    }
+    
+    private void configurarColoresMenu(JMenuBar menuBar) {
+        for (int i = 0; i < menuBar.getMenuCount(); i++) {
+            JMenu menu = menuBar.getMenu(i);
+            menu.setOpaque(true);
+            menu.setBackground(new Color(70, 70, 70));
+            menu.setForeground(Color.WHITE);
+        }
+        
+        configurarColorMenuItems(mnCalendario);
+        configurarColorMenuItems(mnEquipos);
+        configurarColorMenuItems(mnJugadores);
+        configurarColorMenuItems(mnEstadisticas);
+        configurarColorMenuItems(mnLesiones);
+    }
+    
+    private void configurarColorMenuItems(JMenu menu) {
+        for (int i = 0; i < menu.getItemCount(); i++) {
+            JMenuItem item = menu.getItem(i);
+            if (item != null) {
+                item.setOpaque(true);
+                item.setBackground(new Color(90, 90, 90)); 
+                item.setForeground(Color.WHITE);
+            }
+        }
     }
 }

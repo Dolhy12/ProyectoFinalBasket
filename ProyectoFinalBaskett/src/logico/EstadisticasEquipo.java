@@ -22,20 +22,61 @@ public class EstadisticasEquipo implements Serializable {
         this.asistenciasTotales = 0;
     }
 
-    public int getPartidosJugados() { return partidosJugados; }
-    public void setPartidosJugados(int partidosJugados) { this.partidosJugados = partidosJugados; }
-    public int getVictorias() { return victorias; }
-    public void setVictorias(int victorias) { this.victorias = victorias; }
-    public int getDerrotas() { return derrotas; }
-    public void setDerrotas(int derrotas) { this.derrotas = derrotas; }
-    public int getTotalPuntos() { return totalPuntos; }
-    public void setTotalPuntos(int totalPuntos) { this.totalPuntos = totalPuntos; }
-    public int getRobosTotales() { return robosTotales; }
-    public void setRobosTotales(int robosTotales) { this.robosTotales = robosTotales; }
-    public int getBloqueosTotales() { return bloqueosTotales; }
-    public void setBloqueosTotales(int bloqueosTotales) { this.bloqueosTotales = bloqueosTotales; }
-    public int getAsistenciasTotales() { return asistenciasTotales; }
-    public void setAsistenciasTotales(int asistenciasTotales) { this.asistenciasTotales = asistenciasTotales; }
+    public int getPartidosJugados() {
+        return partidosJugados;
+    }
+
+    public void setPartidosJugados(int partidosJugados) {
+        this.partidosJugados = partidosJugados;
+    }
+
+    public int getVictorias() {
+        return victorias;
+    }
+
+    public void setVictorias(int victorias) {
+        this.victorias = victorias;
+    }
+
+    public int getDerrotas() {
+        return derrotas;
+    }
+
+    public void setDerrotas(int derrotas) {
+        this.derrotas = derrotas;
+    }
+
+    public int getTotalPuntos() {
+        return totalPuntos;
+    }
+
+    public void setTotalPuntos(int totalPuntos) {
+        this.totalPuntos = totalPuntos;
+    }
+
+    public int getRobosTotales() {
+        return robosTotales;
+    }
+
+    public void setRobosTotales(int robosTotales) {
+        this.robosTotales = robosTotales;
+    }
+
+    public int getBloqueosTotales() {
+        return bloqueosTotales;
+    }
+
+    public void setBloqueosTotales(int bloqueosTotales) {
+        this.bloqueosTotales = bloqueosTotales;
+    }
+
+    public int getAsistenciasTotales() {
+        return asistenciasTotales;
+    }
+
+    public void setAsistenciasTotales(int asistenciasTotales) {
+        this.asistenciasTotales = asistenciasTotales;
+    }
 
     public float getPorcentajeVictorias() {
         return partidosJugados > 0 ? (victorias * 100.0f / partidosJugados) : 0;

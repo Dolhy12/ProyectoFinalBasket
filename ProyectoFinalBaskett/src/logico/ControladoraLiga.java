@@ -154,10 +154,21 @@ public class ControladoraLiga {
         guardarDatos();
     }
 
-    public ArrayList<Equipo> getMisEquipos() { return misEquipos; }
-    public ArrayList<Jugador> getMisJugadores() { return misJugadores; }
-    public CalendarioJuegos getCalendario() { return calendario; }
-    public void setCalendario(CalendarioJuegos calendario) { this.calendario = calendario; }
+    public ArrayList<Equipo> getMisEquipos() { 
+    	return misEquipos; 
+    }
+    
+    public ArrayList<Jugador> getMisJugadores() { 
+    	return misJugadores; 
+    }
+    
+    public CalendarioJuegos getCalendario() { 
+    	return calendario; 
+    }
+    
+    public void setCalendario(CalendarioJuegos calendario) {
+    	this.calendario = calendario; 
+    }
 
     public void guardarDatos() {
         try {

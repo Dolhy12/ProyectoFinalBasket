@@ -21,16 +21,52 @@ public class Lesion implements Serializable {
         this.estado = "Activa";
     }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
-    public String getParteCuerpo() { return parteCuerpo; }
-    public void setParteCuerpo(String parteCuerpo) { this.parteCuerpo = parteCuerpo; }
-    public int getDuracionEstimada() { return duracionEstimada; }
-    public void setDuracionEstimada(int duracionEstimada) { this.duracionEstimada = duracionEstimada; }
-    public String getTratamiento() { return tratamiento; }
-    public void setTratamiento(String tratamiento) { this.tratamiento = tratamiento; }
-    public LocalDate getFechaLesion() { return fechaLesion; }
-    public void setFechaLesion(LocalDate fechaLesion) { this.fechaLesion = fechaLesion; }
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getParteCuerpo() {
+        return parteCuerpo;
+    }
+
+    public void setParteCuerpo(String parteCuerpo) {
+        this.parteCuerpo = parteCuerpo;
+    }
+
+    public int getDuracionEstimada() {
+        return duracionEstimada;
+    }
+
+    public void setDuracionEstimada(int duracionEstimada) {
+        this.duracionEstimada = duracionEstimada;
+    }
+
+    public String getTratamiento() {
+        return tratamiento;
+    }
+
+    public void setTratamiento(String tratamiento) {
+        this.tratamiento = tratamiento;
+    }
+
+    public LocalDate getFechaLesion() {
+        return fechaLesion;
+    }
+
+    public void setFechaLesion(LocalDate fechaLesion) {
+        this.fechaLesion = fechaLesion;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
 }
