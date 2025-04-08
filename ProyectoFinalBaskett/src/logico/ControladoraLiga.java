@@ -1,20 +1,24 @@
 package logico;
 
-import java.sql.Date;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class ControladoraLiga {
-    private static ControladoraLiga instance;
-    private ArrayList<Jugador> misJugadores = new ArrayList<>();
-    private ArrayList<Equipo> misEquipos = new ArrayList<>();
-    private CalendarioJuegos calendario = new CalendarioJuegos();
+    private static ControladoraLiga instance = null;
+    private ArrayList<Equipo> misEquipos;
+    private ArrayList<Jugador> misJugadores;
+    private CalendarioJuegos calendario;
+
+    private static final String ARCHIVO_EQUIPOS = "equipos.dat";
+    private static final String ARCHIVO_JUGADORES = "jugadores.dat";
+    private static final String ARCHIVO_CALENDARIO = "calendario.dat";
 
     private ControladoraLiga() {
-        this.misEquipos = new ArrayList<>();
-        this.misJugadores = new ArrayList<>();
-        this.calendario = new CalendarioJuegos();
+        misEquipos = new ArrayList<>();
+        misJugadores = new ArrayList<>();
+        calendario = new CalendarioJuegos();
+        cargarDatos();
     }
 
     public static ControladoraLiga getInstance() {
@@ -24,325 +28,181 @@ public class ControladoraLiga {
         return instance;
     }
 
+    
     public void agregarEquipo(Equipo equipo) {
-        if (equipo != null && !misEquipos.contains(equipo)) {
-            misEquipos.add(equipo);
-            for (Jugador jugador : equipo.getJugadores()) {
-                if (!misJugadores.contains(jugador)) {
-                    misJugadores.add(jugador);
-                }
-            }
-        }
-    }
-
-    public boolean eliminarEquipo(String idEquipo) {
-        Equipo equipo = buscarEquipo(idEquipo);
-        if (equipo != null) {
-            for (Jugador jugador : equipo.getJugadores()) {
-                boolean enOtroEquipo = false;
-                for (Equipo e : misEquipos) {
-                    if (!e.getID().equals(idEquipo) && e.getJugadores().contains(jugador)) {
-                        enOtroEquipo = true;
-                        break;
-                    }
-                }
-                if (!enOtroEquipo) {
-                    misJugadores.remove(jugador);
-                }
-            }
-            return misEquipos.remove(equipo);
-        }
-        return false;
-    }
-
-    public Equipo buscarEquipo(String idEquipo) {
-        for (Equipo equipo : misEquipos) {
-            if (equipo.getID().equals(idEquipo)) {
-                return equipo;
-            }
-        }
-        return null;
+        misEquipos.add(equipo);
+        guardarDatos();
     }
 
     public void agregarJugador(Jugador jugador) {
-        if (jugador != null && !misJugadores.contains(jugador)) {
-            misJugadores.add(jugador);
-        }
-    }
-
-    public boolean eliminarJugador(String idJugador) {
-        Jugador jugador = buscarJugador(idJugador);
-        if (jugador != null) {
-            for (Equipo equipo : misEquipos) {
-                equipo.getJugadores().remove(jugador);
-            }
-            return misJugadores.remove(jugador);
-        }
-        return false;
-    }
-
-    public Jugador buscarJugador(String id) {
-        return misJugadores.stream()
-            .filter(j -> j.getID().equals(id))
-            .findFirst()
-            .orElse(null);
+        misJugadores.add(jugador);
+        guardarDatos();
     }
 
     public void agregarJuego(Juego juego) {
         calendario.getJuegos().add(juego);
+        guardarDatos();
     }
 
-    public boolean eliminarJuego(String idJuego) {
-        return calendario.eliminarJuego(idJuego);
-    }
-
-    public void actualizarResultadoJuego(String idJuego, Resultado resultado) {
-        Juego juego = calendario.buscarJuego(idJuego);
-        if (juego != null) {
-            calendario.actualizarResultadoJuego(idJuego, resultado);
-            actualizarEquipo(juego.getEquipoLocal());
-            actualizarEquipo(juego.getEquipoVisitante());
-        }
-    }
-
-    public Juego buscarJuego(String idJuego) {
-        return calendario.buscarJuego(idJuego);
-    }
-
-    public ArrayList<Jugador> getJugadoresPorEquipo(String idEquipo) {
-        Equipo equipo = buscarEquipo(idEquipo);
-        if (equipo != null) {
-            return new ArrayList<>(equipo.getJugadores());
-        }
-        return new ArrayList<>();
-    }
-
-    public ArrayList<Juego> getJuegosPorEquipo(String idEquipo) {
-        return calendario.getJuegos().stream()
-            .filter(j -> j.getEquipoLocal().getID().equals(idEquipo) || 
-                         j.getEquipoVisitante().getID().equals(idEquipo))
-            .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public ArrayList<Equipo> getMisEquipos() {
-        return misEquipos;
-    }
-
-    public void setMisEquipos(ArrayList<Equipo> misEquipos) {
-        this.misEquipos = misEquipos;
-        this.misJugadores.clear();
-        for (Equipo equipo : misEquipos) {
-            for (Jugador jugador : equipo.getJugadores()) {
-                if (!misJugadores.contains(jugador)) {
-                    misJugadores.add(jugador);
-                }
+    public void actualizarEquipo(Equipo equipo) {
+        for (int i = 0; i < misEquipos.size(); i++) {
+            if (misEquipos.get(i).getID().equals(equipo.getID())) {
+                misEquipos.set(i, equipo);
+                break;
             }
         }
+        guardarDatos();
     }
 
-    public ArrayList<Jugador> getMisJugadores() {
-        return misJugadores;
+    public void eliminarEquipo(String id) {
+        misEquipos.removeIf(e -> e.getID().equals(id));
+        guardarDatos();
     }
 
-    public void setMisJugadores(ArrayList<Jugador> misJugadores) {
-        this.misJugadores = misJugadores;
+    public void eliminarJugador(String id) {
+        misJugadores.removeIf(j -> j.getID().equals(id));
+        guardarDatos();
     }
 
-    public CalendarioJuegos getCalendario() {
-        if (calendario == null) {
-            calendario = new CalendarioJuegos();
-        }
-        return calendario;
-    }
-    public void setCalendario(CalendarioJuegos calendario) {
-        this.calendario = calendario;
+    public Equipo buscarEquipo(String id) {
+        return misEquipos.stream().filter(e -> e.getID().equals(id)).findFirst().orElse(null);
     }
 
-    public boolean existeEquipo(String idEquipo) {
-        return buscarEquipo(idEquipo) != null;
+    public Jugador buscarJugador(String id) {
+        return misJugadores.stream().filter(j -> j.getID().equals(id)).findFirst().orElse(null);
     }
 
-    public boolean existeJugador(String idJugador) {
-        return buscarJugador(idJugador) != null;
+    public boolean existeJugador(String id) {
+        return misJugadores.stream().anyMatch(j -> j.getID().equals(id));
     }
 
-    public boolean existeJuego(String idJuego) {
-        return buscarJuego(idJuego) != null;
-    }
-
-    public void transferirJugador(String idJugador, String idEquipoOrigen, String idEquipoDestino) {
-        Jugador jugador = buscarJugador(idJugador);
-        Equipo equipoOrigen = buscarEquipo(idEquipoOrigen);
-        Equipo equipoDestino = buscarEquipo(idEquipoDestino);
-
-        if (jugador != null && equipoOrigen != null && equipoDestino != null) {
-            if (equipoOrigen.getJugadores().remove(jugador)) {
-                equipoDestino.getJugadores().add(jugador);
+    public void actualizarJugador(Jugador jugador) {
+        for (int i = 0; i < misJugadores.size(); i++) {
+            if (misJugadores.get(i).getID().equals(jugador.getID())) {
+                misJugadores.set(i, jugador);
+                break;
             }
         }
+        guardarDatos();
     }
 
-    public ArrayList<Jugador> buscarJugadoresPorNombre(String nombre) {
-        ArrayList<Jugador> resultados = new ArrayList<>();
-        for (Jugador jugador : misJugadores) {
-            if (jugador.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
-                resultados.add(jugador);
-            }
-        }
-        return resultados;
-    }
-
-    public ArrayList<Equipo> buscarEquiposPorCiudad(String ciudad) {
-        ArrayList<Equipo> resultados = new ArrayList<>();
-        for (Equipo equipo : misEquipos) {
-            if (equipo.getCiudad().equalsIgnoreCase(ciudad)) {
-                resultados.add(equipo);
-            }
-        }
-        return resultados;
-    }
-    
-    public ArrayList<Equipo> generarClasificacion() {
-        return (ArrayList<Equipo>) misEquipos.stream()
-            .sorted((e1, e2) -> {
-                int cmp = Integer.compare(e2.getEstadisticas().getVictorias(), e1.getEstadisticas().getVictorias());
-                if (cmp == 0) {
-                    cmp = Integer.compare(e2.getEstadisticas().getTotalPuntos(), e1.getEstadisticas().getTotalPuntos());
-                }
-                return cmp;
-            })
-            .collect(Collectors.toList());
-    }
-    
-    public ArrayList<Jugador> reportarJugadoresLesionados() {
-        return (ArrayList<Jugador>) misJugadores.stream()
-            .filter(j -> j.getLesiones().stream().anyMatch(l -> l.getEstado().equals("Activa")))
-            .collect(Collectors.toList());
-    }
-    
-    public ArrayList<Jugador> topJugadoresPorPuntos() {
-        return (ArrayList<Jugador>) misJugadores.stream()
-            .sorted((j1, j2) -> Integer.compare(j2.getEstadisticas().getPuntosTotales(), j1.getEstadisticas().getPuntosTotales()))
-            .limit(10)
-            .collect(Collectors.toList());
-    }
-    
-    public void modificarEquipo(String idEquipo, String nombre, String ciudad, String entrenador, Jugador capitan, String nombreDeLaMascota, String tiempoFundado) {
-        Equipo equipo = buscarEquipo(idEquipo);
-        if (equipo != null) {
-            equipo.setNombre(nombre);
-            equipo.setCiudad(ciudad);
-            equipo.setEntrenador(entrenador);
-            equipo.setNombreDeLaMascota(nombreDeLaMascota);
-            equipo.setTiempoFundado(tiempoFundado);
-        }
-    }
-
-    public void agregarJugadorAEquipo(String idJugador, String idEquipo) {
-        Jugador jugador = buscarJugador(idJugador);
-        Equipo equipo = buscarEquipo(idEquipo);
-        if (jugador != null && equipo != null && !equipo.getJugadores().contains(jugador)) {
-            equipo.agregarJugador(jugador);
-            if (!misJugadores.contains(jugador)) {
-                misJugadores.add(jugador);
-            }
-        }
-    }
-
-    public void modificarJugador(String idJugador, String nombre, int edad, String posicion, int numero) {
+    public void agregarLesionAJugador(String idJugador, String tipo, String parteCuerpo, int duracionEstimada, 
+                                     String tratamiento, LocalDate fechaLesion, int duracion) {
         Jugador jugador = buscarJugador(idJugador);
         if (jugador != null) {
-            jugador.setNombre(nombre);
-            jugador.setEdad(edad);
-            jugador.setPosicion(posicion);
-            jugador.setNumero(numero);
+            Lesion lesion = new Lesion(tipo, parteCuerpo, duracionEstimada, tratamiento, fechaLesion);
+            jugador.getLesiones().add(lesion);
+            guardarDatos();
         }
-    }
-
-    public void agregarLesionAJugador(String idJugador, String tipo, String parteCuerpo, int diasBajaEstimado, String tratamiento, LocalDate fechaLesion, int duracionEstimada) {
-        Jugador jugador = buscarJugador(idJugador);
-        if (jugador != null) {
-            Lesion lesion = new Lesion(tipo, parteCuerpo, diasBajaEstimado, tratamiento, fechaLesion, duracionEstimada);
-            jugador.agregarLesion(lesion);
-        }
-    }
-
-    public void verificarLesionesJugadores() {
-        LocalDate hoy = LocalDate.now();
-        for (Jugador jugador : misJugadores) {
-            jugador.getLesiones().removeIf(lesion -> {
-                LocalDate fechaFin = lesion.getFechaLesion().plusDays(lesion.getDuracionEstimada());
-                if (hoy.isAfter(fechaFin)) {
-                    lesion.setEstado("Recuperada");
-                    return true; 
-                }
-                return false;
-            });
-        }
-    }
-
-    public void eliminarLesionDeJugador(String idJugador, String tipoLesion) {
-        Jugador jugador = buscarJugador(idJugador);
-        if (jugador != null) {
-            jugador.getLesiones().removeIf(l -> l.getTipo().equals(tipoLesion));
-        }
-    }
-
-    public ArrayList<Jugador> getJugadoresLesionadosPorEquipo(String idEquipo) {
-        Equipo equipo = buscarEquipo(idEquipo);
-        if (equipo == null) return new ArrayList<>();
-        return equipo.getJugadores().stream()
-            .filter(j -> !j.getLesionesActivas().isEmpty())
-            .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public ArrayList<Juego> getJuegosPorJugador(String idJugador) {
-        ArrayList<Juego> juegosDelJugador = new ArrayList<>();
-        for (Juego juego : calendario.getJuegos()) {
-            if (juego.getEquipoLocal().buscarJugador(idJugador) != null ||
-                juego.getEquipoVisitante().buscarJugador(idJugador) != null) {
-                juegosDelJugador.add(juego);
-            }
-        }
-        return juegosDelJugador;
     }
 
     public Equipo buscarEquipoPorJugador(String idJugador) {
-        for (Equipo equipo : misEquipos) {
-            for (Jugador jugador : equipo.getJugadores()) {
-                if (jugador.getID().equals(idJugador)) {
-                    return equipo;
-                }
-            }
-        }
-        return null;
+        return misEquipos.stream()
+                .filter(e -> e.getJugadores().stream().anyMatch(j -> j.getID().equals(idJugador)))
+                .findFirst().orElse(null);
     }
 
-    public void actualizarEquipo(Equipo equipoActualizado) {
-        for (int i = 0; i < misEquipos.size(); i++) {
-            if (misEquipos.get(i).getID().equals(equipoActualizado.getID())) {
-                misEquipos.set(i, equipoActualizado);
+    public ArrayList<Juego> getJuegosPorJugador(String idJugador) {
+        ArrayList<Juego> juegosJugador = new ArrayList<>();
+        for (Juego juego : calendario.getJuegos()) {
+            if ((juego.getEquipoLocal().getJugadores().stream().anyMatch(j -> j.getID().equals(idJugador)) ||
+                 juego.getEquipoVisitante().getJugadores().stream().anyMatch(j -> j.getID().equals(idJugador))) &&
+                juego.getResultado() != null) {
+                juegosJugador.add(juego);
+            }
+        }
+        return juegosJugador;
+    }
+
+    public void actualizarResultadoJuego(String idJuego, Resultado resultado) {
+        for (Juego juego : calendario.getJuegos()) {
+            if (juego.getID().equals(idJuego)) {
+                juego.setResultado(resultado);
+                juego.setEstado("Finalizado");
+                
+                EstadisticasEquipo statsLocal = juego.getEquipoLocal().getEstadisticas();
+                statsLocal.setPartidosJugados(statsLocal.getPartidosJugados() + 1);
+                statsLocal.setTotalPuntos(statsLocal.getTotalPuntos() + resultado.getPuntosLocal());
+                for (int[] stats : resultado.getStatsLocales()) {
+                    statsLocal.setRobosTotales(statsLocal.getRobosTotales() + stats[3]);
+                    statsLocal.setBloqueosTotales(statsLocal.getBloqueosTotales() + stats[4]);
+                    statsLocal.setAsistenciasTotales(statsLocal.getAsistenciasTotales() + stats[2]);
+                }
+                if (resultado.getPuntosLocal() > resultado.getPuntosVisitante()) {
+                    statsLocal.setVictorias(statsLocal.getVictorias() + 1);
+                } else {
+                    statsLocal.setDerrotas(statsLocal.getDerrotas() + 1);
+                }
+
+                EstadisticasEquipo statsVisitante = juego.getEquipoVisitante().getEstadisticas();
+                statsVisitante.setPartidosJugados(statsVisitante.getPartidosJugados() + 1);
+                statsVisitante.setTotalPuntos(statsVisitante.getTotalPuntos() + resultado.getPuntosVisitante());
+                for (int[] stats : resultado.getStatsVisitantes()) {
+                    statsVisitante.setRobosTotales(statsVisitante.getRobosTotales() + stats[3]);
+                    statsVisitante.setBloqueosTotales(statsVisitante.getBloqueosTotales() + stats[4]);
+                    statsVisitante.setAsistenciasTotales(statsVisitante.getAsistenciasTotales() + stats[2]);
+                }
+                if (resultado.getPuntosVisitante() > resultado.getPuntosLocal()) {
+                    statsVisitante.setVictorias(statsVisitante.getVictorias() + 1);
+                } else {
+                    statsVisitante.setDerrotas(statsVisitante.getDerrotas() + 1);
+                }
+                
                 break;
             }
         }
+        guardarDatos();
     }
 
-    public void actualizarJugador(Jugador jugadorEditando) {
-        for (int i = 0; i < misJugadores.size(); i++) {
-            if (misJugadores.get(i).getID().equals(jugadorEditando.getID())) {
-                misJugadores.set(i, jugadorEditando);
-                break;
+    public ArrayList<Equipo> getMisEquipos() { return misEquipos; }
+    public ArrayList<Jugador> getMisJugadores() { return misJugadores; }
+    public CalendarioJuegos getCalendario() { return calendario; }
+    public void setCalendario(CalendarioJuegos calendario) { this.calendario = calendario; }
+
+    public void guardarDatos() {
+        try {
+            try (ObjectOutputStream oosEquipos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_EQUIPOS))) {
+                oosEquipos.writeObject(misEquipos);
             }
+            try (ObjectOutputStream oosJugadores = new ObjectOutputStream(new FileOutputStream(ARCHIVO_JUGADORES))) {
+                oosJugadores.writeObject(misJugadores);
+            }
+            try (ObjectOutputStream oosCalendario = new ObjectOutputStream(new FileOutputStream(ARCHIVO_CALENDARIO))) {
+                oosCalendario.writeObject(calendario);
+            }
+            System.out.println("Datos guardados exitosamente en archivos .dat");
+        } catch (IOException e) {
+            System.err.println("Error al guardar datos: " + e.getMessage());
         }
-        
-        
-        for (Equipo equipo : misEquipos) {
-            for (int i = 0; i < equipo.getJugadores().size(); i++) {
-                if (equipo.getJugadores().get(i).getID().equals(jugadorEditando.getID())) {
-                    equipo.getJugadores().set(i, jugadorEditando);
-                    break;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void cargarDatos() {
+        try {
+            File archivoEquipos = new File(ARCHIVO_EQUIPOS);
+            if (archivoEquipos.exists()) {
+                try (ObjectInputStream oisEquipos = new ObjectInputStream(new FileInputStream(ARCHIVO_EQUIPOS))) {
+                    misEquipos = (ArrayList<Equipo>) oisEquipos.readObject();
                 }
             }
+            File archivoJugadores = new File(ARCHIVO_JUGADORES);
+            if (archivoJugadores.exists()) {
+                try (ObjectInputStream oisJugadores = new ObjectInputStream(new FileInputStream(ARCHIVO_JUGADORES))) {
+                    misJugadores = (ArrayList<Jugador>) oisJugadores.readObject();
+                }
+            }
+            File archivoCalendario = new File(ARCHIVO_CALENDARIO);
+            if (archivoCalendario.exists()) {
+                try (ObjectInputStream oisCalendario = new ObjectInputStream(new FileInputStream(ARCHIVO_CALENDARIO))) {
+                    calendario = (CalendarioJuegos) oisCalendario.readObject();
+                }
+            }
+            System.out.println("Datos cargados exitosamente desde archivos .dat");
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error al cargar datos: " + e.getMessage());
+            misEquipos = new ArrayList<>();
+            misJugadores = new ArrayList<>();
+            calendario = new CalendarioJuegos();
         }
     }
 }

@@ -17,6 +17,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane; 
 import javax.swing.border.BevelBorder;
 import logico.ControladoraLiga; 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class PrincipalVisual extends JFrame {
 
@@ -240,5 +242,13 @@ public class PrincipalVisual extends JFrame {
                 fondoLabel.setSize(getWidth(), getHeight());
             }
         }); 
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                controladora.guardarDatos(); 
+                System.exit(0); 
+            }
+        });
     }
 }

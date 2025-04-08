@@ -1,86 +1,66 @@
 package logico;
 
-import java.time.LocalDate;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Jugador {
+public class Jugador implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String ID;
     private String nombre;
     private int edad;
     private String posicion;
-    private String nacionalidad; 
-    private Date fechaDeNacimiento; 
-    private float peso; 
-    private float altura; 
+    private String nacionalidad;
+    private Date fechaDeNacimiento;
+    private float peso;
+    private float altura;
     private int numero;
-    private ArrayList<Lesion> lesiones;
     private EstadisticasJugador estadisticas;
+    private ArrayList<Lesion> lesiones;
 
-    public Jugador(String ID, String nombre, int edad, String posicion, String nacionalidad, Date fechaDeNacimiento, float peso, float altura, int numero) {
+    public Jugador(String ID, String nombre, int edad, String posicion, String nacionalidad, 
+                   Date fechaDeNacimiento, float peso, float altura, int numero) {
         this.ID = ID;
         this.nombre = nombre;
         this.edad = edad;
         this.posicion = posicion;
-        this.peso = peso; 
-        this.nacionalidad = nacionalidad; 
+        this.nacionalidad = nacionalidad;
         this.fechaDeNacimiento = fechaDeNacimiento;
-        this.altura = altura; 
+        this.peso = peso;
+        this.altura = altura;
         this.numero = numero;
-        this.lesiones = new ArrayList<>();
         this.estadisticas = new EstadisticasJugador();
+        this.lesiones = new ArrayList<>();
     }
 
+    // Getters y Setters
     public String getID() { return ID; }
-    public String getNombre() { return nombre; }
-    public int getEdad() { return edad; }
-    public String getPosicion() { return posicion; }
-    public String getNacionalidad() { return nacionalidad; }
-    public Date getFechaDeNacimiento() { return fechaDeNacimiento; }
-    public float getPeso() { return peso; }
-    public float getAltura() { return altura; }
-    public int getNumero() { return numero; }
-    public ArrayList<Lesion> getLesiones() { return lesiones; }
-    public EstadisticasJugador getEstadisticas() { return estadisticas; }
-
     public void setID(String ID) { this.ID = ID; }
+    public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
+    public int getEdad() { return edad; }
     public void setEdad(int edad) { this.edad = edad; }
+    public String getPosicion() { return posicion; }
     public void setPosicion(String posicion) { this.posicion = posicion; }
+    public String getNacionalidad() { return nacionalidad; }
     public void setNacionalidad(String nacionalidad) { this.nacionalidad = nacionalidad; }
+    public Date getFechaDeNacimiento() { return fechaDeNacimiento; }
     public void setFechaDeNacimiento(Date fechaDeNacimiento) { this.fechaDeNacimiento = fechaDeNacimiento; }
+    public float getPeso() { return peso; }
     public void setPeso(float peso) { this.peso = peso; }
+    public float getAltura() { return altura; }
     public void setAltura(float altura) { this.altura = altura; }
+    public int getNumero() { return numero; }
     public void setNumero(int numero) { this.numero = numero; }
-    public void setLesiones(ArrayList<Lesion> lesiones) { this.lesiones = lesiones; }
+    public EstadisticasJugador getEstadisticas() { return estadisticas; }
     public void setEstadisticas(EstadisticasJugador estadisticas) { this.estadisticas = estadisticas; }
-
-    public void agregarLesion(Lesion lesion) {
-        if (!lesiones.contains(lesion)) { 
-            lesiones.add(lesion);
-        }
-    }
-
-    public void verificarLesiones() {
-        LocalDate hoy = LocalDate.now();
-        lesiones.removeIf(lesion -> {
-            LocalDate fechaFin = lesion.getFechaLesion().plusDays(lesion.getDuracionEstimada());
-            if (hoy.isAfter(fechaFin)) {
-                lesion.setEstado("Recuperada");
-                return true;
-            }
-            return false;
-        });
-    }
-
-    public boolean eliminarLesion(String tipo) {
-        return lesiones.removeIf(l -> l.getTipo().equals(tipo));
-    }
+    public ArrayList<Lesion> getLesiones() { return lesiones; }
+    public void setLesiones(ArrayList<Lesion> lesiones) { this.lesiones = lesiones; }
 
     public ArrayList<Lesion> getLesionesActivas() {
         ArrayList<Lesion> activas = new ArrayList<>();
         for (Lesion lesion : lesiones) {
-            if (lesion.getEstado().equals("Activa")) {
+            if ("Activa".equals(lesion.getEstado())) {
                 activas.add(lesion);
             }
         }
@@ -88,15 +68,7 @@ public class Jugador {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Jugador jugador = (Jugador) o;
-        return ID.equals(jugador.ID);
-    }
-    
-    @Override
     public String toString() {
-        return nombre + " (" + ID + ") - " + posicion;
+        return ID + " - " + nombre + " (" + posicion + ")";
     }
 }

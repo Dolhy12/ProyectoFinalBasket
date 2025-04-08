@@ -1,80 +1,40 @@
 package logico;
 
-import java.time.LocalDate;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Juego {
+public class Juego implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String ID;
-    private LocalDateTime fechaHora;
+    private LocalDateTime fecha;
     private String lugar;
-    private String estado;
     private Equipo equipoLocal;
     private Equipo equipoVisitante;
     private Resultado resultado;
+    private String estado;
 
-    public Juego(String ID, LocalDateTime fechaHora, String lugar, Equipo local, Equipo visitante)  {
+    public Juego(String ID, LocalDateTime fecha, String lugar, Equipo equipoLocal, Equipo equipoVisitante) {
         this.ID = ID;
-        this.fechaHora = fechaHora;
+        this.fecha = fecha;
         this.lugar = lugar;
-        this.estado = "Programado";
-        this.equipoLocal = local;
-        this.equipoVisitante = visitante;
-    }
-
-    public String getID() {
-        return ID;
-    }
-
-    public LocalDateTime getFecha() {
-        return (LocalDateTime) fechaHora;
-    }
-
-    public String getLugar() {
-        return lugar;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public Equipo getEquipoLocal() {
-        return equipoLocal;
-    }
-
-    public Equipo getEquipoVisitante() {
-        return equipoVisitante;
-    }
-
-    public Resultado getResultado() {
-        return resultado;
-    }
-
-    public void setID(String iD) {
-        ID = iD;
-    }
-
-    public void setFecha(LocalDateTime fecha) {
-        this.fechaHora = fecha;
-    }
-
-    public void setLugar(String lugar) {
-        this.lugar = lugar;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public void setEquipoLocal(Equipo equipoLocal) {
         this.equipoLocal = equipoLocal;
-    }
-
-    public void setEquipoVisitante(Equipo equipoVisitante) {
         this.equipoVisitante = equipoVisitante;
+        this.resultado = null;
+        this.estado = "Programado";
     }
 
-    public void setResultado(Resultado resultado) {
-        this.resultado = resultado;
-        this.estado = "Finalizado";
-    }
+    public String getID() { return ID; }
+    public void setID(String ID) { this.ID = ID; }
+    public LocalDateTime getFecha() { return fecha; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+    public String getLugar() { return lugar; }
+    public void setLugar(String lugar) { this.lugar = lugar; }
+    public Equipo getEquipoLocal() { return equipoLocal; }
+    public void setEquipoLocal(Equipo equipoLocal) { this.equipoLocal = equipoLocal; }
+    public Equipo getEquipoVisitante() { return equipoVisitante; }
+    public void setEquipoVisitante(Equipo equipoVisitante) { this.equipoVisitante = equipoVisitante; }
+    public Resultado getResultado() { return resultado; }
+    public void setResultado(Resultado resultado) { this.resultado = resultado; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 }
