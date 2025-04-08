@@ -335,7 +335,7 @@ public class ControladoraLiga {
             }
         }
         
-        // Actualizar también en los equipos
+        
         for (Equipo equipo : misEquipos) {
             for (int i = 0; i < equipo.getJugadores().size(); i++) {
                 if (equipo.getJugadores().get(i).getID().equals(jugadorEditando.getID())) {
