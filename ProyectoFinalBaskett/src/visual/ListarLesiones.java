@@ -89,6 +89,12 @@ public class ListarLesiones extends JDialog {
 
         JButton btnCerrar = new JButton("Cerrar");
         btnCerrar.addActionListener(e -> dispose());
+
+        JButton btnModificar = new JButton("Modificar");
+        buttonPane.add(btnModificar);
+
+        JButton btnEliminar = new JButton("Eliminar");
+        buttonPane.add(btnEliminar);
         buttonPane.add(btnCerrar);
 
         btnFiltrarJugador.addActionListener(e -> aplicarFiltro());
