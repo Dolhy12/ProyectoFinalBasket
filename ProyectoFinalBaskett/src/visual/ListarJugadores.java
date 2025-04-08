@@ -138,7 +138,7 @@ public class ListarJugadores extends JDialog {
             if (jugador != null) {
                 RegJugador ventanaModificar = new RegJugador(controladora, jugador);
                 ventanaModificar.setVisible(true);
-                cargarJugadores(); // Refrescar la tabla después de modificar
+                cargarJugadores(); 
             }
         } else {
             mostrarMensaje("Selecciona un jugador para modificar", "Sin selección");
