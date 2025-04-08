@@ -311,7 +311,7 @@ public class RegJugador extends JDialog {
                                 numero
                             );
 
-                            // Verificar si es un jugador nuevo o una modificación
+                            
                             if (controladora != null && controladora.existeJugador(id)) {
                                 controladora.actualizarJugador(jugador);
                                 JOptionPane.showMessageDialog(RegJugador.this, 
@@ -378,7 +378,7 @@ public class RegJugador extends JDialog {
         txtEdad.setText(String.valueOf(jugador.getEdad()));
         txtNacionalidad.setText(jugador.getNacionalidad());
         
-        // Configurar posición
+        
         for (int i = 0; i < cbxPosicion.getItemCount(); i++) {
             if (cbxPosicion.getItemAt(i).equals(jugador.getPosicion())) {
                 cbxPosicion.setSelectedIndex(i);
@@ -386,7 +386,7 @@ public class RegJugador extends JDialog {
             }
         }
         
-        // Configurar fecha
+        
         spnFecha.setValue(jugador.getFechaDeNacimiento());
         
         spnPeso.setValue(jugador.getPeso());
