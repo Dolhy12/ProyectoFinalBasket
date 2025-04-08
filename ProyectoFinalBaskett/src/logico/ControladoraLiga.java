@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class ControladoraLiga {
-	private static ControladoraLiga instance;
-	private ArrayList<Jugador> misJugadores = new ArrayList<>();
+    private static ControladoraLiga instance;
+    private ArrayList<Jugador> misJugadores = new ArrayList<>();
     private ArrayList<Equipo> misEquipos = new ArrayList<>();
     private CalendarioJuegos calendario = new CalendarioJuegos();
 
@@ -19,7 +19,7 @@ public class ControladoraLiga {
 
     public static ControladoraLiga getInstance() {
         if (instance == null) {
-        	instance = new ControladoraLiga();
+            instance = new ControladoraLiga();
         }
         return instance;
     }
@@ -89,7 +89,7 @@ public class ControladoraLiga {
     }
 
     public void agregarJuego(Juego juego) {
-    	calendario.getJuegos().add(juego);
+        calendario.getJuegos().add(juego);
     }
 
     public boolean eliminarJuego(String idJuego) {
@@ -307,29 +307,42 @@ public class ControladoraLiga {
         return juegosDelJugador;
     }
 
-	public Equipo buscarEquipoPorJugador(String idJugador) {
-	    for (Equipo equipo : misEquipos) {
-	        for (Jugador jugador : equipo.getJugadores()) {
-	            if (jugador.getID().equals(idJugador)) {
-	                return equipo;
-	            }
-	        }
-	    }
-	    return null;
-	}
+    public Equipo buscarEquipoPorJugador(String idJugador) {
+        for (Equipo equipo : misEquipos) {
+            for (Jugador jugador : equipo.getJugadores()) {
+                if (jugador.getID().equals(idJugador)) {
+                    return equipo;
+                }
+            }
+        }
+        return null;
+    }
 
-	public void actualizarEquipo(Equipo equipoActualizado) {
-	    for (int i = 0; i < misEquipos.size(); i++) {
-	        if (misEquipos.get(i).getID().equals(equipoActualizado.getID())) {
-	            misEquipos.set(i, equipoActualizado);
-	            break;
-	        }
-	    }
-	}
+    public void actualizarEquipo(Equipo equipoActualizado) {
+        for (int i = 0; i < misEquipos.size(); i++) {
+            if (misEquipos.get(i).getID().equals(equipoActualizado.getID())) {
+                misEquipos.set(i, equipoActualizado);
+                break;
+            }
+        }
+    }
 
-	public void actualizarJugador(Jugador jugadorEditando) {
-		
-		
-	}
-	
+    public void actualizarJugador(Jugador jugadorEditando) {
+        for (int i = 0; i < misJugadores.size(); i++) {
+            if (misJugadores.get(i).getID().equals(jugadorEditando.getID())) {
+                misJugadores.set(i, jugadorEditando);
+                break;
+            }
+        }
+        
+        // Actualizar también en los equipos
+        for (Equipo equipo : misEquipos) {
+            for (int i = 0; i < equipo.getJugadores().size(); i++) {
+                if (equipo.getJugadores().get(i).getID().equals(jugadorEditando.getID())) {
+                    equipo.getJugadores().set(i, jugadorEditando);
+                    break;
+                }
+            }
+        }
+    }
 }

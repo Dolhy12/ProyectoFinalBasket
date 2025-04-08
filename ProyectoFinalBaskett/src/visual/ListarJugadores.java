@@ -134,7 +134,12 @@ public class ListarJugadores extends JDialog {
         int fila = table.getSelectedRow();
         if(fila != -1) {
             String id = (String) table.getValueAt(fila, 0);
-            mostrarMensaje("Función en desarrollo", "Próximamente");
+            Jugador jugador = controladora.buscarJugador(id);
+            if (jugador != null) {
+                RegJugador ventanaModificar = new RegJugador(controladora, jugador);
+                ventanaModificar.setVisible(true);
+                cargarJugadores(); // Refrescar la tabla después de modificar
+            }
         } else {
             mostrarMensaje("Selecciona un jugador para modificar", "Sin selección");
         }
