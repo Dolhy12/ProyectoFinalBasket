@@ -1,412 +1,243 @@
 package visual;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import logico.ControladoraLiga;
-import logico.Jugador;
-
-import javax.swing.SwingConstants;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JSpinner;
-import javax.swing.JComboBox;
-import javax.swing.SpinnerDateModel;
-import java.util.Date;
-import java.util.Calendar;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.DefaultComboBoxModel;
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.border.BevelBorder;
-import java.awt.event.ActionListener;
+import logico.*;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
-import java.awt.event.ActionEvent;
-import java.awt.Window.Type;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+import java.util.Date;
 
 public class RegJugador extends JDialog {
 
-    private final JPanel contentPanel = new JPanel();
-    private JTextField txtID;
-    private JTextField txtNombre;
-    private JTextField txtNacionalidad;
-    private ControladoraLiga controladora;
-    private JComboBox cbxPosicion;
-    private JSpinner spnFecha;
-    private JSpinner spnPeso;
-    private JSpinner spnAltura;
-    private JSpinner spnNumero;
-    private JTextField txtEdad;
-    
-    
-    public RegJugador(ControladoraLiga controladora) {
+    private JTextField txtID, txtNombre, txtNacionalidad, txtEdad;
+    private JComboBox<String> cbxPosicion;
+    private JSpinner spnFecha, spnPeso, spnAltura, spnNumero;
+    private ControladoraLiga controladora = ControladoraLiga.getInstance();
+
+    public RegJugador(Jugador jugador) {
         this();
-        this.controladora = controladora;
-    }
-    
-    public RegJugador(ControladoraLiga controladora, Jugador jugador) {
-        this();
-        this.controladora = controladora;
         cargarDatosJugador(jugador);
     }
-    
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        try {
-            RegJugador dialog = new RegJugador();
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    /**
-     * Create the dialog.
-     */
     public RegJugador() {
-        setType(Type.POPUP);
         setTitle("Registrar Jugador");
-        setBounds(100, 100, 520, 431);
+        setSize(700, 600);
         setLocationRelativeTo(null);
-        getContentPane().setLayout(new BorderLayout());
-        contentPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-        getContentPane().add(contentPanel, BorderLayout.CENTER);
-        contentPanel.setLayout(new BorderLayout(0, 0));
-        {
-            JPanel panel = new JPanel();
-            panel.setBackground(new Color(255, 147, 30));
-            panel.setBorder(new EmptyBorder(0, 0, 0, 0));
-            contentPanel.add(panel, BorderLayout.CENTER);
-            panel.setLayout(null);
-            {
-                JPanel panelID = new JPanel();
-                panelID.setBackground(new Color(169, 169, 169));
-                panelID.setBounds(12, 13, 221, 42);
-                panel.add(panelID);
-                panelID.setLayout(null);
-                {
-                    JLabel lblID = new JLabel("ID:");
-                    lblID.setBounds(12, 13, 56, 16);
-                    panelID.add(lblID);
-                }
-                {
-                    txtID = new JTextField();
-                    txtID.setEditable(false);
-                    txtID.setBounds(37, 10, 166, 22);
-                    panelID.add(txtID);
-                    txtID.setText(generarNuevoId());
-                    txtID.setColumns(10);
-                }
-            }
-            {
-                JPanel panelNombre = new JPanel();
-                panelNombre.setBackground(new Color(169, 169, 169));
-                panelNombre.setBounds(12, 68, 474, 42);
-                panel.add(panelNombre);
-                panelNombre.setLayout(null);
-                {
-                    JLabel lblNombre = new JLabel("Nombre:");
-                    lblNombre.setBounds(12, 13, 56, 16);
-                    panelNombre.add(lblNombre);
-                }
-                {
-                    txtNombre = new JTextField();
-                    txtNombre.setBounds(67, 10, 395, 22);
-                    panelNombre.add(txtNombre);
-                    txtNombre.setColumns(10);
-                }
-            }
-            {
-                JPanel panelEdad = new JPanel();
-                panelEdad.setBackground(new Color(169, 169, 169));
-                panelEdad.setBounds(284, 123, 202, 42);
-                panel.add(panelEdad);
-                panelEdad.setLayout(null);
-                {
-                    JLabel lblEdad = new JLabel("Edad:");
-                    lblEdad.setBounds(12, 13, 56, 16);
-                    panelEdad.add(lblEdad);
-                }
-                
-                txtEdad = new JTextField();
-                txtEdad.setEditable(false);
-                txtEdad.setBounds(68, 10, 122, 22);
-                panelEdad.add(txtEdad);
-                txtEdad.setColumns(10);
-            }
-            {
-                JPanel panelPosicion = new JPanel();
-                panelPosicion.setBackground(new Color(169, 169, 169));
-                panelPosicion.setBounds(12, 178, 193, 42);
-                panel.add(panelPosicion);
-                panelPosicion.setLayout(null);
-                {
-                    JLabel lblPosicion = new JLabel("Posición:");
-                    lblPosicion.setBounds(12, 13, 56, 16);
-                    panelPosicion.add(lblPosicion);
-                }
-                {
-                    cbxPosicion = new JComboBox();
-                    cbxPosicion.setModel(new DefaultComboBoxModel(new String[] {"<Seleccionar>", "Base", "Escolta", "Alero", "Ala-Pívot", "Pívot"}));
-                    cbxPosicion.setBounds(69, 10, 112, 22);
-                    panelPosicion.add(cbxPosicion);
-                }
-            }
-            {
-                JPanel panelNacionalidad = new JPanel();
-                panelNacionalidad.setBackground(new Color(169, 169, 169));
-                panelNacionalidad.setBounds(217, 178, 269, 42);
-                panel.add(panelNacionalidad);
-                panelNacionalidad.setLayout(null);
-                {
-                    JLabel lblNacionalidad = new JLabel("Nacionalidad:");
-                    lblNacionalidad.setBounds(12, 13, 88, 16);
-                    panelNacionalidad.add(lblNacionalidad);
-                }
-                {
-                    txtNacionalidad = new JTextField();
-                    txtNacionalidad.setBounds(100, 10, 157, 22);
-                    panelNacionalidad.add(txtNacionalidad);
-                    txtNacionalidad.setColumns(10);
-                }
-            }
-            {
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.YEAR, -18);
-                Date fechaInicial = calendar.getTime();
-                
-                JPanel panelFecha = new JPanel();
-                panelFecha.setBackground(new Color(169, 169, 169));
-                panelFecha.setBounds(12, 123, 254, 42);
-                panel.add(panelFecha);
-                panelFecha.setLayout(null);
-                {
-                    JLabel lblFecha = new JLabel("Fecha:");
-                    lblFecha.setBounds(12, 13, 56, 16);
-                    panelFecha.add(lblFecha);
-                }
-                {
-                    spnFecha = new JSpinner(new SpinnerDateModel());
-                    spnFecha.addChangeListener(new ChangeListener() {
-                        public void stateChanged(ChangeEvent e) {
-                            actualizarEdad();
-                        }
-                    });
-                    spnFecha.setBounds(74, 13, 170, 22);
-                    panelFecha.add(spnFecha);
-                    JSpinner.DateEditor de_spnFecha = new JSpinner.DateEditor(spnFecha, "dd-MM-yyyy");
-                    spnFecha.setEditor(de_spnFecha);
-                    spnFecha.setPreferredSize(new Dimension(150, 25));
-                    spnFecha.setValue(fechaInicial);
-                }
-            }
-            {
-                JPanel panelPeso = new JPanel();
-                panelPeso.setBackground(new Color(169, 169, 169));
-                panelPeso.setBounds(12, 233, 221, 42);
-                panel.add(panelPeso);
-                panelPeso.setLayout(null);
-                {
-                    JLabel lblPeso = new JLabel("Peso (KG):");
-                    lblPeso.setBounds(12, 13, 75, 16);
-                    panelPeso.add(lblPeso);
-                }
-                {
-                    spnPeso = new JSpinner();
-                    spnPeso.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
-                    spnPeso.setBounds(89, 10, 120, 22);
-                    panelPeso.add(spnPeso);
-                }
-            }
-            {
-                JPanel panelAltura = new JPanel();
-                panelAltura.setBackground(new Color(169, 169, 169));
-                panelAltura.setBounds(271, 233, 215, 42);
-                panel.add(panelAltura);
-                panelAltura.setLayout(null);
-                {
-                    JLabel lblAltura = new JLabel("Altura (m):");
-                    lblAltura.setBounds(12, 13, 74, 16);
-                    panelAltura.add(lblAltura);
-                }
-                {
-                    spnAltura = new JSpinner();
-                    spnAltura.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
-                    spnAltura.setBounds(89, 10, 114, 22);
-                    panelAltura.add(spnAltura);
-                }
-            }
-            {
-                JPanel panelNumero = new JPanel();
-                panelNumero.setBackground(new Color(169, 169, 169));
-                panelNumero.setBounds(12, 288, 178, 42);
-                panel.add(panelNumero);
-                panelNumero.setLayout(null);
-                {
-                    JLabel lblNumero = new JLabel("Número:");
-                    lblNumero.setBounds(12, 13, 56, 16);
-                    panelNumero.add(lblNumero);
-                }
-                {
-                    spnNumero = new JSpinner();
-                    spnNumero.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
-                    spnNumero.setBounds(68, 10, 100, 22);
-                    panelNumero.add(spnNumero);
-                }
-            }
-        }
-        {
-            JPanel buttonPane = new JPanel();
-            buttonPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-            buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-            getContentPane().add(buttonPane, BorderLayout.SOUTH);
-            {
-                JButton btnRegistrar = new JButton("Registrar");
-                btnRegistrar.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            if (txtNombre.getText().isEmpty() || 
-                                cbxPosicion.getSelectedIndex() == 0 || 
-                                txtNacionalidad.getText().isEmpty()) {
-                                throw new IllegalArgumentException("Complete los campos obligatorios (*)");
-                            }
+        getRootPane().setBorder(BorderFactory.createLineBorder(new Color(255, 147, 30), 2));
+        getContentPane().setBackground(Color.WHITE);
 
-                            String id = txtID.getText();
-                            String nombre = txtNombre.getText();
-                            String posicion = cbxPosicion.getSelectedItem().toString();
-                            String nacionalidad = txtNacionalidad.getText();
-                            Date fechaNac = (Date) spnFecha.getValue();
-                            float peso = ((Number) spnPeso.getValue()).floatValue();
-                            float altura = ((Number) spnAltura.getValue()).floatValue();
-                            int numero = (int) spnNumero.getValue();
-                            int edad = Integer.parseInt(txtEdad.getText());
-                            
-                            if (peso <= 0 || altura <= 0) {
-                                throw new IllegalArgumentException("Peso y altura deben ser mayores a 0");
-                            }
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBorder(new EmptyBorder(20, 25, 20, 25));
+        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-                            Jugador jugador = new Jugador(
-                                id, 
-                                nombre, 
-                                edad, 
-                                posicion, 
-                                nacionalidad, 
-                                fechaNac, 
-                                peso, 
-                                altura, 
-                                numero
-                            );
+        txtID = new JTextField(generarNuevoId());
+        txtID.setEditable(false);
+        mainPanel.add(createInputPanel("ID:", txtID));
+        mainPanel.add(Box.createVerticalStrut(20));
 
-                            
-                            if (controladora != null && controladora.existeJugador(id)) {
-                                controladora.actualizarJugador(jugador);
-                                JOptionPane.showMessageDialog(RegJugador.this, 
-                                    "Jugador modificado exitosamente", 
-                                    "Éxito", 
-                                    JOptionPane.INFORMATION_MESSAGE);
-                                dispose();
-                            } else {
-                                if (controladora != null) {
-                                    controladora.agregarJugador(jugador);
-                                }
-                                
-                                int respuesta = JOptionPane.showConfirmDialog(
-                                    RegJugador.this,
-                                    "¿Desea agregar otro jugador?",
-                                    "Registro exitoso",
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE
-                                );
+        txtNombre = new JTextField();
+        mainPanel.add(createInputPanel("Nombre:", txtNombre));
+        mainPanel.add(Box.createVerticalStrut(20));
 
-                                if (respuesta == JOptionPane.YES_OPTION) {
-                                    txtID.setText(generarNuevoId());
-                                    txtNombre.setText("");
-                                    spnFecha.setValue(new Date());
-                                    txtEdad.setText("");
-                                    cbxPosicion.setSelectedIndex(0);
-                                    txtNacionalidad.setText("");
-                                    spnAltura.setValue(0);
-                                    spnPeso.setValue(0);
-                                    spnNumero.setValue(0);
-                                } else {
-                                    dispose();
-                                }
-                            }
-                            
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(RegJugador.this, 
-                                "Error: " + ex.getMessage(), 
-                                "Error", 
-                                JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                });
-                btnRegistrar.setActionCommand("OK");
-                buttonPane.add(btnRegistrar);
-                getRootPane().setDefaultButton(btnRegistrar);
-            }
-            {
-                JButton btnCancerlar = new JButton("Cancelar");
-                btnCancerlar.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
+        JPanel fechaEdadPanel = new JPanel(new GridLayout(1, 2, 25, 0));
+        fechaEdadPanel.setBackground(Color.WHITE);
+        
+        spnFecha = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnFecha, "dd-MM-yyyy");
+        spnFecha.setEditor(dateEditor);
+        spnFecha.setValue(new Date());
+        spnFecha.addChangeListener(e -> actualizarEdad());
+        
+        txtEdad = new JTextField();
+        txtEdad.setEditable(false);
+        
+        fechaEdadPanel.add(createInputPanel("Fecha Nacimiento:", spnFecha));
+        fechaEdadPanel.add(createInputPanel("Edad:", txtEdad));
+        mainPanel.add(fechaEdadPanel);
+        mainPanel.add(Box.createVerticalStrut(25));
+
+        JPanel posNacPanel = new JPanel(new GridLayout(1, 2, 25, 0));
+        posNacPanel.setBackground(Color.WHITE);
+        
+        cbxPosicion = new JComboBox<>(new String[]{"<Seleccionar>", "Base", "Escolta", "Alero", "Ala-Pívot", "Pívot"});
+        txtNacionalidad = new JTextField();
+        
+        posNacPanel.add(createInputPanel("Posición:", cbxPosicion));
+        posNacPanel.add(createInputPanel("Nacionalidad:", txtNacionalidad));
+        mainPanel.add(posNacPanel);
+        mainPanel.add(Box.createVerticalStrut(25));
+
+        JPanel pesoAlturaPanel = new JPanel(new GridLayout(1, 2, 25, 0));
+        pesoAlturaPanel.setBackground(Color.WHITE);
+        
+        spnPeso = new JSpinner(new SpinnerNumberModel(0.0, 0.0, 200.0, 0.5));
+        spnAltura = new JSpinner(new SpinnerNumberModel(0.0, 0.0, 3.0, 0.05));
+        
+        pesoAlturaPanel.add(createInputPanel("Peso (kg):", spnPeso));
+        pesoAlturaPanel.add(createInputPanel("Altura (m):", spnAltura));
+        mainPanel.add(pesoAlturaPanel);
+        mainPanel.add(Box.createVerticalStrut(25));
+
+        spnNumero = new JSpinner(new SpinnerNumberModel(0, 0, 99, 1));
+        mainPanel.add(createInputPanel("Número:", spnNumero));
+        mainPanel.add(Box.createVerticalStrut(30));
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        buttonPanel.setBackground(Color.WHITE);
+        
+        JButton btnRegistrar = new JButton("Registrar");
+        btnRegistrar.setBackground(new Color(255, 147, 30));
+        btnRegistrar.setForeground(Color.WHITE);
+        btnRegistrar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnRegistrar.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setBackground(new Color(178, 34, 34));
+        btnCancelar.setForeground(Color.WHITE);
+        btnCancelar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnCancelar.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+
+        btnRegistrar.addActionListener(e -> {
+            try {
+                if (validarCampos()) {
+                    Jugador jugador = new Jugador(
+                        txtID.getText(),
+                        txtNombre.getText(),
+                        Integer.parseInt(txtEdad.getText()),
+                        cbxPosicion.getSelectedItem().toString(),
+                        txtNacionalidad.getText(),
+                        (Date) spnFecha.getValue(),
+                        ((Number) spnPeso.getValue()).floatValue(),
+                        ((Number) spnAltura.getValue()).floatValue(),
+                        (int) spnNumero.getValue()
+                    );
+
+                    if (controladora.existeJugador(jugador.getID())) {
+                        controladora.actualizarJugador(jugador);
+                        JOptionPane.showMessageDialog(this, 
+                            "Jugador actualizado exitosamente!", 
+                            "Éxito", 
+                            JOptionPane.INFORMATION_MESSAGE);
                         dispose();
+                    } else {
+                        controladora.agregarJugador(jugador);
+                        int respuesta = JOptionPane.showConfirmDialog(
+                            this, 
+                            "¿Desea agregar otro jugador?", 
+                            "Registro exitoso", 
+                            JOptionPane.YES_NO_OPTION);
+
+                        if (respuesta == JOptionPane.YES_OPTION) {
+                            resetForm();
+                        } else {
+                            dispose();
+                        }
                     }
-                });
-                btnCancerlar.setActionCommand("Cancel");
-                buttonPane.add(btnCancerlar);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Error: " + ex.getMessage(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
             }
-        }
+        });
+
+        btnCancelar.addActionListener(e -> dispose());
+
+        buttonPanel.add(btnRegistrar);
+        buttonPanel.add(btnCancelar);
+
+        add(mainPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+        actualizarEdad();
     }
-    
-    private void cargarDatosJugador(Jugador jugador) {
-        txtID.setText(jugador.getID());
-        txtNombre.setText(jugador.getNombre());
-        txtEdad.setText(String.valueOf(jugador.getEdad()));
-        txtNacionalidad.setText(jugador.getNacionalidad());
+
+    private JPanel createInputPanel(String label, JComponent component) {
+        JPanel panel = new JPanel(new BorderLayout(15, 5));
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(new Font("Arial", Font.BOLD, 14));
         
-        for (int i = 0; i < cbxPosicion.getItemCount(); i++) {
-            if (cbxPosicion.getItemAt(i).equals(jugador.getPosicion())) {
-                cbxPosicion.setSelectedIndex(i);
-                break;
-            }
+        if (component instanceof JSpinner) {
+            component.setPreferredSize(new Dimension(180, 35));
+            ((JSpinner.DefaultEditor) ((JSpinner) component).getEditor()).getTextField().setFont(new Font("Arial", Font.PLAIN, 14));
+        } else {
+            component.setPreferredSize(new Dimension(250, 30));
+            component.setFont(new Font("Arial", Font.PLAIN, 14));
         }
         
+        panel.add(lbl, BorderLayout.WEST);
+        panel.add(component, BorderLayout.CENTER);
         
-        spnFecha.setValue(jugador.getFechaDeNacimiento());
+        return panel;
+    }
+
+    private boolean validarCampos() {
+        if (txtNombre.getText().trim().isEmpty() ||
+            cbxPosicion.getSelectedIndex() == 0 ||
+            txtNacionalidad.getText().trim().isEmpty()) {
+            
+            JOptionPane.showMessageDialog(this, 
+                "Complete todos los campos obligatorios (*)", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
         
-        spnPeso.setValue(jugador.getPeso());
-        
-        spnAltura.setValue(jugador.getAltura());
-        spnNumero.setValue(jugador.getNumero());
+        if (((Number) spnPeso.getValue()).floatValue() <= 0 ||
+            ((Number) spnAltura.getValue()).floatValue() <= 0) {
+            
+            JOptionPane.showMessageDialog(this, 
+                "Peso y altura deben ser mayores a cero", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     private void actualizarEdad() {
-        Date birthDate = (Date) spnFecha.getValue();
-        LocalDate birthLocalDate = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        int age = Period.between(birthLocalDate, LocalDate.now()).getYears();
-        txtEdad.setText(String.valueOf(age));
+        Date fecha = (Date) spnFecha.getValue();
+        LocalDate nacimiento = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int edad = Period.between(nacimiento, LocalDate.now()).getYears();
+        txtEdad.setText(String.valueOf(edad));
     }
-    
+
+    private void resetForm() {
+        txtID.setText(generarNuevoId());
+        txtNombre.setText("");
+        spnFecha.setValue(new Date());
+        cbxPosicion.setSelectedIndex(0);
+        txtNacionalidad.setText("");
+        spnPeso.setValue(0.0);
+        spnAltura.setValue(0.0);
+        spnNumero.setValue(0);
+    }
+
+    private void cargarDatosJugador(Jugador jugador) {
+        txtID.setText(jugador.getID());
+        txtNombre.setText(jugador.getNombre());
+        spnFecha.setValue(jugador.getFechaDeNacimiento());
+        txtNacionalidad.setText(jugador.getNacionalidad());
+        spnPeso.setValue(jugador.getPeso());
+        spnAltura.setValue(jugador.getAltura());
+        spnNumero.setValue(jugador.getNumero());
+        cbxPosicion.setSelectedItem(jugador.getPosicion());
+        actualizarEdad();
+    }
+
     private String generarNuevoId() {
-        if (controladora == null) {
-            controladora = ControladoraLiga.getInstance();
-        }
-        int numJugador = controladora.getMisJugadores().size(); 
-        return "JUG-" + (numJugador + 1);
+        return "JUG-" + (controladora.getMisJugadores().size() + 1);
+    }
+
+    public static void main(String[] args) {
+        RegJugador dialog = new RegJugador();
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
     }
 }

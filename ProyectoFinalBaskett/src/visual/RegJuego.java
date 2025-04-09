@@ -1,287 +1,209 @@
 package visual;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import logico.CalendarioJuegos;
-import logico.ControladoraLiga;
-import logico.Equipo;
-import logico.Juego;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.JTextField;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerDateModel;
+import logico.*;
+import java.awt.*;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.JComboBox;
-import java.awt.event.ActionListener;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.awt.event.ActionEvent;
-import java.util.Calendar;
 
 public class RegJuego extends JDialog {
 
-	private final JPanel contentPanel = new JPanel();
-	private JTextField txtID;
-	private ControladoraLiga controladora;
-	private JComboBox<Equipo> cbxEquipoLocal;
-	private JComboBox<Equipo> cbxEquipoVisitante;
-	private JComboBox cbxUbicacion;
-	private static JSpinner spnFecha;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			RegJuego dialog = new RegJuego();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    private JTextField txtID;
+    private JComboBox<Equipo> cbxEquipoLocal;
+    private JComboBox<Equipo> cbxEquipoVisitante;
+    private JComboBox<String> cbxUbicacion;
+    private JSpinner spnFecha;
+    private ControladoraLiga controladora = ControladoraLiga.getInstance();
 
-	/**
-	 * Create the dialog.
-	 */
-	public RegJuego() {
-		controladora = ControladoraLiga.getInstance();
-		setTitle("Registrar Juego");
-		setType(Type.POPUP);
-		setBounds(100, 100, 609, 324);
-		setLocationRelativeTo(null);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new BorderLayout(0, 0));
-		{
-			JPanel panel = new JPanel();
-			panel.setBackground(new Color(212, 122, 25));
-			contentPanel.add(panel, BorderLayout.CENTER);
-			panel.setLayout(null);
-			{
-				JPanel panelID = new JPanel();
-				panelID.setBackground(new Color(169, 169, 169));
-				panelID.setBounds(177, 10, 225, 43);
-				panel.add(panelID);
-				panelID.setLayout(null);
-				{
-					JLabel lblID = new JLabel("ID:");
-					lblID.setBounds(12, 16, 56, 16);
-					panelID.add(lblID);
-				}
-				{
-					txtID = new JTextField();
-					txtID.setBounds(42, 13, 170, 22);
-					panelID.add(txtID);
-					txtID.setEditable(false);
-					txtID.setText(generarNuevoId());
-					txtID.setColumns(10);
-				}
-			}
-			{
-				JPanel panelFecha = new JPanel();
-				panelFecha.setBackground(new Color(169, 169, 169));
-				panelFecha.setBounds(12, 66, 255, 43);
-				panel.add(panelFecha);
-				panelFecha.setLayout(null);
-				{
-					JLabel lblFecha = new JLabel("Fecha:");
-					lblFecha.setBounds(12, 16, 56, 16);
-					panelFecha.add(lblFecha);
-				}
-				
-					spnFecha = new JSpinner(new SpinnerDateModel(new Date(),null,null,Calendar.HOUR_OF_DAY));
-					JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnFecha,"dd-MM-yyyy HH:mm");
-					spnFecha.setEditor(dateEditor);
-				    spnFecha.setBounds(69, 13, 174, 22);
-				    panelFecha.add(spnFecha);
+    public RegJuego() {
+        setTitle("Registrar Juego");
+        setSize(650, 400);
+        setLocationRelativeTo(null);
+        getContentPane().setBackground(Color.WHITE);
+        getRootPane().setBorder(BorderFactory.createLineBorder(new Color(255, 147, 30), 2));
 
-			}
-			{
-				JPanel EquipoLocal = new JPanel();
-				EquipoLocal.setBackground(new Color(169, 169, 169));
-				EquipoLocal.setBounds(12, 139, 255, 80);
-				panel.add(EquipoLocal);
-				EquipoLocal.setLayout(null);
-				{
-					JLabel lblEquipoLocal = new JLabel("Equipo Local:");
-					lblEquipoLocal.setBounds(12, 13, 82, 16);
-					EquipoLocal.add(lblEquipoLocal);
-				}
-				{
-					cbxEquipoLocal = new JComboBox();
-					cargarEquipos(cbxEquipoLocal);
-					cbxEquipoLocal.setBounds(12, 31, 231, 22);
-					EquipoLocal.add(cbxEquipoLocal);
-				}
-			}
-			{
-				JPanel EquipoVisitante = new JPanel();
-				EquipoVisitante.setLayout(null);
-				EquipoVisitante.setBackground(new Color(169, 169, 169));
-				EquipoVisitante.setBounds(314, 139, 255, 80);
-				panel.add(EquipoVisitante);
-				{
-					JLabel lblEquipoVisitante = new JLabel("Equipo Visitante:");
-					lblEquipoVisitante.setBounds(12, 13, 108, 16);
-					EquipoVisitante.add(lblEquipoVisitante);
-				}
-				{
-					cbxEquipoVisitante = new JComboBox();
-					cargarEquipos(cbxEquipoVisitante);
-					cbxEquipoVisitante.setBounds(12, 31, 231, 22);
-					EquipoVisitante.add(cbxEquipoVisitante);
-				}
-			}
-			{
-				JPanel panelUbicacion = new JPanel();
-				panelUbicacion.setBackground(new Color(169, 169, 169));
-				panelUbicacion.setBounds(314, 66, 255, 43);
-				panel.add(panelUbicacion);
-				panelUbicacion.setLayout(null);
-				{
-					JLabel lblUbicacion = new JLabel("Ubicacion:");
-					lblUbicacion.setBounds(12, 13, 64, 16);
-					panelUbicacion.add(lblUbicacion);
-				}
-				{
-					cbxUbicacion = new JComboBox();
-					cargarLugares(cbxUbicacion);
-					cbxUbicacion.setBounds(88, 10, 155, 22);
-					panelUbicacion.add(cbxUbicacion);
-				}
-			}
-			
-		}
-		{
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				JButton btnRegistrar = new JButton("Registrar");
-				btnRegistrar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						try {
-							if (cbxEquipoLocal.getSelectedItem() == null 
-					                || cbxEquipoVisitante.getSelectedItem() == null 
-					                || cbxUbicacion.getSelectedItem() == null) {
-					                throw new IllegalArgumentException("Seleccione todos los campos obligatorios");
-					            }
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setLayout(new GridLayout(5, 1, 15, 15));
 
-		                    Equipo local = (Equipo) cbxEquipoLocal.getSelectedItem();
-		                    Equipo visitante = (Equipo) cbxEquipoVisitante.getSelectedItem();
-		                    
-		                    if (local.equals(visitante)) {
-		                        throw new IllegalArgumentException("Los equipos deben ser diferentes");
-		                    }
+        txtID = new JTextField(generarNuevoId());
+        txtID.setEditable(false);
+        txtID.setFont(new Font("Arial", Font.PLAIN, 14));
+        JPanel panelID = new JPanel(new BorderLayout(10, 5));
+        panelID.setBackground(Color.WHITE);
+        panelID.add(new JLabel("ID:"), BorderLayout.WEST);
+        panelID.add(txtID, BorderLayout.CENTER);
+        mainPanel.add(panelID);
 
-		                    Date fechaSeleccionada = (Date) spnFecha.getValue();
-		                    LocalDateTime fechaHora = fechaSeleccionada.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        spnFecha = new JSpinner(new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY));
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnFecha, "dd-MM-yyyy HH:mm");
+        spnFecha.setEditor(dateEditor);
+        ((JSpinner.DefaultEditor) spnFecha.getEditor()).getTextField().setFont(new Font("Arial", Font.PLAIN, 14));
+        JPanel panelFecha = new JPanel(new BorderLayout(10, 5));
+        panelFecha.setBackground(Color.WHITE);
+        panelFecha.add(new JLabel("Fecha y Hora:"), BorderLayout.WEST);
+        panelFecha.add(spnFecha, BorderLayout.CENTER);
+        mainPanel.add(panelFecha);
 
-		                    String idJuego = txtID.getText();
-		                    String ubicacion = (String) cbxUbicacion.getSelectedItem();
+        JPanel panelEquipos = new JPanel(new GridLayout(1, 2, 15, 0));
+        panelEquipos.setBackground(Color.WHITE);
+        
+        cbxEquipoLocal = new JComboBox<>();
+        cbxEquipoVisitante = new JComboBox<>();
+        for (Equipo equipo : controladora.getMisEquipos()) {
+            cbxEquipoLocal.addItem(equipo);
+            cbxEquipoVisitante.addItem(equipo);
+        }
+        
+        JPanel panelLocal = new JPanel(new BorderLayout(10, 5));
+        panelLocal.setBackground(Color.WHITE);
+        panelLocal.add(new JLabel("Equipo Local:"), BorderLayout.WEST);
+        panelLocal.add(cbxEquipoLocal, BorderLayout.CENTER);
+        
+        JPanel panelVisitante = new JPanel(new BorderLayout(10, 5));
+        panelVisitante.setBackground(Color.WHITE);
+        panelVisitante.add(new JLabel("Equipo Visitante:"), BorderLayout.WEST);
+        panelVisitante.add(cbxEquipoVisitante, BorderLayout.CENTER);
+        
+        panelEquipos.add(panelLocal);
+        panelEquipos.add(panelVisitante);
+        mainPanel.add(panelEquipos);
 
-		                    Juego nuevoJuego = new Juego(
-		                        idJuego,
-		                        fechaHora,
-		                        ubicacion,
-		                        local,
-		                        visitante
-		                    );
+        cbxUbicacion = new JComboBox<>();
+        Set<String> lugares = new HashSet<>();
+        for (Equipo equipo : controladora.getMisEquipos()) {
+            lugares.add(equipo.getCiudad());
+        }
+        for (String lugar : lugares) {
+            cbxUbicacion.addItem(lugar);
+        }
+        
+        JPanel panelUbicacion = new JPanel(new BorderLayout(10, 5));
+        panelUbicacion.setBackground(Color.WHITE);
+        panelUbicacion.add(new JLabel("Ubicación:"), BorderLayout.WEST);
+        panelUbicacion.add(cbxUbicacion, BorderLayout.CENTER);
+        mainPanel.add(panelUbicacion);
 
-		                    controladora.agregarJuego(nuevoJuego);
-		                    
-		                    int respuesta = JOptionPane.showConfirmDialog(
-		                            RegJuego.this,
-		                            "¿Desea agregar otro juego?",
-		                            "Registro exitoso",
-		                            JOptionPane.YES_NO_OPTION,
-		                            JOptionPane.QUESTION_MESSAGE
-		                        );
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        panelBotones.setBackground(Color.WHITE);
+        
+        JButton btnRegistrar = new JButton("Registrar");
+        btnRegistrar.setBackground(new Color(255, 147, 30));
+        btnRegistrar.setForeground(Color.WHITE);
+        btnRegistrar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnRegistrar.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setBackground(new Color(178, 34, 34));
+        btnCancelar.setForeground(Color.WHITE);
+        btnCancelar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnCancelar.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
 
-		                        if (respuesta == JOptionPane.YES_OPTION) {
-		                            txtID.setText(generarNuevoId());
-		                            spnFecha.setValue(new Date());
-		                            cbxEquipoLocal.setSelectedIndex(-1);
-		                            cbxEquipoVisitante.setSelectedIndex(-1);
-		                            cbxUbicacion.setSelectedIndex(-1);
-		                        } else {
-		                            dispose();
-		                        }
-		                } catch (Exception ex) {
-		                    JOptionPane.showMessageDialog(RegJuego.this, 
-		                        "Error: " + ex.getMessage(), 
-		                        "Error", 
-		                        JOptionPane.ERROR_MESSAGE);
-		                }
-	            }
-				});
-				btnRegistrar.setActionCommand("OK");
-				buttonPane.add(btnRegistrar);
-				getRootPane().setDefaultButton(btnRegistrar);
-			}
-			{
-				JButton btnCancelar = new JButton("Cancelar");
-				btnCancelar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						dispose();
-					}
-				});
-				btnCancelar.setActionCommand("Cancel");
-				buttonPane.add(btnCancelar);
-			}
-		}
-	}
+        btnRegistrar.addActionListener(e -> {
+            try {
+                if (cbxEquipoLocal.getSelectedItem() == null || 
+                    cbxEquipoVisitante.getSelectedItem() == null || 
+                    cbxUbicacion.getSelectedItem() == null) {
+                    
+                    JOptionPane.showMessageDialog(this, 
+                        "Complete todos los campos", 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if (cbxEquipoLocal.getSelectedItem() == cbxEquipoVisitante.getSelectedItem()) {
+                    JOptionPane.showMessageDialog(this, 
+                        "Los equipos deben ser diferentes", 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                Equipo local = (Equipo) cbxEquipoLocal.getSelectedItem();
+                Equipo visitante = (Equipo) cbxEquipoVisitante.getSelectedItem();
+                
+                if (tieneJugadoresLesionados(local)) {
+                    JOptionPane.showMessageDialog(this, 
+                        "El equipo local tiene jugadores lesionados activos", 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if (tieneJugadoresLesionados(visitante)) {
+                    JOptionPane.showMessageDialog(this, 
+                        "El equipo visitante tiene jugadores lesionados activos", 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                Date fechaSeleccionada = (Date) spnFecha.getValue();
+                LocalDateTime fechaHora = fechaSeleccionada.toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
+                
+                Juego nuevoJuego = new Juego(
+                    txtID.getText(),
+                    fechaHora,
+                    (String) cbxUbicacion.getSelectedItem(),
+                    local,
+                    visitante
+                );
+                
+                controladora.agregarJuego(nuevoJuego);
+                
+                int respuesta = JOptionPane.showConfirmDialog(
+                    this, 
+                    "¿Desea agregar otro juego?", 
+                    "Registro exitoso", 
+                    JOptionPane.YES_NO_OPTION
+                );
+                
+                if (respuesta == JOptionPane.YES_OPTION) {
+                    txtID.setText("JUE-" + (controladora.getCalendario().getJuegos().size() + 1));
+                    spnFecha.setValue(new Date());
+                    cbxEquipoLocal.setSelectedIndex(-1);
+                    cbxEquipoVisitante.setSelectedIndex(-1);
+                    cbxUbicacion.setSelectedIndex(-1);
+                } else {
+                    dispose();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Error: " + ex.getMessage(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
+        btnCancelar.addActionListener(e -> dispose());
+        
+        panelBotones.add(btnRegistrar);
+        panelBotones.add(btnCancelar);
 
-	private void cargarLugares(JComboBox<String> comboBox) {
-	    Set<String> lugares = new HashSet<>();
-	    if (controladora.getMisEquipos() != null) {
-	        for (Equipo equipo : controladora.getMisEquipos()) {
-	            if (equipo.getCiudad() != null) {
-	                lugares.add(equipo.getCiudad());
-	            }
-	        }
-	    }
-	    DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(lugares.toArray(new String[0]));
-	    comboBox.setModel(model);
-	}
+        add(mainPanel, BorderLayout.CENTER);
+        add(panelBotones, BorderLayout.SOUTH);
+    }
 
-	private void cargarEquipos(JComboBox<Equipo> comboBox) {
-	    DefaultComboBoxModel<Equipo> model = new DefaultComboBoxModel<>();
-	    if (controladora.getMisEquipos() != null) {
-	        for (Equipo equipo : controladora.getMisEquipos()) {
-	            model.addElement(equipo);
-	        }
-	    }
-	    comboBox.setModel(model);
-	}
-
-	private String generarNuevoId() {
-	    controladora = ControladoraLiga.getInstance();
-	    CalendarioJuegos calendario = controladora.getCalendario();
-	    
-	    if (calendario == null) {
-	        calendario = new CalendarioJuegos();
-	        controladora.setCalendario(calendario); 
-	    }
-	    
-	    int numJuegos = calendario.getJuegos().size();
-	    return "JUE-" + (numJuegos + 1);
-	}
+    private String generarNuevoId() {
+        return "JUE-" + (controladora.getCalendario().getJuegos().size() + 1);
+    }
+    
+    private boolean tieneJugadoresLesionados(Equipo equipo) {
+        return equipo.getJugadores().stream()
+                    .anyMatch(j -> !j.getLesionesActivas().isEmpty());
+    }
+    
+    public static void main(String[] args) {
+        RegJuego dialog = new RegJuego();
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
+    }
 }

@@ -2,159 +2,115 @@ package visual;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import logico.ControladoraLiga;
-import logico.Equipo;
-import logico.Jugador;
-import logico.Lesion;
+import logico.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class ListarLesiones extends JDialog {
-    
-    private final JPanel contentPanel = new JPanel();
-    private JTable table;
-    private ControladoraLiga controladora;
-    private JComboBox<String> cmbJugadores;
-    private JComboBox<String> cmbEquipos;
-    private JButton btnFiltrarJugador;
-    private JButton btnFiltrarEquipo;
-    
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-        try {
-            ControladoraLiga controladora = ControladoraLiga.getInstance();
-            ListarLesiones dialog = new ListarLesiones(controladora);
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-	
-	/**
-	 * Create the dialog.
-	 */
+
     public ListarLesiones(ControladoraLiga controladora) {
-        this.controladora = controladora;
-
         setTitle("Listado de Lesiones");
-        setBounds(100, 100, 800, 400);
+        setSize(900, 500);
         setLocationRelativeTo(null);
-        getContentPane().setLayout(new BorderLayout());
-        contentPanel.setLayout(new BorderLayout());
-        getContentPane().add(contentPanel, BorderLayout.CENTER);
+        getContentPane().setLayout(new BorderLayout(10, 10));
+        getContentPane().setBackground(Color.WHITE);
 
-        JPanel panelFiltros = new JPanel();
-        panelFiltros.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        cmbJugadores = new JComboBox<>();
+        JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        panelFiltros.setBackground(Color.WHITE);
+        
+        JComboBox<String> cmbJugadores = new JComboBox<>();
         cmbJugadores.addItem("Todos");
         for (Jugador j : controladora.getMisJugadores()) {
             cmbJugadores.addItem(j.getNombre() + " (" + j.getID() + ")");
         }
-        panelFiltros.add(new JLabel("Jugador:"));
-        panelFiltros.add(cmbJugadores);
-
-        btnFiltrarJugador = new JButton("Filtrar por Jugador");
-        panelFiltros.add(btnFiltrarJugador);
-
-        cmbEquipos = new JComboBox<>();
+        
+        JComboBox<String> cmbEquipos = new JComboBox<>();
         cmbEquipos.addItem("Todos");
         for (Equipo e : controladora.getMisEquipos()) {
             cmbEquipos.addItem(e.getNombre() + " (" + e.getID() + ")");
         }
+
+        JButton btnFiltrar = new JButton("Filtrar");
+        btnFiltrar.setBackground(new Color(255, 147, 30));
+        btnFiltrar.setForeground(Color.WHITE);
+        btnFiltrar.setFont(new Font("Arial", Font.BOLD, 12));
+        btnFiltrar.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+
+        panelFiltros.add(new JLabel("Jugador:"));
+        panelFiltros.add(cmbJugadores);
         panelFiltros.add(new JLabel("Equipo:"));
         panelFiltros.add(cmbEquipos);
+        panelFiltros.add(btnFiltrar);
+        add(panelFiltros, BorderLayout.NORTH);
 
-        btnFiltrarEquipo = new JButton("Filtrar por Equipo");
-        panelFiltros.add(btnFiltrarEquipo);
+        DefaultTableModel model = new DefaultTableModel(
+            new String[]{"Jugador", "Equipo", "Tipo", "Tratamiento", "Fecha", "Duración", "Estado"}, 0
+        );
+        JTable tabla = new JTable(model);
+        tabla.setRowHeight(30);
+        tabla.setFont(new Font("Arial", Font.PLAIN, 12));
+        tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        tabla.setSelectionBackground(new Color(255, 147, 30));
+        tabla.setSelectionForeground(Color.WHITE);
+        add(new JScrollPane(tabla), BorderLayout.CENTER);
 
-        getContentPane().add(panelFiltros, BorderLayout.NORTH);
-
-        String[] columnas = {"Jugador", "Equipo", "Tipo de Lesión", "Tratamiento", "Fecha de Lesión", "Duración", "Estado"};
-        DefaultTableModel model = new DefaultTableModel(columnas, 0);
-        table = new JTable(model);
-        table.setBackground(new Color(240, 240, 240));
-        table.setSelectionBackground(new Color(212, 122, 25)); 
-        table.setSelectionForeground(Color.WHITE);
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        contentPanel.add(scrollPane, BorderLayout.CENTER);
-
-        JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        getContentPane().add(buttonPane, BorderLayout.SOUTH);
-
-        JButton btnCerrar = new JButton("Cerrar");
-        btnCerrar.addActionListener(e -> dispose());
-
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        panelBotones.setBackground(Color.WHITE);
+        
         JButton btnModificar = new JButton("Modificar");
-        buttonPane.add(btnModificar);
-
         JButton btnEliminar = new JButton("Eliminar");
-        buttonPane.add(btnEliminar);
-        buttonPane.add(btnCerrar);
-
-        btnFiltrarJugador.addActionListener(e -> aplicarFiltro());
-        btnFiltrarEquipo.addActionListener(e -> aplicarFiltro());
-
-        cargarLesiones(null, null);
-    }
-    
-
-    private void aplicarFiltro() {
-        String idJugador = null;
-        String idEquipo = null;
-
-        String seleccionJugador = (String) cmbJugadores.getSelectedItem();
-        if (seleccionJugador != null && !seleccionJugador.equals("Todos")) {
-            idJugador = seleccionJugador.split("\\(")[1].replace(")", "");
+        JButton btnCerrar = new JButton("Cerrar");
+        
+        for (JButton btn : new JButton[]{btnModificar, btnEliminar, btnCerrar}) {
+            btn.setFont(new Font("Arial", Font.BOLD, 12));
+            btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+            btn.setForeground(Color.WHITE);
         }
+        btnModificar.setBackground(new Color(255, 147, 30));
+        btnEliminar.setBackground(new Color(178, 34, 34));
+        btnCerrar.setBackground(new Color(100, 100, 100));
+        
+        btnCerrar.addActionListener(e -> dispose());
+        panelBotones.add(btnModificar);
+        panelBotones.add(btnEliminar);
+        panelBotones.add(btnCerrar);
+        add(panelBotones, BorderLayout.SOUTH);
 
-        String seleccionEquipo = (String) cmbEquipos.getSelectedItem();
-        if (seleccionEquipo != null && !seleccionEquipo.equals("Todos")) {
-            idEquipo = seleccionEquipo.split("\\(")[1].replace(")", "");
-        }
+        btnFiltrar.addActionListener(e -> {
+            String idJugador = cmbJugadores.getSelectedIndex() > 0 ? 
+                cmbJugadores.getSelectedItem().toString().split("\\(")[1].replace(")", "") : null;
+            
+            String idEquipo = cmbEquipos.getSelectedIndex() > 0 ? 
+                cmbEquipos.getSelectedItem().toString().split("\\(")[1].replace(")", "") : null;
 
-        cargarLesiones(idJugador, idEquipo);
-    }
-
-
-    private void cargarLesiones(String idJugadorFiltro, String idEquipoFiltro) {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0);
-
-        ArrayList<Jugador> jugadores = controladora.getMisJugadores();
-        for (Jugador jugador : jugadores) {
-            if (idJugadorFiltro != null && !jugador.getID().equals(idJugadorFiltro)) {
-                continue;
-            }
-
-            String nombreEquipo = "Sin equipo";
-            Equipo equipo = controladora.buscarEquipoPorJugador(jugador.getID());
-            if (equipo != null) {
-                nombreEquipo = equipo.getNombre();
-                if (idEquipoFiltro != null && !equipo.getID().equals(idEquipoFiltro)) {
-                    continue;
+            model.setRowCount(0);
+            for (Jugador jugador : controladora.getMisJugadores()) {
+                if (idJugador != null && !jugador.getID().equals(idJugador)) continue;
+                
+                Equipo equipo = controladora.buscarEquipoPorJugador(jugador.getID());
+                if (idEquipo != null && (equipo == null || !equipo.getID().equals(idEquipo))) continue;
+                
+                String nombreEquipo = equipo != null ? equipo.getNombre() : "Sin equipo";
+                
+                for (Lesion lesion : jugador.getLesiones()) {
+                    model.addRow(new Object[]{
+                        jugador.getNombre(),
+                        nombreEquipo,
+                        lesion.getTipo(),
+                        lesion.getTratamiento(),
+                        lesion.getFechaLesion(),
+                        lesion.getDuracionEstimada() + " días",
+                        lesion.getEstado()
+                    });
                 }
-            } else if (idEquipoFiltro != null) {
-                continue;
             }
+        });
 
-            for (Lesion lesion : jugador.getLesiones()) {
-                Object[] fila = {
-                    jugador.getNombre(),
-                    nombreEquipo,
-                    lesion.getTipo(),
-                    lesion.getTratamiento(),
-                    lesion.getFechaLesion(),
-                    lesion.getDuracionEstimada(),
-                    lesion.getEstado()
-                };
-                model.addRow(fila);
-            }
-        }
+        btnFiltrar.doClick();
+    }
+
+    public static void main(String[] args) {
+        ListarLesiones dialog = new ListarLesiones(ControladoraLiga.getInstance());
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
     }
 }

@@ -9,10 +9,7 @@ public class ControladoraLiga {
     private ArrayList<Equipo> misEquipos;
     private ArrayList<Jugador> misJugadores;
     private CalendarioJuegos calendario;
-
-    private static final String ARCHIVO_EQUIPOS = "equipos.dat";
-    private static final String ARCHIVO_JUGADORES = "jugadores.dat";
-    private static final String ARCHIVO_CALENDARIO = "calendario.dat";
+    private static final String ARCHIVO_DATOS = "datos.dat";
 
     private ControladoraLiga() {
         misEquipos = new ArrayList<>();
@@ -153,7 +150,20 @@ public class ControladoraLiga {
         }
         guardarDatos();
     }
-
+    
+    public void actualizarEstadoLesiones() {
+        LocalDate hoy = LocalDate.now();
+        for (Jugador jugador : misJugadores) {
+            for (Lesion lesion : jugador.getLesiones()) {
+                if (lesion.getEstado().equals("Activa") 
+                    && hoy.isAfter(lesion.getFechaLesion().plusDays(lesion.getDuracionEstimada()))) {
+                    lesion.setEstado("Inactiva");
+                }
+            }
+        }
+        guardarDatos();
+    }
+    
     public ArrayList<Equipo> getMisEquipos() { 
     	return misEquipos; 
     }
@@ -169,19 +179,18 @@ public class ControladoraLiga {
     public void setCalendario(CalendarioJuegos calendario) {
     	this.calendario = calendario; 
     }
-
+    
     public void guardarDatos() {
         try {
-            try (ObjectOutputStream oosEquipos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_EQUIPOS))) {
-                oosEquipos.writeObject(misEquipos);
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_DATOS))) {
+                Object[] datos = {
+                    misEquipos,
+                    misJugadores,
+                    calendario
+                };
+                oos.writeObject(datos);
             }
-            try (ObjectOutputStream oosJugadores = new ObjectOutputStream(new FileOutputStream(ARCHIVO_JUGADORES))) {
-                oosJugadores.writeObject(misJugadores);
-            }
-            try (ObjectOutputStream oosCalendario = new ObjectOutputStream(new FileOutputStream(ARCHIVO_CALENDARIO))) {
-                oosCalendario.writeObject(calendario);
-            }
-            System.out.println("Datos guardados exitosamente en archivos .dat");
+            System.out.println("Datos guardados exitosamente en " + ARCHIVO_DATOS);
         } catch (IOException e) {
             System.err.println("Error al guardar datos: " + e.getMessage());
         }
@@ -190,26 +199,22 @@ public class ControladoraLiga {
     @SuppressWarnings("unchecked")
     private void cargarDatos() {
         try {
-            File archivoEquipos = new File(ARCHIVO_EQUIPOS);
-            if (archivoEquipos.exists()) {
-                try (ObjectInputStream oisEquipos = new ObjectInputStream(new FileInputStream(ARCHIVO_EQUIPOS))) {
-                    misEquipos = (ArrayList<Equipo>) oisEquipos.readObject();
+            File archivo = new File(ARCHIVO_DATOS);
+            if (archivo.exists()) {
+                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARCHIVO_DATOS))) {
+                    
+                    Object[] datos = (Object[]) ois.readObject();
+                    
+                    misEquipos = (ArrayList<Equipo>) datos[0];
+                    misJugadores = (ArrayList<Jugador>) datos[1];
+                    calendario = (CalendarioJuegos) datos[2];
+                    
+                    System.out.println("Datos cargados desde " + ARCHIVO_DATOS);
                 }
+            } else {
+                System.out.println("No se encontró archivo de datos, inicializando nuevas estructuras");
             }
-            File archivoJugadores = new File(ARCHIVO_JUGADORES);
-            if (archivoJugadores.exists()) {
-                try (ObjectInputStream oisJugadores = new ObjectInputStream(new FileInputStream(ARCHIVO_JUGADORES))) {
-                    misJugadores = (ArrayList<Jugador>) oisJugadores.readObject();
-                }
-            }
-            File archivoCalendario = new File(ARCHIVO_CALENDARIO);
-            if (archivoCalendario.exists()) {
-                try (ObjectInputStream oisCalendario = new ObjectInputStream(new FileInputStream(ARCHIVO_CALENDARIO))) {
-                    calendario = (CalendarioJuegos) oisCalendario.readObject();
-                }
-            }
-            System.out.println("Datos cargados exitosamente desde archivos .dat");
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | ClassCastException e) {
             System.err.println("Error al cargar datos: " + e.getMessage());
             misEquipos = new ArrayList<>();
             misJugadores = new ArrayList<>();

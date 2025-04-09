@@ -1,309 +1,202 @@
 package visual;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.AbstractButton;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import logico.ControladoraLiga;
 import logico.Equipo;
-import logico.Jugador;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
-import javax.swing.JSpinner;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Window.Type;
-import java.util.Date;
-import java.awt.event.ActionListener;
-import java.text.ParseException;
+import java.awt.*;
 import java.text.SimpleDateFormat;
-import java.awt.event.ActionEvent;
-import javax.swing.JComboBox;
+import java.util.Date;
 
 public class RegEquipo extends JDialog {
 
-	private final JPanel contentPanel = new JPanel();
-	private JTextField txtNombre;
-	private JTextField txtCiudad;
-	private JTextField txtID;
-	private JTextField txtEntrenador;
-	private JTextField txtMascota;
-	private ControladoraLiga controladora;
-	private JSpinner spnFundacion;
-	private Equipo equipoExistente;
-	private JButton btnRegistrar;
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			RegEquipo dialog = new RegEquipo();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public RegEquipo(Equipo equipoEditar) {
+    private JTextField txtNombre, txtCiudad, txtID, txtEntrenador, txtMascota;
+    private JSpinner spnFundacion;
+    private Equipo equipoExistente;
+    private JButton btnRegistrar;
+    private ControladoraLiga controladora = ControladoraLiga.getInstance();
+
+    public RegEquipo(Equipo equipoEditar) {
         this();
         setTitle("Modificar Equipo");
         equipoExistente = equipoEditar;
         btnRegistrar.setText("Modificar");
         cargarDatosEquipo(equipoEditar);
     }
-	
-	private void cargarDatosEquipo(Equipo equipo) {
-	    equipoExistente = equipo;
-	    txtID.setText(equipo.getID());
-	    txtNombre.setText(equipo.getNombre());
-	    txtCiudad.setText(equipo.getCiudad());
-	    txtEntrenador.setText(equipo.getEntrenador());
-	    txtMascota.setText(equipo.getNombreDeLaMascota());
-	    
-	    try {
-	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-	        Date fechaFundacion = sdf.parse(equipo.getTiempoFundado());
-	        spnFundacion.setValue(fechaFundacion);
-	    } catch (ParseException e) {
-	        e.printStackTrace();
-	    }
-	}
 
-	/**
-	 * Create the dialog.
-	 */
-	public RegEquipo() {
-		controladora = ControladoraLiga.getInstance();
-		setType(Type.POPUP);
-		setTitle("Registrar Equipo");
-		setBounds(100, 100, 590, 466);
-		setLocationRelativeTo(null);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new BorderLayout(0, 0));
-		{
-			JPanel panel = new JPanel();
-			panel.setBackground(new Color(212, 122, 25));
-			contentPanel.add(panel, BorderLayout.CENTER);
-			panel.setLayout(null);
-			{
-				JPanel panelID = new JPanel();
-				panelID.setBackground(new Color(169, 169, 169));
-				panelID.setBounds(160, 13, 211, 41);
-				panel.add(panelID);
-				panelID.setLayout(null);
-				{
-					JLabel lblID = new JLabel("ID:");
-					lblID.setBounds(12, 13, 56, 16);
-					panelID.add(lblID);
-				}
-				{
-					txtID = new JTextField();
-					txtID.setEditable(false);
-					txtID.setBounds(44, 10, 155, 22);
-					panelID.add(txtID);
-					txtID.setText(generarNuevoId());
-					txtID.setColumns(10);
-				}
-			}
-			{
-				JPanel panelNombre = new JPanel();
-				panelNombre.setBackground(new Color(169, 169, 169));
-				panelNombre.setLayout(null);
-				panelNombre.setBounds(12, 83, 315, 41);
-				panel.add(panelNombre);
-				{
-					JLabel lblNombre = new JLabel("Nombre:");
-					lblNombre.setBounds(12, 13, 56, 16);
-					panelNombre.add(lblNombre);
-				}
-				{
-					txtNombre = new JTextField();
-					txtNombre.setBounds(67, 10, 236, 22);
-					panelNombre.add(txtNombre);
-					txtNombre.setColumns(10);
-				}
-			}
-			{
-				JPanel panelCiudad = new JPanel();
-				panelCiudad.setBackground(new Color(169, 169, 169));
-				panelCiudad.setLayout(null);
-				panelCiudad.setBounds(12, 147, 538, 41);
-				panel.add(panelCiudad);
-				{
-					JLabel lblCiudad = new JLabel("Ciudad:");
-					lblCiudad.setBounds(12, 13, 56, 16);
-					panelCiudad.add(lblCiudad);
-				}
-				{
-					txtCiudad = new JTextField();
-					txtCiudad.setBounds(70, 10, 445, 22);
-					panelCiudad.add(txtCiudad);
-					txtCiudad.setColumns(10);
-				}
-			}
-			{
-				JPanel panelEntrenador = new JPanel();
-				panelEntrenador.setBackground(new Color(169, 169, 169));
-				panelEntrenador.setLayout(null);
-				panelEntrenador.setBounds(12, 219, 538, 41);
-				panel.add(panelEntrenador);
-				{
-					JLabel lblEntrenador = new JLabel("Entrenador:");
-					lblEntrenador.setBounds(12, 13, 80, 16);
-					panelEntrenador.add(lblEntrenador);
-				}
-				{
-					txtEntrenador = new JTextField();
-					txtEntrenador.setBounds(85, 10, 441, 22);
-					panelEntrenador.add(txtEntrenador);
-					txtEntrenador.setColumns(10);
-				}
-			}
-			{
-				JPanel panelMascota = new JPanel();
-				panelMascota.setBackground(new Color(169, 169, 169));
-				panelMascota.setLayout(null);
-				panelMascota.setBounds(12, 288, 538, 41);
-				panel.add(panelMascota);
-				{
-					JLabel lblMascota = new JLabel("Nombre de la Mascota:");
-					lblMascota.setBounds(12, 13, 158, 16);
-					panelMascota.add(lblMascota);
-				}
-				{
-					txtMascota = new JTextField();
-					txtMascota.setBounds(163, 10, 363, 22);
-					panelMascota.add(txtMascota);
-					txtMascota.setColumns(10);
-				}
-			}
-			{
-				JPanel panelFundacion = new JPanel();
-				panelFundacion.setBackground(new Color(169, 169, 169));
-				panelFundacion.setLayout(null);
-				panelFundacion.setBounds(339, 83, 211, 41);
-				panel.add(panelFundacion);
-				{
-					JLabel lblFundacion = new JLabel("Fundaci\u00F3n:");
-					lblFundacion.setBounds(12, 13, 81, 16);
-					panelFundacion.add(lblFundacion);
-				}
-				{
-					spnFundacion = new JSpinner(new SpinnerDateModel());
-					spnFundacion.setBounds(80, 10, 124, 22);
-					panelFundacion.add(spnFundacion);
-					JSpinner.DateEditor de_spnFundacion = new JSpinner.DateEditor(spnFundacion, "dd-MM-yyyy");
-					spnFundacion.setEditor(de_spnFundacion);
-					spnFundacion.setPreferredSize(new Dimension(150, 25));
-					spnFundacion.setValue(new Date());
-				}
-			}
-		}
-		{
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				btnRegistrar = new JButton("Registrar");
-				btnRegistrar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						try {
-				            if (txtNombre.getText().isEmpty() || 
-				                txtCiudad.getText().isEmpty() || 
-				                txtEntrenador.getText().isEmpty()) {
-				                throw new IllegalArgumentException("Complete los campos obligatorios (*)");
-				            }
+    public RegEquipo() {
+        setTitle("Registrar Equipo");
+        setSize(600, 500);
+        setLocationRelativeTo(null);
+        getRootPane().setBorder(BorderFactory.createLineBorder(new Color(255, 147, 30), 2));
+        getContentPane().setBackground(Color.WHITE);
 
-				            String id = txtID.getText();
-				            String nombre = txtNombre.getText();
-				            String ciudad = txtCiudad.getText();
-				            String entrenador = txtEntrenador.getText();
-				            String mascota = txtMascota.getText();
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setLayout(new GridLayout(6, 1, 10, 10));
 
-				            java.util.Date fechaUtil = (java.util.Date) spnFundacion.getValue();
-				            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
-				            String fechaFundacion = sdf.format(fechaUtil);
+        txtID = new JTextField();
+        txtID.setEditable(false);
+        txtID.setFont(new Font("Arial", Font.PLAIN, 14));
+        txtID.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        txtID.setText(generarNuevoId());
 
-				            if (equipoExistente == null) {
-				                Equipo nuevoEquipo = new Equipo(
-				                    id,
-				                    fechaFundacion,
-				                    null,
-				                    mascota,
-				                    nombre,
-				                    ciudad,
-				                    entrenador
-				                );
-				                controladora.agregarEquipo(nuevoEquipo);
-				            } else {
-				                equipoExistente.setNombre(nombre);
-				                equipoExistente.setCiudad(ciudad);
-				                equipoExistente.setEntrenador(entrenador);
-				                equipoExistente.setNombreDeLaMascota(mascota);
-				                equipoExistente.setTiempoFundado(fechaFundacion);
-				                controladora.actualizarEquipo(equipoExistente);
-				            }
+        txtNombre = new JTextField();
+        txtCiudad = new JTextField();
+        txtEntrenador = new JTextField();
+        txtMascota = new JTextField();
 
-				            int respuesta = JOptionPane.showConfirmDialog(RegEquipo.this,
-				                    "¿Desea agregar otro equipo?",
-				                    "Registro exitoso",
-				                    JOptionPane.YES_NO_OPTION,
-				                    JOptionPane.QUESTION_MESSAGE
-				                );
+        for (JTextField field : new JTextField[]{txtNombre, txtCiudad, txtEntrenador, txtMascota}) {
+            field.setFont(new Font("Arial", Font.PLAIN, 14));
+            field.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+            ));
+        }
 
-				                if (respuesta == JOptionPane.YES_OPTION) {
-				                    txtNombre.setText("");
-				                    txtCiudad.setText("");
-				                    txtEntrenador.setText("");
-				                    txtMascota.setText("");
-				                    spnFundacion.setValue(new Date());
-				                    
-				                    txtID.setText(generarNuevoId());
-				                } else {
-				                    dispose();
-				                }
-				        } catch (Exception ex) {
-				            JOptionPane.showMessageDialog(RegEquipo.this, 
-				                "Error: " + ex.getMessage(), 
-				                "Error", 
-				                JOptionPane.ERROR_MESSAGE);
-				        }
-				    }
-				});
-				btnRegistrar.setActionCommand("OK");
-				buttonPane.add(btnRegistrar);
-				getRootPane().setDefaultButton(btnRegistrar);
-			}
-			{
-				JButton btnCancelar = new JButton("Cancelar");
-				btnCancelar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						dispose();
-					}
-				});
-				btnCancelar.setActionCommand("Cancel");
-				buttonPane.add(btnCancelar);
-			}
-		}
-	}
-	
-	private String generarNuevoId() {
-	    if (controladora == null) {
-	        controladora = ControladoraLiga.getInstance();
-	    }
-	    int numEqui = controladora.getMisEquipos().size(); 
-	    return "EQU-" + (numEqui + 1);
-	}
+        spnFundacion = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(spnFundacion, "dd-MM-yyyy");
+        spnFundacion.setEditor(editor);
+        spnFundacion.setValue(new Date());
+
+        mainPanel.add(createLabelPanel("ID:", txtID));
+        mainPanel.add(createLabelPanel("Nombre:", txtNombre));
+        mainPanel.add(createLabelPanel("Ciudad:", txtCiudad));
+        mainPanel.add(createLabelPanel("Entrenador:", txtEntrenador));
+        mainPanel.add(createLabelPanel("Mascota:", txtMascota));
+        mainPanel.add(createLabelPanel("Fundación:", spnFundacion));
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        buttonPanel.setBackground(Color.WHITE);
+        
+        btnRegistrar = new JButton("Registrar");
+        btnRegistrar.setBackground(new Color(255, 147, 30));
+        btnRegistrar.setForeground(Color.WHITE);
+        btnRegistrar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnRegistrar.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        btnRegistrar.addActionListener(e -> {
+            try {
+                if (txtNombre.getText().trim().isEmpty() || 
+                    txtCiudad.getText().trim().isEmpty() || 
+                    txtEntrenador.getText().trim().isEmpty()) {
+                    
+                    JOptionPane.showMessageDialog(this, 
+                        "Complete los campos obligatorios (*)", 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                String fechaFundacion = new SimpleDateFormat("dd-MM-yyyy").format(spnFundacion.getValue());
+                Equipo equipo = (equipoExistente == null) ? 
+                    new Equipo(
+                        txtID.getText(),
+                        fechaFundacion,
+                        null,
+                        txtMascota.getText(),
+                        txtNombre.getText(),
+                        txtCiudad.getText(),
+                        txtEntrenador.getText()
+                    ) : 
+                    actualizarEquipoExistente(fechaFundacion);
+
+                if (equipoExistente == null) {
+                    controladora.agregarEquipo(equipo);
+                } else {
+                    controladora.actualizarEquipo(equipo);
+                }
+
+                if (equipoExistente == null) {
+                    int respuesta = JOptionPane.showConfirmDialog(this,
+                        "¿Desea agregar otro equipo?",
+                        "Registro exitoso",
+                        JOptionPane.YES_NO_OPTION);
+
+                    if (respuesta == JOptionPane.YES_OPTION) {
+                        txtID.setText(generarNuevoId());
+                        txtNombre.setText("");
+                        txtCiudad.setText("");
+                        txtEntrenador.setText("");
+                        txtMascota.setText("");
+                        spnFundacion.setValue(new Date());
+                    } else {
+                        dispose();
+                    }
+                } else {
+                	JOptionPane.showMessageDialog(this,
+                            "Equipo modificado exitosamente",
+                            "Modificación exitosa", 
+                            JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Error: " + ex.getMessage(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setBackground(new Color(178, 34, 34));
+        btnCancelar.setForeground(Color.WHITE);
+        btnCancelar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnCancelar.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        btnCancelar.addActionListener(e -> dispose());
+
+        buttonPanel.add(btnRegistrar);
+        buttonPanel.add(btnCancelar);
+
+        add(mainPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private JPanel createLabelPanel(String label, JComponent component) {
+        JPanel panel = new JPanel(new BorderLayout(10, 5));
+        panel.setBackground(Color.WHITE);
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(new Font("Arial", Font.BOLD, 14));
+        panel.add(lbl, BorderLayout.WEST);
+        panel.add(component, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private Equipo actualizarEquipoExistente(String fechaFundacion) {
+        equipoExistente.setNombre(txtNombre.getText());
+        equipoExistente.setCiudad(txtCiudad.getText());
+        equipoExistente.setEntrenador(txtEntrenador.getText());
+        equipoExistente.setNombreDeLaMascota(txtMascota.getText());
+        equipoExistente.setTiempoFundado(fechaFundacion);
+        return equipoExistente;
+    }
+
+    private void cargarDatosEquipo(Equipo equipo) {
+        try {
+            txtID.setText(equipo.getID());
+            txtNombre.setText(equipo.getNombre());
+            txtCiudad.setText(equipo.getCiudad());
+            txtEntrenador.setText(equipo.getEntrenador());
+            txtMascota.setText(equipo.getNombreDeLaMascota());
+            spnFundacion.setValue(new SimpleDateFormat("dd-MM-yyyy").parse(equipo.getTiempoFundado()));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Error al cargar datos: " + e.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String generarNuevoId() {
+        return "EQU-" + (controladora.getMisEquipos().size() + 1);
+    }
+
+    public static void main(String[] args) {
+        RegEquipo dialog = new RegEquipo();
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
+    }
 }

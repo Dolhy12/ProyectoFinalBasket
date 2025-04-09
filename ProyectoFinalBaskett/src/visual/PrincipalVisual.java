@@ -4,8 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent; 
-import java.awt.event.ActionListener; 
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,10 +19,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane; 
-import javax.swing.border.BevelBorder;
-import logico.ControladoraLiga; 
+import logico.ControladoraLiga;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.Socket;
 
 public class PrincipalVisual extends JFrame {
 
@@ -30,13 +39,10 @@ public class PrincipalVisual extends JFrame {
     private JMenuItem mntmAgregarJuego;
     private JMenu mnEquipos;
     private JMenu mnJugadores;
-    private JMenu mnEstadisticas;
     private JMenu mnLesiones;
+    private JMenu mnRespaldo;
 
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
+    public static void main(String[] args) {        
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -56,12 +62,8 @@ public class PrincipalVisual extends JFrame {
         });
     }
 
-    /**
-     * Create the frame 
-     */
-    public PrincipalVisual(String rol) {
+    public PrincipalVisual(String rol) throws IOException {
         this.rolUsuario = rol;
-        
         setTitle("Serie Nacional de Basketball - [" + rolUsuario + "]");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 900, 600);
@@ -72,7 +74,7 @@ public class PrincipalVisual extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         
-        menuBar.setBackground(new Color(70, 70, 70));
+        menuBar.setBackground(Color.WHITE);
         
         mnCalendario = new JMenu("Calendario");
         menuBar.add(mnCalendario);
@@ -143,26 +145,6 @@ public class PrincipalVisual extends JFrame {
             }
         });
         mnJugadores.add(mntmListarJugadores);
-        mnEstadisticas = new JMenu("Estadísticas");
-        menuBar.add(mnEstadisticas);
-
-        JMenuItem mntmEstadisticasEquipos = new JMenuItem("Estadísticas de Equipos");
-        mntmEstadisticasEquipos.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ListarEstadisticasEquipo ventanaEst = new ListarEstadisticasEquipo(controladora);
-                ventanaEst.setVisible(true);
-            }
-        });
-        mnEstadisticas.add(mntmEstadisticasEquipos);
-
-        JMenuItem mntmEstadisticasJugadores = new JMenuItem("Estadísticas de Jugadores");
-        mntmEstadisticasJugadores.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ListarJugadores ventanaListJugadores = new ListarJugadores(controladora);
-                ventanaListJugadores.setVisible(true);
-            }
-        });
-        mnEstadisticas.add(mntmEstadisticasJugadores);
         mnLesiones = new JMenu("Lesiones");
         menuBar.add(mnLesiones);
 
@@ -183,73 +165,91 @@ public class PrincipalVisual extends JFrame {
             }
         });
         mnLesiones.add(mntmListarLesiones);
-        configurarColoresMenu(menuBar);
+        
+        mnRespaldo = new JMenu("Respaldo");
+        menuBar.add(mnRespaldo);
+        
+        JMenuItem mntmRespaldar = new JMenuItem("Realizar respaldo");
+        mntmRespaldar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                generarRespaldo();
+            }
+        });
+        mnRespaldo.add(mntmRespaldar);
         configurarAccesoSegunRol();
         
-        contentPane = new JPanel();
+        contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        contentPane.setLayout(new BorderLayout(0, 0));
         setContentPane(contentPane);
-        getContentPane().setBackground(new Color(70, 70, 70));
-
+        getContentPane().setBackground(Color.WHITE);
+        
         ImageIcon imagenFondo = new ImageIcon("Imagenes/Logo.png");
         JLabel fondoLabel = new JLabel(imagenFondo);
-        fondoLabel.setBounds(0, 0, getWidth(), getHeight());
-
-        JPanel panelFondo = new JPanel(null);
-        panelFondo.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-        panelFondo.setBackground(new Color(255, 147, 30));
-        panelFondo.add(fondoLabel);
-        contentPane.add(panelFondo, BorderLayout.CENTER);
+        JPanel panelImagen = new JPanel(new BorderLayout());
+        panelImagen.setBackground(new Color(255, 147, 30));
+        panelImagen.add(fondoLabel, BorderLayout.CENTER);
+        
+        JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        statusPanel.setBackground(new Color(255, 147, 30));
+        statusPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        
+        JLabel lblRol = new JLabel("Rol actual: " + rolUsuario);
+        lblRol.setFont(new Font("Arial", Font.BOLD, 12));
+        lblRol.setForeground(new Color(0, 0, 0));
+        statusPanel.add(lblRol);
+        
+        contentPane.add(panelImagen, BorderLayout.CENTER);
+        contentPane.add(statusPanel, BorderLayout.SOUTH);
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
-                fondoLabel.setSize(getWidth(), getHeight());
+                fondoLabel.setSize(contentPane.getWidth(), contentPane.getHeight());
             }
         });
 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                controladora.guardarDatos(); 
+                controladora.guardarDatos();
+                new File("backups").mkdirs();
                 System.exit(0); 
             }
         });
     }
-    
+
     private void configurarAccesoSegunRol() {
         if (rolUsuario.equals("Anotador")) {
             mnEquipos.setEnabled(false);
             mnJugadores.setEnabled(false);
-            mnEstadisticas.setEnabled(false);
             mnLesiones.setEnabled(false);
             mntmAgregarJuego.setEnabled(false);
         }
     }
     
-    private void configurarColoresMenu(JMenuBar menuBar) {
-        for (int i = 0; i < menuBar.getMenuCount(); i++) {
-            JMenu menu = menuBar.getMenu(i);
-            menu.setOpaque(true);
-            menu.setBackground(new Color(70, 70, 70));
-            menu.setForeground(Color.WHITE);
-        }
-        
-        configurarColorMenuItems(mnCalendario);
-        configurarColorMenuItems(mnEquipos);
-        configurarColorMenuItems(mnJugadores);
-        configurarColorMenuItems(mnEstadisticas);
-        configurarColorMenuItems(mnLesiones);
-    }
-    
-    private void configurarColorMenuItems(JMenu menu) {
-        for (int i = 0; i < menu.getItemCount(); i++) {
-            JMenuItem item = menu.getItem(i);
-            if (item != null) {
-                item.setOpaque(true);
-                item.setBackground(new Color(90, 90, 90)); 
-                item.setForeground(Color.WHITE);
+    private void generarRespaldo() {
+        new Thread(() -> {
+            File f = new File("datos.dat");
+            
+            try (Socket socket = new Socket("127.0.0.1", 7000);
+                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                 FileInputStream fis = new FileInputStream(f)) {
+                
+                out.writeUTF(f.getName());
+                out.writeLong(f.length());
+                
+                byte[] buffer = new byte[4096];
+                int leidos;
+                while ((leidos = fis.read(buffer)) != -1) {
+                    out.write(buffer, 0, leidos);
+                }
+                
+                JOptionPane.showMessageDialog(this, "Respaldo completo realizado");
+                
+            } catch (ConnectException ce) {
+                JOptionPane.showMessageDialog(this, "Servidor de respaldo no disponible", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error en respaldo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }
+        }).start();
     }
 }

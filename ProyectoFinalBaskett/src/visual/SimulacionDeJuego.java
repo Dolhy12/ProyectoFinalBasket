@@ -4,176 +4,180 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import logico.*;
 import java.awt.*;
-import java.util.ArrayList;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import java.util.function.Consumer;
 
 public class SimulacionDeJuego extends JDialog {
     
     private ControladoraLiga controladora;
     private Juego juego;
     private Resultado resultado;
+    private Runnable onCloseCallback;
 
-    public SimulacionDeJuego(ControladoraLiga controladora, Juego juego) {
+    public SimulacionDeJuego(ControladoraLiga controladora, Juego juego, Runnable onCloseCallback) {
         this.controladora = controladora;
         this.juego = juego;
         this.resultado = new Resultado(0, 0);
+        this.onCloseCallback = onCloseCallback;
+        controladora.actualizarEstadoLesiones();
         
         setTitle("Simulación: " + juego.getEquipoLocal().getNombre() + " vs " + juego.getEquipoVisitante().getNombre());
         setSize(1200, 600);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10));
+        getContentPane().setBackground(Color.WHITE);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         
-        JPanel panelLocal = new JPanel(new BorderLayout());
-        String[] columnas = {"Nombre", "Posición", "Número"};
-        DefaultTableModel modelLocal = new DefaultTableModel(columnas, 0) {
-            public boolean isCellEditable(int row, int column) { return false; }
-        };
+        DefaultTableModel modelLocal = crearModeloTabla();
+        JTable tblLocal = configurarTabla(modelLocal, true);
         
-        JTable tblLocal = new JTable(modelLocal);
-        tblLocal.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        DefaultTableModel modelVisitante = crearModeloTabla();
+        JTable tblVisitante = configurarTabla(modelVisitante, false);
+
+        tabbedPane.addTab(juego.getEquipoLocal().getNombre(), new JScrollPane(tblLocal));
+        tabbedPane.addTab(juego.getEquipoVisitante().getNombre(), new JScrollPane(tblVisitante));
         
-        for (Jugador jugador : juego.getEquipoLocal().getJugadores()) {
-            if (jugador.getLesionesActivas().isEmpty()) {
-                modelLocal.addRow(new Object[]{jugador.getNombre(), jugador.getPosicion(), jugador.getNumero()});
-            }
-        }
-        
-        tblLocal.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting() && tblLocal.getSelectedRow() >= 0) {
-                    String nombre = (String) tblLocal.getValueAt(tblLocal.getSelectedRow(), 0);
-                    Jugador jugador = controladora.getMisJugadores().stream()
-                        .filter(j -> j.getNombre().equals(nombre)).findFirst().orElse(null);
-                    mostrarDialogoEstadisticas(jugador, true);
-                }
-            }
-        });
-        
-        panelLocal.add(new JScrollPane(tblLocal), BorderLayout.CENTER);
-        
-        JPanel panelVisitante = new JPanel(new BorderLayout());
-        DefaultTableModel modelVisitante = new DefaultTableModel(columnas, 0) {
-            public boolean isCellEditable(int row, int column) { return false; }
-        };
-        
-        JTable tblVisitante = new JTable(modelVisitante);
-        tblVisitante.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        for (Jugador jugador : juego.getEquipoVisitante().getJugadores()) {
-            if (jugador.getLesionesActivas().isEmpty()) {
-                modelVisitante.addRow(new Object[]{jugador.getNombre(), jugador.getPosicion(), jugador.getNumero()});
-            }
-        }
-        
-        tblVisitante.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting() && tblVisitante.getSelectedRow() >= 0) {
-                    String nombre = (String) tblVisitante.getValueAt(tblVisitante.getSelectedRow(), 0);
-                    Jugador jugador = controladora.getMisJugadores().stream()
-                        .filter(j -> j.getNombre().equals(nombre)).findFirst().orElse(null);
-                    mostrarDialogoEstadisticas(jugador, false);
-                }
-            }
-        });
-        
-        panelVisitante.add(new JScrollPane(tblVisitante), BorderLayout.CENTER);
-        
-        tabbedPane.addTab(juego.getEquipoLocal().getNombre(), panelLocal);
-        tabbedPane.addTab(juego.getEquipoVisitante().getNombre(), panelVisitante);
+        JButton btnFinalizar = crearBotonFinalizar();
+        JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        panelSur.setBackground(Color.WHITE);
+        panelSur.add(btnFinalizar);
+
         add(tabbedPane, BorderLayout.CENTER);
+        add(panelSur, BorderLayout.SOUTH);
+    }
+
+    private DefaultTableModel crearModeloTabla() {
+        return new DefaultTableModel(new String[]{"Nombre", "Posición", "Número"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    }
+
+    private JTable configurarTabla(DefaultTableModel model, boolean esLocal) {
+    	Equipo equipo = esLocal ? juego.getEquipoLocal() : juego.getEquipoVisitante();
         
-         JButton btnFinalizar = new JButton("Finalizar Juego");
+        for (Jugador j : equipo.getJugadores()) {
+            Jugador jugadorActualizado = controladora.buscarJugador(j.getID());
+            if (jugadorActualizado != null && jugadorActualizado.getLesionesActivas().isEmpty()) {
+                model.addRow(new Object[]{
+                    jugadorActualizado.getNombre(), 
+                    jugadorActualizado.getPosicion(), 
+                    jugadorActualizado.getNumero()
+                });
+            }
+        }
+        
+        JTable tabla = new JTable(model);
+        tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabla.setRowHeight(30);
+        tabla.setFont(new Font("Arial", Font.PLAIN, 14));
+        tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        
+        tabla.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && tabla.getSelectedRow() >= 0) {
+                String nombre = (String) tabla.getValueAt(tabla.getSelectedRow(), 0);
+                Jugador jugador = controladora.getMisJugadores().stream()
+                        .filter(j -> j.getNombre().equals(nombre))
+                        .findFirst()
+                        .orElse(null);
+                mostrarEstadisticas(jugador, esLocal);
+            }
+        });
+        
+        return tabla;
+    }
+
+    private JButton crearBotonFinalizar() {
+        JButton btnFinalizar = new JButton("Finalizar Juego");
+        btnFinalizar.setBackground(new Color(255, 147, 30));
+        btnFinalizar.setForeground(Color.WHITE);
+        btnFinalizar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnFinalizar.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        
         btnFinalizar.addActionListener(e -> {
             int puntosLocal = resultado.getStatsLocales().stream().mapToInt(stat -> stat[0]).sum();
             int puntosVisitante = resultado.getStatsVisitantes().stream().mapToInt(stat -> stat[0]).sum();
             
             resultado.setPuntosLocal(puntosLocal);
             resultado.setPuntosVisitante(puntosVisitante);
-            
-            String mensaje = "Resultado final:\n" + juego.getEquipoLocal().getNombre() + ": " + puntosLocal + "\n" +
-                             juego.getEquipoVisitante().getNombre() + ": " + puntosVisitante + "\n\n" +
-                             (puntosLocal > puntosVisitante ? "Ganador: " + juego.getEquipoLocal().getNombre() :
-                             puntosVisitante > puntosLocal ? "Ganador: " + juego.getEquipoVisitante().getNombre() : "¡Empate!");
-            
+            juego.setEstado("Finalizado");
             controladora.actualizarResultadoJuego(juego.getID(), resultado);
-            JOptionPane.showMessageDialog(this, mensaje, "Resultado del Juego", JOptionPane.INFORMATION_MESSAGE);
+            
+            JOptionPane.showMessageDialog(this, 
+                "Resultado final:\n" + 
+                juego.getEquipoLocal().getNombre() + ": " + puntosLocal + "\n" +
+                juego.getEquipoVisitante().getNombre() + ": " + puntosVisitante, 
+                "Resultado", JOptionPane.INFORMATION_MESSAGE);
+            
             dispose();
+            if (onCloseCallback != null) {
+                onCloseCallback.run();
+            }
         });
         
-        JPanel panelSur = new JPanel();
-        panelSur.add(btnFinalizar);
-        add(panelSur, BorderLayout.SOUTH);
+        return btnFinalizar;
     }
 
-    private void mostrarDialogoEstadisticas(Jugador jugador, boolean esLocal) {
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (onCloseCallback != null) {
+            onCloseCallback.run();
+        }
+    }
+
+    private void mostrarEstadisticas(Jugador jugador, boolean esLocal) {
         JDialog dialog = new JDialog(this, "Estadísticas de " + jugador.getNombre(), true);
         dialog.setSize(400, 400);
-        dialog.setLayout(new GridLayout(0, 2, 5, 5));
-        
-        JSpinner spnPuntosNormales = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-        JSpinner spnPuntosTriples = new JSpinner(new SpinnerNumberModel(0, 0, 50, 1));
-        JSpinner spnTirosLibres = new JSpinner(new SpinnerNumberModel(0, 0, 30, 1));
-        JSpinner spnRebotes = new JSpinner(new SpinnerNumberModel(0, 0, 50, 1));
-        JSpinner spnAsistencias = new JSpinner(new SpinnerNumberModel(0, 0, 30, 1));
-        JSpinner spnRobos = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
-        JSpinner spnBloqueos = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
-        JSpinner spnMinutos = new JSpinner(new SpinnerNumberModel(0, 0, 48, 1));
+        dialog.setLayout(new GridLayout(9, 2, 10, 5));
+        dialog.getContentPane().setBackground(Color.WHITE);
 
-        dialog.add(new JLabel("Puntos normales:"));
-        dialog.add(spnPuntosNormales);
-        dialog.add(new JLabel("Puntos triples:"));
-        dialog.add(spnPuntosTriples);
-        dialog.add(new JLabel("Tiros libres:"));
-        dialog.add(spnTirosLibres);
-        dialog.add(new JLabel("Rebotes:"));
-        dialog.add(spnRebotes);
-        dialog.add(new JLabel("Asistencias:"));
-        dialog.add(spnAsistencias);
-        dialog.add(new JLabel("Robos:"));
-        dialog.add(spnRobos);
-        dialog.add(new JLabel("Bloqueos:"));
-        dialog.add(spnBloqueos);
-        dialog.add(new JLabel("Minutos jugados:"));
-        dialog.add(spnMinutos);
+        JSpinner[] spinners = crearSpinners();
+        String[] labels = {
+            "Puntos normales:", "Puntos triples:", "Tiros libres:", 
+            "Rebotes:", "Asistencias:", "Robos:", "Bloqueos:", "Minutos:"
+        };
 
+        for (int i = 0; i < labels.length; i++) {
+            JLabel label = new JLabel(labels[i]);
+            label.setFont(new Font("Arial", Font.BOLD, 12));
+            dialog.add(label);
+            spinners[i].setFont(new Font("Arial", Font.PLAIN, 12));
+            dialog.add(spinners[i]);
+        }
+
+        JButton btnGuardar = crearBotonGuardar(spinners, esLocal, jugador, dialog);
+        dialog.add(new JLabel());
+        dialog.add(btnGuardar);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
+    private JSpinner[] crearSpinners() {
+        return new JSpinner[]{
+            new JSpinner(new SpinnerNumberModel(0, 0, 100, 1)),
+            new JSpinner(new SpinnerNumberModel(0, 0, 50, 1)),
+            new JSpinner(new SpinnerNumberModel(0, 0, 30, 1)),
+            new JSpinner(new SpinnerNumberModel(0, 0, 50, 1)),
+            new JSpinner(new SpinnerNumberModel(0, 0, 30, 1)),
+            new JSpinner(new SpinnerNumberModel(0, 0, 10, 1)),
+            new JSpinner(new SpinnerNumberModel(0, 0, 10, 1)),
+            new JSpinner(new SpinnerNumberModel(0, 0, 48, 1))
+        };
+    }
+
+    private JButton crearBotonGuardar(JSpinner[] spinners, boolean esLocal, Jugador jugador, JDialog dialog) {
         JButton btnGuardar = new JButton("Guardar");
+        btnGuardar.setBackground(new Color(50, 150, 50));
+        btnGuardar.setForeground(Color.WHITE);
+        
         btnGuardar.addActionListener(e -> {
-            int puntosNormales = (int) spnPuntosNormales.getValue();
-            int puntosTriples = (int) spnPuntosTriples.getValue();
-            int tirosLibres = (int) spnTirosLibres.getValue();
-            int rebotes = (int) spnRebotes.getValue();
-            int asistencias = (int) spnAsistencias.getValue();
-            int robos = (int) spnRobos.getValue();
-            int bloqueos = (int) spnBloqueos.getValue();
-            int minutos = (int) spnMinutos.getValue();
-
-            int totalPuntos = puntosNormales + (puntosTriples * 3) + tirosLibres;
+            int totalPuntos = calcularPuntos(spinners);
+            int[] stats = crearArrayStats(spinners, totalPuntos);
             
-            jugador.getEstadisticas().agregarPuntosNormales(puntosNormales);
-            jugador.getEstadisticas().agregarPuntosTriples(puntosTriples);
-            jugador.getEstadisticas().agregarPuntosTirosLibres(tirosLibres);
-            jugador.getEstadisticas().agregarRebotes(rebotes);
-            jugador.getEstadisticas().agregarAsistencias(asistencias);
-            jugador.getEstadisticas().agregarRobos(robos);
-            jugador.getEstadisticas().agregarBloqueos(bloqueos);
-            jugador.getEstadisticas().agregarMinutosJugados(minutos);
-            jugador.getEstadisticas().verificarDoblesDobles();
-
-            int[] stats = {
-                totalPuntos, 
-                rebotes, 
-                asistencias, 
-                robos, 
-                bloqueos,
-                puntosNormales,
-                puntosTriples,
-                tirosLibres,
-                minutos
-            };
-
             if (esLocal) {
                 resultado.agregarEstadisticaLocal(jugador, stats);
             } else {
@@ -181,11 +185,28 @@ public class SimulacionDeJuego extends JDialog {
             }
             
             dialog.dispose();
-            ListarEstadisticasEquipo.refrescarDatos();
         });
         
-        dialog.add(btnGuardar);
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
+        return btnGuardar;
+    }
+
+    private int calcularPuntos(JSpinner[] spinners) {
+        return ((int)spinners[0].getValue()) + 
+               ((int)spinners[1].getValue())*3 + 
+               ((int)spinners[2].getValue());
+    }
+
+    private int[] crearArrayStats(JSpinner[] spinners, int totalPuntos) {
+        return new int[]{
+            totalPuntos,
+            ((int)spinners[3].getValue()),
+            ((int)spinners[4].getValue()),
+            ((int)spinners[5].getValue()),
+            ((int)spinners[6].getValue()),
+            ((int)spinners[0].getValue()),
+            ((int)spinners[1].getValue()),
+            ((int)spinners[2].getValue()),
+            ((int)spinners[7].getValue())
+        };
     }
 }
