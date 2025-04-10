@@ -129,22 +129,6 @@ public class RegJuego extends JDialog {
                 Equipo local = (Equipo) cbxEquipoLocal.getSelectedItem();
                 Equipo visitante = (Equipo) cbxEquipoVisitante.getSelectedItem();
                 
-                if (tieneJugadoresLesionados(local)) {
-                    JOptionPane.showMessageDialog(this, 
-                        "El equipo local tiene jugadores lesionados activos", 
-                        "Error", 
-                        JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                
-                if (tieneJugadoresLesionados(visitante)) {
-                    JOptionPane.showMessageDialog(this, 
-                        "El equipo visitante tiene jugadores lesionados activos", 
-                        "Error", 
-                        JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                
                 Date fechaSeleccionada = (Date) spnFecha.getValue();
                 LocalDateTime fechaHora = fechaSeleccionada.toInstant()
                     .atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -194,11 +178,6 @@ public class RegJuego extends JDialog {
 
     private String generarNuevoId() {
         return "JUE-" + (controladora.getCalendario().getJuegos().size() + 1);
-    }
-    
-    private boolean tieneJugadoresLesionados(Equipo equipo) {
-        return equipo.getJugadores().stream()
-                    .anyMatch(j -> !j.getLesionesActivas().isEmpty());
     }
     
     public static void main(String[] args) {

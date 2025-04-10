@@ -112,10 +112,46 @@ public class ControladoraLiga {
     }
 
     public void actualizarResultadoJuego(String idJuego, Resultado resultado) {
-        for (Juego juego : calendario.getJuegos()) {
-            if (juego.getID().equals(idJuego)) {
-                juego.setResultado(resultado);
-                juego.setEstado("Finalizado");
+    	    for (Juego juego : calendario.getJuegos()) {
+    	        if (juego.getID().equals(idJuego)) {
+    	            juego.setResultado(resultado);
+    	            juego.setEstado("Finalizado");
+    	            
+    	            for (int i = 0; i < resultado.getIdsJugadoresLocales().size(); i++) {
+    	                String idJugador = resultado.getIdsJugadoresLocales().get(i);
+    	                int[] stats = resultado.getStatsLocales().get(i);
+    	                Jugador jugador = buscarJugador(idJugador);
+    	                if (jugador != null) {
+    	                    EstadisticasJugador estadisticas = jugador.getEstadisticas();
+    	                    estadisticas.agregarPuntosNormales(stats[5]);
+    	                    estadisticas.agregarPuntosTriples(stats[6]);
+    	                    estadisticas.agregarPuntosTirosLibres(stats[7]);
+    	                    estadisticas.agregarRebotes(stats[1]);
+    	                    estadisticas.agregarAsistencias(stats[2]);
+    	                    estadisticas.agregarRobos(stats[3]);
+    	                    estadisticas.agregarBloqueos(stats[4]);
+    	                    estadisticas.agregarMinutosJugados(stats[8]);
+    	                    estadisticas.verificarDoblesDobles();
+    	                }
+    	            }
+
+    	            for (int i = 0; i < resultado.getIdsJugadoresVisitantes().size(); i++) {
+    	                String idJugador = resultado.getIdsJugadoresVisitantes().get(i);
+    	                int[] stats = resultado.getStatsVisitantes().get(i);
+    	                Jugador jugador = buscarJugador(idJugador);
+    	                if (jugador != null) {
+    	                    EstadisticasJugador estadisticas = jugador.getEstadisticas();
+    	                    estadisticas.agregarPuntosNormales(stats[5]);
+    	                    estadisticas.agregarPuntosTriples(stats[6]);
+    	                    estadisticas.agregarPuntosTirosLibres(stats[7]);
+    	                    estadisticas.agregarRebotes(stats[1]);
+    	                    estadisticas.agregarAsistencias(stats[2]);
+    	                    estadisticas.agregarRobos(stats[3]);
+    	                    estadisticas.agregarBloqueos(stats[4]);
+    	                    estadisticas.agregarMinutosJugados(stats[8]);
+    	                    estadisticas.verificarDoblesDobles();
+    	                }
+    	            }
                 
                 EstadisticasEquipo statsLocal = juego.getEquipoLocal().getEstadisticas();
                 statsLocal.setPartidosJugados(statsLocal.getPartidosJugados() + 1);

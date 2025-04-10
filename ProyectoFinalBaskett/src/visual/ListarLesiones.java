@@ -4,10 +4,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import logico.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.awt.event.ActionEvent;
 
 public class ListarLesiones extends JDialog {
 
@@ -61,8 +61,8 @@ public class ListarLesiones extends JDialog {
         panelBotones.setBackground(Color.WHITE);
         JButton btnEliminar = new JButton("Eliminar");
         btnEliminar.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		int filaSeleccionada = tabla.getSelectedRow();
+            public void actionPerformed(ActionEvent e) {
+                int filaSeleccionada = tabla.getSelectedRow();
                 if (filaSeleccionada == -1) {
                     JOptionPane.showMessageDialog(
                         ListarLesiones.this,
@@ -81,34 +81,71 @@ public class ListarLesiones extends JDialog {
                 );
 
                 if (confirmacion == JOptionPane.YES_OPTION) {
-                    String nombreJugador = (String) tabla.getValueAt(filaSeleccionada, 0);
-                    String tipo = (String) tabla.getValueAt(filaSeleccionada, 2);
-                    LocalDate fecha = LocalDate.parse(
-                        ((String) tabla.getValueAt(filaSeleccionada, 4)),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                    );
+                    String nombreJugador = (String) tabla.getValueAt(filaSeleccionada, 0); // Columna "Jugador"
+                    String tipo = (String) tabla.getValueAt(filaSeleccionada, 2); // Columna "Tipo"
+                    String fechaStr = (String) tabla.getValueAt(filaSeleccionada, 4); // Columna "Fecha"
+                    LocalDate fecha = LocalDate.parse(fechaStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-                    Jugador jugador = controladora.getMisJugadores().stream()
+                    // Buscar jugadores con ese nombre
+                    java.util.List<Jugador> jugadoresCoincidentes = controladora.getMisJugadores().stream()
                         .filter(j -> j.getNombre().equals(nombreJugador))
-                        .findFirst().orElse(null);
+                        .collect(java.util.stream.Collectors.toList());
 
-                    if (jugador != null) {
+                    if (jugadoresCoincidentes.isEmpty()) {
+                        JOptionPane.showMessageDialog(
+                            ListarLesiones.this,
+                            "No se encontró ningún jugador con el nombre: " + nombreJugador,
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+
+                    boolean eliminada = false;
+                    Jugador jugadorModificado = null;
+
+                    // Iterar sobre jugadores con el mismo nombre
+                    for (Jugador jugador : jugadoresCoincidentes) {
                         boolean removido = jugador.getLesiones().removeIf(l ->
                             l.getTipo().equals(tipo) && l.getFechaLesion().equals(fecha)
                         );
-
                         if (removido) {
+                            eliminada = true;
+                            jugadorModificado = jugador;
                             controladora.actualizarJugador(jugador);
-                            btnFiltrar.doClick();
-                            JOptionPane.showMessageDialog(
-                                ListarLesiones.this,
-                                "Lesión eliminada exitosamente."
-                            );
+                            break; // Salir del bucle tras eliminar la lesión
                         }
                     }
+
+                    if (eliminada) {
+                        btnFiltrar.doClick(); // Refrescar la tabla
+                        JOptionPane.showMessageDialog(
+                            ListarLesiones.this,
+                            "Lesión eliminada exitosamente del jugador: " + nombreJugador
+                        );
+                    } else {
+                        JOptionPane.showMessageDialog(
+                            ListarLesiones.this,
+                            "No se encontró la lesión para el jugador: " + nombreJugador,
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+
+                    // Si hay más de un jugador con el mismo nombre, advertir al usuario
+                    if (jugadoresCoincidentes.size() > 1) {
+                        JOptionPane.showMessageDialog(
+                            ListarLesiones.this,
+                            "Advertencia: Hay " + jugadoresCoincidentes.size() + " jugadores con el nombre '" + nombreJugador + "'. " +
+                            "Se eliminó la lesión del primer jugador encontrado.",
+                            "Advertencia",
+                            JOptionPane.WARNING_MESSAGE
+                        );
+                    }
                 }
-        	}
+            }
         });
+
         JButton btnCerrar = new JButton("Cerrar");
         
         for (JButton btn : new JButton[]{btnEliminar, btnCerrar}) {
@@ -146,7 +183,7 @@ public class ListarLesiones extends JDialog {
                         nombreEquipo,
                         lesion.getTipo(),
                         lesion.getTratamiento(),
-                        lesion.getFechaLesion(),
+                        lesion.getFechaLesion().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                         lesion.getDuracionEstimada() + " días",
                         lesion.getEstado()
                     });

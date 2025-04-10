@@ -4,8 +4,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import logico.*;
 import java.awt.*;
-import javax.swing.event.ListSelectionEvent;
-import java.util.function.Consumer;
 
 public class SimulacionDeJuego extends JDialog {
     
@@ -60,12 +58,11 @@ public class SimulacionDeJuego extends JDialog {
     	Equipo equipo = esLocal ? juego.getEquipoLocal() : juego.getEquipoVisitante();
         
         for (Jugador j : equipo.getJugadores()) {
-            Jugador jugadorActualizado = controladora.buscarJugador(j.getID());
-            if (jugadorActualizado != null && jugadorActualizado.getLesionesActivas().isEmpty()) {
+            if (j.getLesionesActivas().isEmpty()) { 
                 model.addRow(new Object[]{
-                    jugadorActualizado.getNombre(), 
-                    jugadorActualizado.getPosicion(), 
-                    jugadorActualizado.getNumero()
+                    j.getNombre(), 
+                    j.getPosicion(), 
+                    j.getNumero()
                 });
             }
         }
