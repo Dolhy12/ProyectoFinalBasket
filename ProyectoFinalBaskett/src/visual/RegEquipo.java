@@ -160,6 +160,7 @@ public class RegEquipo extends JDialog {
         panel.setBackground(Color.WHITE);
         JLabel lbl = new JLabel(label);
         lbl.setFont(new Font("Arial", Font.BOLD, 14));
+        lbl.setPreferredSize(new Dimension(90, lbl.getPreferredSize().height)); 
         panel.add(lbl, BorderLayout.WEST);
         panel.add(component, BorderLayout.CENTER);
         return panel;

@@ -3,7 +3,6 @@ package visual;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.geom.RoundRectangle2D;
 
 public class Login extends JDialog {
     private JComboBox<String> cmbRol;
@@ -12,117 +11,97 @@ public class Login extends JDialog {
     private String rol = "";
 
     public Login() {
+        login();
+    }
+
+    private void login() {
         setTitle("Inicio de Sesión");
-        setSize(400, 350);
+        setSize(450, 320);
         setLocationRelativeTo(null);
         setUndecorated(true);
         setModal(true);
         getRootPane().setBorder(BorderFactory.createLineBorder(new Color(255, 147, 30), 2));
 
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(240, 240, 240));
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 25));
+        mainPanel.setBackground(new Color(240, 240, 240));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
 
         JLabel lblTitulo = new JLabel("Inicio de Sesión");
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 24));
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 26));
         lblTitulo.setForeground(new Color(255, 147, 30));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        panel.add(lblTitulo, gbc);
+        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        mainPanel.add(lblTitulo, BorderLayout.NORTH);
 
-        JPanel panelCampos = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(Color.WHITE);
-                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 20, 20));
-            }
-        };
-        panelCampos.setOpaque(false);
-        panelCampos.setLayout(new GridBagLayout());
-        GridBagConstraints gbcCampos = new GridBagConstraints();
-        gbcCampos.insets = new Insets(5, 10, 5, 10);
+        JPanel panelCampos = new JPanel(new GridLayout(2, 1, 10, 25));
+        panelCampos.setBackground(new Color(240, 240, 240));
 
+        JPanel panelRol = new JPanel(new BorderLayout(10, 0));
         JLabel lblRol = new JLabel("Rol:");
-        lblRol.setFont(new Font("Arial", Font.BOLD, 14));
-        lblRol.setForeground(new Color(51, 51, 51));
-        gbcCampos.gridx = 0;
-        gbcCampos.gridy = 0;
-        panelCampos.add(lblRol, gbcCampos);
-
-        cmbRol = new JComboBox<>(new String[]{"Administrador", "Anotador"});
+        lblRol.setFont(new Font("Arial", Font.BOLD, 16));
+        
+        cmbRol = new JComboBox<>();
+        cmbRol.setModel(new DefaultComboBoxModel<>(new String[]{"Administrador", "Anotador"}));
         cmbRol.setFont(new Font("Arial", Font.PLAIN, 14));
-        cmbRol.setPreferredSize(new Dimension(200, 30));
-        gbcCampos.gridx = 1;
-        panelCampos.add(cmbRol, gbcCampos);
+        cmbRol.setPreferredSize(new Dimension(350, 40)); 
+        panelRol.add(lblRol, BorderLayout.WEST);
+        panelRol.add(cmbRol, BorderLayout.CENTER);
 
+        JPanel panelContrasena = new JPanel(new BorderLayout(10, 0));
         JLabel lblContrasena = new JLabel("Contraseña:");
-        lblContrasena.setFont(new Font("Arial", Font.BOLD, 14));
-        lblContrasena.setForeground(new Color(51, 51, 51));
-        gbcCampos.gridx = 0;
-        gbcCampos.gridy = 1;
-        panelCampos.add(lblContrasena, gbcCampos);
-
+        lblContrasena.setFont(new Font("Arial", Font.BOLD, 16));
+        
         txtContrasena = new JPasswordField();
-        txtContrasena.setPreferredSize(new Dimension(200, 30));
-        gbcCampos.gridx = 1;
-        panelCampos.add(txtContrasena, gbcCampos);
+        txtContrasena.setPreferredSize(new Dimension(350, 40));
+        txtContrasena.setFont(new Font("Arial", Font.PLAIN, 14));
+        panelContrasena.add(lblContrasena, BorderLayout.WEST);
+        panelContrasena.add(txtContrasena, BorderLayout.CENTER);
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
-        panel.add(panelCampos, gbc);
+        panelCampos.add(panelRol);
+        panelCampos.add(panelContrasena);
+        mainPanel.add(panelCampos, BorderLayout.CENTER);
 
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
-        panelBotones.setOpaque(false);
-
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 0));
+        panelBotones.setBackground(new Color(240, 240, 240));
+        
         JButton btnLogin = new JButton("Ingresar");
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 14));
+        btnLogin.setFont(new Font("Arial", Font.BOLD, 16));
         btnLogin.setBackground(new Color(255, 147, 30));
         btnLogin.setForeground(Color.WHITE);
-        btnLogin.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        btnLogin.setPreferredSize(new Dimension(140, 45));
+        btnLogin.setBorder(BorderFactory.createEmptyBorder(8, 25, 8, 25));
         btnLogin.setFocusPainted(false);
         btnLogin.addActionListener(this::validarCredenciales);
-
+        
         JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnCancelar.setFont(new Font("Arial", Font.BOLD, 16));
         btnCancelar.setBackground(new Color(204, 0, 0));
         btnCancelar.setForeground(Color.WHITE);
-        btnCancelar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        btnCancelar.setPreferredSize(new Dimension(140, 45));
+        btnCancelar.setBorder(BorderFactory.createEmptyBorder(8, 25, 8, 25));
         btnCancelar.setFocusPainted(false);
         btnCancelar.addActionListener(e -> System.exit(0));
-
+        
         panelBotones.add(btnLogin);
         panelBotones.add(btnCancelar);
+        mainPanel.add(panelBotones, BorderLayout.SOUTH);
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        panel.add(panelBotones, gbc);
-
-        add(panel);
+        add(mainPanel);
     }
 
     private void validarCredenciales(ActionEvent e) {
         String selectedRol = (String) cmbRol.getSelectedItem();
-        String contrasenaIngresada = new String(txtContrasena.getPassword());
+        String contrasena = new String(txtContrasena.getPassword());
 
-        if (selectedRol.equals("Administrador") && contrasenaIngresada.equals("admin")) {
-            rol = "Administrador";
-            autenticado = true;
-            dispose();
-        } else if (selectedRol.equals("Anotador") && contrasenaIngresada.equals("anotador")) {
-            rol = "Anotador";
+        if (("Administrador".equals(selectedRol) && "admin".equals(contrasena)) ||
+            ("Anotador".equals(selectedRol) && "anotador".equals(contrasena))) {
+            rol = selectedRol;
             autenticado = true;
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Credenciales inválidas para el rol seleccionado",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                "Credenciales inválidas para el rol seleccionado",
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -135,13 +114,13 @@ public class Login extends JDialog {
     }
 
     public static void main(String[] args) {
-        Login login = new Login();
-        login.setVisible(true);
-
-        if (login.estaAutenticado()) {
-            System.out.println("Usuario autenticado como: " + login.getRol());
+        Login dialog = new Login();
+        dialog.setVisible(true);
+        
+        if (dialog.estaAutenticado()) {
+            System.out.println("Autenticación exitosa como: " + dialog.getRol());
         } else {
-            System.exit(0);
+            System.out.println("La autenticación falló");
         }
     }
 }

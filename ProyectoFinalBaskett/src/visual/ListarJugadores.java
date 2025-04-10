@@ -26,7 +26,8 @@ public class ListarJugadores extends JDialog {
         JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         panelFiltros.setBackground(Color.WHITE);
         
-        JComboBox<String> cmbPosiciones = new JComboBox<>(new String[]{"Todas", "Base", "Escolta", "Alero", "Ala-Pívot", "Pívot"});
+        JComboBox<String> cmbPosiciones = new JComboBox<>();
+        cmbPosiciones.setModel(new DefaultComboBoxModel<>(new String[]{"Todas", "Base", "Escolta", "Alero", "Ala-Pívot", "Pívot"}));
         JComboBox<String> cmbNacionalidades = new JComboBox<>();
         JTextField txtNombre = new JTextField(15);
         

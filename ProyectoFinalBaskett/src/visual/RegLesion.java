@@ -4,14 +4,16 @@ import java.awt.*;
 import java.util.Date;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
 import logico.ControladoraLiga;
 import logico.Jugador;
 
+@SuppressWarnings({ "serial", "rawtypes", "unchecked" })
 public class RegLesion extends JDialog {
 
     private JComboBox<Jugador> cbxJugadores;
-    private JComboBox<String> cbxLesion;
-    private JComboBox<String> cbxTratamiento;
+    private JComboBox<String> cbxLesion = new JComboBox<>();
+    private JComboBox<String> cbxTratamiento = new JComboBox<>(); 
     private JSpinner spnFecha;
     private JSpinner spnDuracion;
     private ControladoraLiga controladora;
@@ -19,7 +21,6 @@ public class RegLesion extends JDialog {
     public RegLesion(ControladoraLiga controladora) {
         this.controladora = controladora;
         initComponents();
-        styleComponents();
     }
 
     private void initComponents() {
@@ -28,106 +29,105 @@ public class RegLesion extends JDialog {
         setLocationRelativeTo(null);
         getRootPane().setBorder(BorderFactory.createLineBorder(new Color(255, 147, 30), 2));
         getContentPane().setBackground(Color.WHITE);
+        getContentPane().setLayout(new BorderLayout());
 
         JPanel mainPanel = new JPanel();
         mainPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setLayout(new GridLayout(4, 1, 15, 15));
 
+        JPanel jugadorPanel = new JPanel(new BorderLayout(10, 5));
+        jugadorPanel.setBackground(Color.WHITE);
+        JLabel lblJugador = new JLabel("Jugador:");
+        lblJugador.setFont(new Font("Arial", Font.BOLD, 14));
         cbxJugadores = new JComboBox<>();
         cargarJugadores();
-        mainPanel.add(createInputPanel("Jugador:", cbxJugadores));
+        jugadorPanel.add(lblJugador, BorderLayout.WEST);
+        jugadorPanel.add(cbxJugadores, BorderLayout.CENTER);
+        mainPanel.add(jugadorPanel);
 
         JPanel panelLesionTratamiento = new JPanel(new GridLayout(1, 2, 15, 0));
         panelLesionTratamiento.setBackground(Color.WHITE);
         
-        cbxLesion = new JComboBox<>(new String[]{
-            "<Seleccionar>", "Esguince de tobillo", "Rotura de ligamentos", 
-            "Tendinitis rotuliana", "Distensión muscular", "Fracturas por estrés", 
-            "Lesiones en el tendón de Aquiles", "Luxación de hombro", 
-            "Esguince de dedos", "Fracturas en manos/muñecas"
-        });
+        JPanel panelLesion = new JPanel(new BorderLayout(10, 5));
+        panelLesion.setBackground(Color.WHITE);
+        JLabel lblLesion = new JLabel("Tipo de lesión:");
+        lblLesion.setFont(new Font("Arial", Font.BOLD, 14));
+        cbxLesion.setModel(new DefaultComboBoxModel<>(new String[] {"<Seleccionar>", "Esguince de tobillo", "Rotura de ligamentos", "Tendinitis rotuliana", "Distensión muscular", "Fracturas por estrés", "Lesiones en el tendón de Aquiles", "Luxación de hombro", "Esguince de dedos", "Fracturas en manos/muñecas"}));
+        panelLesion.add(lblLesion, BorderLayout.WEST);
+        panelLesion.add(cbxLesion, BorderLayout.CENTER);
         
-        cbxTratamiento = new JComboBox<>(new String[]{
-            "<Seleccionar>", "Reposo y Protección", "Hielo y Compresión", 
-            "Medicamentos", "Fisioterapia", "Inmovilización", "Cirugía"
-        });
+        JPanel panelTratamiento = new JPanel(new BorderLayout(10, 5));
+        panelTratamiento.setBackground(Color.WHITE);
+        JLabel lblTratamiento = new JLabel("Tratamiento:");
+        lblTratamiento.setFont(new Font("Arial", Font.BOLD, 14));
+        cbxTratamiento.setModel(new DefaultComboBoxModel<>(new String[] {"<Seleccionar>", "Reposo y Protección", "Hielo y Compresión", "Medicamentos", "Fisioterapia", "Inmovilización", "Cirugía"}));
+        panelTratamiento.add(lblTratamiento, BorderLayout.WEST);
+        panelTratamiento.add(cbxTratamiento, BorderLayout.CENTER);
         
-        panelLesionTratamiento.add(createInputPanel("Tipo de lesión:", cbxLesion));
-        panelLesionTratamiento.add(createInputPanel("Tratamiento:", cbxTratamiento));
+        panelLesionTratamiento.add(panelLesion);
+        panelLesionTratamiento.add(panelTratamiento);
         mainPanel.add(panelLesionTratamiento);
 
         JPanel panelFechaDuracion = new JPanel(new GridLayout(1, 2, 15, 0));
         panelFechaDuracion.setBackground(Color.WHITE);
         
+        JPanel panelFecha = new JPanel(new BorderLayout(10, 5));
+        panelFecha.setBackground(Color.WHITE);
+        JLabel lblFecha = new JLabel("Fecha:");
+        lblFecha.setFont(new Font("Arial", Font.BOLD, 14));
         spnFecha = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor fechaEditor = new JSpinner.DateEditor(spnFecha, "dd-MM-yyyy");
-        spnFecha.setEditor(fechaEditor);
+        spnFecha.setEditor(new JSpinner.DateEditor(spnFecha, "dd-MM-yyyy"));
         spnFecha.setValue(new Date());
+        panelFecha.add(lblFecha, BorderLayout.WEST);
+        panelFecha.add(spnFecha, BorderLayout.CENTER);
         
+        JPanel panelDuracion = new JPanel(new BorderLayout(10, 5));
+        panelDuracion.setBackground(Color.WHITE);
+        JLabel lblDuracion = new JLabel("Duración (días):");
+        lblDuracion.setFont(new Font("Arial", Font.BOLD, 14));
         spnDuracion = new JSpinner(new SpinnerNumberModel(1, 1, 365, 1));
+        panelDuracion.add(lblDuracion, BorderLayout.WEST);
+        panelDuracion.add(spnDuracion, BorderLayout.CENTER);
         
-        panelFechaDuracion.add(createInputPanel("Fecha:", spnFecha));
-        panelFechaDuracion.add(createInputPanel("Duración (días):", spnDuracion));
+        panelFechaDuracion.add(panelFecha);
+        panelFechaDuracion.add(panelDuracion);
         mainPanel.add(panelFechaDuracion);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
-        buttonPanel.setBackground(Color.WHITE);
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+        panelBotones.setBackground(Color.WHITE);
         
-        JButton btnRegistrar = createButton("Registrar", new Color(255, 147, 46));
-        JButton btnCancelar = createButton("Cancelar", new Color(178, 34, 34));
-
+        JButton btnRegistrar = new JButton("Registrar");
+        btnRegistrar.setBackground(new Color(255, 147, 46));
+        btnRegistrar.setForeground(Color.WHITE);
+        btnRegistrar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnRegistrar.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
         btnRegistrar.addActionListener(e -> registrarLesion());
+        
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setBackground(new Color(178, 34, 34));
+        btnCancelar.setForeground(Color.WHITE);
+        btnCancelar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnCancelar.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
         btnCancelar.addActionListener(e -> dispose());
-
-        buttonPanel.add(btnRegistrar);
-        buttonPanel.add(btnCancelar);
+        
+        panelBotones.add(btnRegistrar);
+        panelBotones.add(btnCancelar);
 
         add(mainPanel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
-    }
+        add(panelBotones, BorderLayout.SOUTH);
 
-    private void styleComponents() {
-        Font mainFont = new Font("Arial", Font.PLAIN, 14);
-        UIManager.put("ComboBox.font", mainFont);
-        UIManager.put("Spinner.font", mainFont);
-        UIManager.put("Label.font", mainFont.deriveFont(Font.BOLD));
-    }
-
-    private JPanel createInputPanel(String label, JComponent component) {
-        JPanel panel = new JPanel(new BorderLayout(10, 5));
-        panel.setBackground(Color.WHITE);
-        
-        JLabel lbl = new JLabel(label);
-        component.setPreferredSize(new Dimension(250, 30));
-        
-        if(component instanceof JSpinner) {
-            component.setPreferredSize(new Dimension(200, 30));
-            ((JSpinner.DefaultEditor) ((JSpinner) component).getEditor()).getTextField().setFont(new Font("Arial", Font.PLAIN, 14));
-        }
-        
-        panel.add(lbl, BorderLayout.WEST);
-        panel.add(component, BorderLayout.CENTER);
-        return panel;
-    }
-
-    private JButton createButton(String text, Color bgColor) {
-        JButton button = new JButton(text);
-        button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
-        button.setFocusPainted(false);
-        return button;
+        UIManager.put("ComboBox.font", new Font("Arial", Font.PLAIN, 14));
+        UIManager.put("Spinner.font", new Font("Arial", Font.PLAIN, 14));
     }
 
     private void cargarJugadores() {
-        DefaultComboBoxModel<Jugador> model = new DefaultComboBoxModel<>();
-        controladora.getMisJugadores().forEach(model::addElement);
-        cbxJugadores.setModel(model);
+        DefaultComboBoxModel<Jugador> modelo = new DefaultComboBoxModel<>();
+        controladora.getMisJugadores().forEach(modelo::addElement);
+        cbxJugadores.setModel(modelo);
         cbxJugadores.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+            @Override @SuppressWarnings("rawtypes")
+            public Component getListCellRendererComponent(JList list, Object value, int index,
                                                           boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof Jugador) {
@@ -180,9 +180,11 @@ public class RegLesion extends JDialog {
     }
 
     public static void main(String[] args) {
-        ControladoraLiga controladora = ControladoraLiga.getInstance();
-        RegLesion dialog = new RegLesion(controladora);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            ControladoraLiga controladora = ControladoraLiga.getInstance();
+            RegLesion dialog = new RegLesion(controladora);
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+        });
     }
 }

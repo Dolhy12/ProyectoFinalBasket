@@ -211,7 +211,6 @@ public class PrincipalVisual extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 controladora.guardarDatos();
-                new File("backups").mkdirs();
                 System.exit(0); 
             }
         });
