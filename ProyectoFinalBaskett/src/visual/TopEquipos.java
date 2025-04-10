@@ -1,5 +1,5 @@
 package visual;
-//como no se vio cuando lo subi
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -58,7 +58,6 @@ public class TopEquipos extends JDialog {
         tabla.setSelectionForeground(Color.WHITE);
         tabla.setGridColor(new Color(220, 220, 220));
         tabla.setFillsViewportHeight(true);
-//internto de nuevo
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         tabla.setRowSorter(sorter);
 

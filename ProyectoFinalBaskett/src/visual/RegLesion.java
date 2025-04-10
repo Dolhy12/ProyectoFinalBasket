@@ -1,12 +1,13 @@
 package visual;
 
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import logico.ControladoraLiga;
-import logico.Jugador;
+import logico.*;
 
 @SuppressWarnings({ "serial", "rawtypes", "unchecked" })
 public class RegLesion extends JDialog {
@@ -17,14 +18,24 @@ public class RegLesion extends JDialog {
     private JSpinner spnFecha;
     private JSpinner spnDuracion;
     private ControladoraLiga controladora;
+    private Jugador jugador;
+    private Lesion lesionExistente;
 
     public RegLesion(ControladoraLiga controladora) {
         this.controladora = controladora;
-        initComponents();
+        RegLesion();
     }
 
-    private void initComponents() {
-        setTitle("Registrar Lesión");
+    public RegLesion(Jugador jugador, Lesion lesion) {
+        this(ControladoraLiga.getInstance());
+        this.jugador = jugador;
+        this.lesionExistente = lesion;
+        RegLesion();
+        cargarDatosLesion();
+    }
+
+    private void RegLesion() {
+        setTitle(lesionExistente != null ? "Modificar Lesión" : "Registrar Lesión");
         setSize(720, 300);
         setLocationRelativeTo(null);
         getRootPane().setBorder(BorderFactory.createLineBorder(new Color(255, 147, 30), 2));
@@ -36,32 +47,59 @@ public class RegLesion extends JDialog {
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setLayout(new GridLayout(4, 1, 15, 15));
 
+        // Panel Jugador
         JPanel jugadorPanel = new JPanel(new BorderLayout(10, 5));
         jugadorPanel.setBackground(Color.WHITE);
         JLabel lblJugador = new JLabel("Jugador:");
         lblJugador.setFont(new Font("Arial", Font.BOLD, 14));
+        
         cbxJugadores = new JComboBox<>();
         cargarJugadores();
+        if(jugador != null) cbxJugadores.setSelectedItem(jugador);
+        cbxJugadores.setEnabled(lesionExistente == null); // Bloquear si es modificación
+        
         jugadorPanel.add(lblJugador, BorderLayout.WEST);
         jugadorPanel.add(cbxJugadores, BorderLayout.CENTER);
         mainPanel.add(jugadorPanel);
 
+        // Panel Lesión-Tratamiento
         JPanel panelLesionTratamiento = new JPanel(new GridLayout(1, 2, 15, 0));
         panelLesionTratamiento.setBackground(Color.WHITE);
         
+        // Lesión
         JPanel panelLesion = new JPanel(new BorderLayout(10, 5));
         panelLesion.setBackground(Color.WHITE);
         JLabel lblLesion = new JLabel("Tipo de lesión:");
         lblLesion.setFont(new Font("Arial", Font.BOLD, 14));
-        cbxLesion.setModel(new DefaultComboBoxModel<>(new String[] {"<Seleccionar>", "Esguince de tobillo", "Rotura de ligamentos", "Tendinitis rotuliana", "Distensión muscular", "Fracturas por estrés", "Lesiones en el tendón de Aquiles", "Luxación de hombro", "Esguince de dedos", "Fracturas en manos/muñecas"}));
+        cbxLesion.setModel(new DefaultComboBoxModel<>(new String[] {
+            "<Seleccionar>", 
+            "Esguince de tobillo", 
+            "Rotura de ligamentos", 
+            "Tendinitis rotuliana", 
+            "Distensión muscular", 
+            "Fracturas por estrés", 
+            "Lesiones en el tendón de Aquiles", 
+            "Luxación de hombro", 
+            "Esguince de dedos", 
+            "Fracturas en manos/muñecas"
+        }));
         panelLesion.add(lblLesion, BorderLayout.WEST);
         panelLesion.add(cbxLesion, BorderLayout.CENTER);
         
+        // Tratamiento
         JPanel panelTratamiento = new JPanel(new BorderLayout(10, 5));
         panelTratamiento.setBackground(Color.WHITE);
         JLabel lblTratamiento = new JLabel("Tratamiento:");
         lblTratamiento.setFont(new Font("Arial", Font.BOLD, 14));
-        cbxTratamiento.setModel(new DefaultComboBoxModel<>(new String[] {"<Seleccionar>", "Reposo y Protección", "Hielo y Compresión", "Medicamentos", "Fisioterapia", "Inmovilización", "Cirugía"}));
+        cbxTratamiento.setModel(new DefaultComboBoxModel<>(new String[] {
+            "<Seleccionar>", 
+            "Reposo y Protección", 
+            "Hielo y Compresión", 
+            "Medicamentos", 
+            "Fisioterapia", 
+            "Inmovilización", 
+            "Cirugía"
+        }));
         panelTratamiento.add(lblTratamiento, BorderLayout.WEST);
         panelTratamiento.add(cbxTratamiento, BorderLayout.CENTER);
         
@@ -69,19 +107,21 @@ public class RegLesion extends JDialog {
         panelLesionTratamiento.add(panelTratamiento);
         mainPanel.add(panelLesionTratamiento);
 
+        // Panel Fecha-Duración
         JPanel panelFechaDuracion = new JPanel(new GridLayout(1, 2, 15, 0));
         panelFechaDuracion.setBackground(Color.WHITE);
         
+        // Fecha
         JPanel panelFecha = new JPanel(new BorderLayout(10, 5));
         panelFecha.setBackground(Color.WHITE);
         JLabel lblFecha = new JLabel("Fecha:");
         lblFecha.setFont(new Font("Arial", Font.BOLD, 14));
         spnFecha = new JSpinner(new SpinnerDateModel());
         spnFecha.setEditor(new JSpinner.DateEditor(spnFecha, "dd-MM-yyyy"));
-        spnFecha.setValue(new Date());
         panelFecha.add(lblFecha, BorderLayout.WEST);
         panelFecha.add(spnFecha, BorderLayout.CENTER);
         
+        // Duración
         JPanel panelDuracion = new JPanel(new BorderLayout(10, 5));
         panelDuracion.setBackground(Color.WHITE);
         JLabel lblDuracion = new JLabel("Duración (días):");
@@ -94,10 +134,11 @@ public class RegLesion extends JDialog {
         panelFechaDuracion.add(panelDuracion);
         mainPanel.add(panelFechaDuracion);
 
+        // Panel Botones
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
         panelBotones.setBackground(Color.WHITE);
         
-        JButton btnRegistrar = new JButton("Registrar");
+        JButton btnRegistrar = new JButton(lesionExistente != null ? "Guardar Cambios" : "Registrar");
         btnRegistrar.setBackground(new Color(255, 147, 46));
         btnRegistrar.setForeground(Color.WHITE);
         btnRegistrar.setFont(new Font("Arial", Font.BOLD, 14));
@@ -117,8 +158,7 @@ public class RegLesion extends JDialog {
         add(mainPanel, BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
 
-        UIManager.put("ComboBox.font", new Font("Arial", Font.PLAIN, 14));
-        UIManager.put("Spinner.font", new Font("Arial", Font.PLAIN, 14));
+        if(lesionExistente != null) cargarDatosLesion();
     }
 
     private void cargarJugadores() {
@@ -126,7 +166,8 @@ public class RegLesion extends JDialog {
         controladora.getMisJugadores().forEach(modelo::addElement);
         cbxJugadores.setModel(modelo);
         cbxJugadores.setRenderer(new DefaultListCellRenderer() {
-            @Override @SuppressWarnings("rawtypes")
+            @Override
+            @SuppressWarnings("rawtypes")
             public Component getListCellRendererComponent(JList list, Object value, int index,
                                                           boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -139,11 +180,26 @@ public class RegLesion extends JDialog {
         });
     }
 
+    private void cargarDatosLesion() {
+        if (lesionExistente != null) {
+            cbxLesion.setSelectedItem(lesionExistente.getTipo());
+            cbxTratamiento.setSelectedItem(lesionExistente.getTratamiento());
+            spnDuracion.setValue(lesionExistente.getDuracionEstimada());
+            
+            Date fecha = Date.from(
+                lesionExistente.getFechaLesion()
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant()
+            );
+            spnFecha.setValue(fecha);
+        }
+    }
+
     private void registrarLesion() {
         try {
-            Jugador jugador = (Jugador) cbxJugadores.getSelectedItem();
+            Jugador jugadorActual = (Jugador) cbxJugadores.getSelectedItem();
             
-            if (jugador == null || 
+            if (jugadorActual == null || 
                 cbxLesion.getSelectedIndex() == 0 || 
                 cbxTratamiento.getSelectedIndex() == 0) {
                 
@@ -155,18 +211,30 @@ public class RegLesion extends JDialog {
             Date fecha = (Date) spnFecha.getValue();
             int duracion = (int) spnDuracion.getValue();
 
-            controladora.agregarLesionAJugador(
-                jugador.getID(),
-                tipoLesion,
-                "General",
-                duracion,
-                tratamiento,
-                fecha.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate(),
-                duracion
-            );
+            if(lesionExistente == null) {
+                // Nueva lesión
+                controladora.agregarLesionAJugador(
+                    jugadorActual.getID(),
+                    tipoLesion,
+                    "General",
+                    duracion,
+                    tratamiento,
+                    fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                    duracion
+                );
+            } else {
+                // Modificar lesión existente
+                lesionExistente.setTipo(tipoLesion);
+                lesionExistente.setTratamiento(tratamiento);
+                lesionExistente.setDuracionEstimada(duracion);
+                lesionExistente.setFechaLesion(
+                    fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                );
+                controladora.actualizarJugador(jugadorActual);
+            }
 
             JOptionPane.showMessageDialog(this, 
-                "Lesión registrada exitosamente", 
+                "Operación realizada exitosamente", 
                 "Éxito", 
                 JOptionPane.INFORMATION_MESSAGE);
             dispose();

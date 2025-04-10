@@ -28,6 +28,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.awt.Component;
+import javax.swing.Box;
+import javax.swing.JComboBox;
 
 public class PrincipalVisual extends JFrame {
 
@@ -140,7 +143,7 @@ public class PrincipalVisual extends JFrame {
         JMenuItem mntmListarJugadores = new JMenuItem("Listar Jugadores");
         mntmListarJugadores.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ListarJugadores ventanaListJugadores = new ListarJugadores(controladora);
+                ListarJugadores ventanaListJugadores = new ListarJugadores(controladora, rol);
                 ventanaListJugadores.setVisible(true);
             }
         });
@@ -165,6 +168,58 @@ public class PrincipalVisual extends JFrame {
             }
         });
         mnLesiones.add(mntmListarLesiones);
+        
+        JMenu mnConsultas = new JMenu("Consultas");
+        menuBar.add(mnConsultas);
+        
+        JMenuItem mntmAnotadores = new JMenuItem("Top 10 anotadores");
+        mntmAnotadores.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		 MaximosAnotadores ventanaMAX = new MaximosAnotadores(controladora);
+        		 ventanaMAX.setVisible(true);
+        	}
+        });
+        
+        JMenuItem mntmEstadisticasEquipo = new JMenuItem("Estadisticas de equipos");
+        mntmEstadisticasEquipo.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		ListarEstadisticasEquipo ventanaEstEq = new ListarEstadisticasEquipo(controladora);
+        		ventanaEstEq.setVisible(true);
+        	}
+        });
+        mnConsultas.add(mntmEstadisticasEquipo);
+        
+        JMenuItem mntmEstadisticasJugadores = new JMenuItem("Estadisticas de jugadores");
+        mntmEstadisticasJugadores.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		ListarJugadores ventanaEstJug = new ListarJugadores(controladora, null);
+        		ventanaEstJug.setVisible(true);
+        	}
+        });
+        mnConsultas.add(mntmEstadisticasJugadores);
+        mnConsultas.add(mntmAnotadores);
+        
+        JMenuItem mntmEquiposTop = new JMenuItem("Top equipos");
+        mntmEquiposTop.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		 TopEquipos ventanaTopEQ = new TopEquipos(controladora);
+        		 ventanaTopEQ.setVisible(true);
+        	}
+        });
+        mnConsultas.add(mntmEquiposTop);
+        
+        JMenuItem mntmHistorial = new JMenuItem("Historial de enfrentamientos");
+        mntmHistorial.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		HistorialdeEquipos ventanaHistorial = new HistorialdeEquipos(controladora);
+        		ventanaHistorial.setVisible(true);
+        	}
+        });
+        mnConsultas.add(mntmHistorial);
+        
+        Component horizontalGlue = Box.createHorizontalGlue();
+        horizontalGlue.setEnabled(false);
+        menuBar.add(horizontalGlue);
         
         mnRespaldo = new JMenu("Respaldo");
         menuBar.add(mnRespaldo);
@@ -222,6 +277,13 @@ public class PrincipalVisual extends JFrame {
             mnJugadores.setEnabled(false);
             mnLesiones.setEnabled(false);
             mntmAgregarJuego.setEnabled(false);
+            mnRespaldo.setEnabled(false);
+        } else if (rolUsuario.equals("Usuario")) {
+        	mnEquipos.setEnabled(false);
+            mnJugadores.setEnabled(false);
+            mnLesiones.setEnabled(false);
+            mnCalendario.setEnabled(false);
+            mnRespaldo.setEnabled(false);
         }
     }
     

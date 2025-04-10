@@ -4,6 +4,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import logico.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.awt.event.ActionEvent;
 
 public class ListarLesiones extends JDialog {
 
@@ -40,7 +44,7 @@ public class ListarLesiones extends JDialog {
         panelFiltros.add(new JLabel("Equipo:"));
         panelFiltros.add(cmbEquipos);
         panelFiltros.add(btnFiltrar);
-        add(panelFiltros, BorderLayout.NORTH);
+        getContentPane().add(panelFiltros, BorderLayout.NORTH);
 
         DefaultTableModel model = new DefaultTableModel(
             new String[]{"Jugador", "Equipo", "Tipo", "Tratamiento", "Fecha", "Duración", "Estado"}, 0
@@ -51,29 +55,74 @@ public class ListarLesiones extends JDialog {
         tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         tabla.setSelectionBackground(new Color(255, 147, 30));
         tabla.setSelectionForeground(Color.WHITE);
-        add(new JScrollPane(tabla), BorderLayout.CENTER);
+        getContentPane().add(new JScrollPane(tabla), BorderLayout.CENTER);
 
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
         panelBotones.setBackground(Color.WHITE);
-        
-        JButton btnModificar = new JButton("Modificar");
         JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int filaSeleccionada = tabla.getSelectedRow();
+                if (filaSeleccionada == -1) {
+                    JOptionPane.showMessageDialog(
+                        ListarLesiones.this,
+                        "Seleccione una lesión para eliminar.",
+                        "Advertencia",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+                    return;
+                }
+
+                int confirmacion = JOptionPane.showConfirmDialog(
+                    ListarLesiones.this,
+                    "¿Está seguro de eliminar esta lesión?",
+                    "Confirmación",
+                    JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirmacion == JOptionPane.YES_OPTION) {
+                    String nombreJugador = (String) tabla.getValueAt(filaSeleccionada, 0);
+                    String tipo = (String) tabla.getValueAt(filaSeleccionada, 2);
+                    LocalDate fecha = LocalDate.parse(
+                        ((String) tabla.getValueAt(filaSeleccionada, 4)),
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                    );
+
+                    Jugador jugador = controladora.getMisJugadores().stream()
+                        .filter(j -> j.getNombre().equals(nombreJugador))
+                        .findFirst().orElse(null);
+
+                    if (jugador != null) {
+                        boolean removido = jugador.getLesiones().removeIf(l ->
+                            l.getTipo().equals(tipo) && l.getFechaLesion().equals(fecha)
+                        );
+
+                        if (removido) {
+                            controladora.actualizarJugador(jugador);
+                            btnFiltrar.doClick();
+                            JOptionPane.showMessageDialog(
+                                ListarLesiones.this,
+                                "Lesión eliminada exitosamente."
+                            );
+                        }
+                    }
+                }
+        	}
+        });
         JButton btnCerrar = new JButton("Cerrar");
         
-        for (JButton btn : new JButton[]{btnModificar, btnEliminar, btnCerrar}) {
+        for (JButton btn : new JButton[]{btnEliminar, btnCerrar}) {
             btn.setFont(new Font("Arial", Font.BOLD, 12));
             btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
             btn.setForeground(Color.WHITE);
         }
-        btnModificar.setBackground(new Color(255, 147, 30));
         btnEliminar.setBackground(new Color(178, 34, 34));
         btnCerrar.setBackground(new Color(100, 100, 100));
         
         btnCerrar.addActionListener(e -> dispose());
-        panelBotones.add(btnModificar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnCerrar);
-        add(panelBotones, BorderLayout.SOUTH);
+        getContentPane().add(panelBotones, BorderLayout.SOUTH);
 
         btnFiltrar.addActionListener(e -> {
             String idJugador = cmbJugadores.getSelectedIndex() > 0 ? 

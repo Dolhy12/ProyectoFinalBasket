@@ -13,9 +13,11 @@ public class ListarJugadores extends JDialog {
     
     private ControladoraLiga controladora;
     private JTable table;
-
-    public ListarJugadores(ControladoraLiga controladora) {
+    private String rolUsuario;
+    
+    public ListarJugadores(ControladoraLiga controladora, String rolUsuario) {
         this.controladora = controladora;
+        this.rolUsuario = rolUsuario;
         
         setTitle("Listado Completo de Jugadores");
         setSize(1000, 600);
@@ -72,10 +74,6 @@ public class ListarJugadores extends JDialog {
         panelBotones.setBackground(Color.WHITE);
         
         JButton btnEstadisticas = new JButton("Estadísticas");
-        try {
-            ImageIcon icono = new ImageIcon("Imagenes/stats_icon.png");
-            btnEstadisticas.setIcon(new ImageIcon(icono.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        } catch (Exception e) { System.out.println("Error cargando icono"); }
         btnEstadisticas.addActionListener(e -> {
             int fila = table.getSelectedRow();
             if(fila == -1) {
@@ -121,8 +119,10 @@ public class ListarJugadores extends JDialog {
         }
         
         panelBotones.add(btnEstadisticas);
-        panelBotones.add(btnModificar);
-        panelBotones.add(btnEliminar);
+        if (!"Usuario".equalsIgnoreCase(rolUsuario)) {
+            panelBotones.add(btnModificar);
+            panelBotones.add(btnEliminar);
+        }
         panelBotones.add(btnCerrar);
         add(panelBotones, BorderLayout.SOUTH);
 
@@ -154,7 +154,7 @@ public class ListarJugadores extends JDialog {
     }
 
     public static void main(String[] args) {
-        ListarJugadores dialog = new ListarJugadores(ControladoraLiga.getInstance());
+        ListarJugadores dialog = new ListarJugadores(ControladoraLiga.getInstance(), "Administrador");
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setVisible(true);
     }

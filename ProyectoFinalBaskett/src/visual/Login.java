@@ -3,6 +3,7 @@ package visual;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Login extends JDialog {
     private JComboBox<String> cmbRol;
@@ -11,10 +12,10 @@ public class Login extends JDialog {
     private String rol = "";
 
     public Login() {
-        login();
+    	Login();
     }
 
-    private void login() {
+    private void Login() {
         setTitle("Inicio de Sesión");
         setSize(450, 320);
         setLocationRelativeTo(null);
@@ -40,7 +41,18 @@ public class Login extends JDialog {
         lblRol.setFont(new Font("Arial", Font.BOLD, 16));
         
         cmbRol = new JComboBox<>();
-        cmbRol.setModel(new DefaultComboBoxModel<>(new String[]{"Administrador", "Anotador"}));
+        cmbRol.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String selected = (String) cmbRol.getSelectedItem();
+                if ("Usuario".equals(selected)) {
+                    txtContrasena.setEnabled(false);
+                    txtContrasena.setText("Puede Ingresar");
+                } else {
+                    txtContrasena.setEnabled(true);
+                }
+        	}
+        });
+        cmbRol.setModel(new DefaultComboBoxModel<>(new String[]{"Administrador", "Anotador", "Usuario"}));
         cmbRol.setFont(new Font("Arial", Font.PLAIN, 14));
         cmbRol.setPreferredSize(new Dimension(350, 40)); 
         panelRol.add(lblRol, BorderLayout.WEST);
@@ -85,14 +97,18 @@ public class Login extends JDialog {
         panelBotones.add(btnCancelar);
         mainPanel.add(panelBotones, BorderLayout.SOUTH);
 
-        add(mainPanel);
+        getContentPane().add(mainPanel);
     }
 
     private void validarCredenciales(ActionEvent e) {
         String selectedRol = (String) cmbRol.getSelectedItem();
         String contrasena = new String(txtContrasena.getPassword());
 
-        if (("Administrador".equals(selectedRol) && "admin".equals(contrasena)) ||
+        if ("Usuario".equals(selectedRol)) {
+            rol = selectedRol;
+            autenticado = true;
+            dispose();
+        } else if (("Administrador".equals(selectedRol) && "admin".equals(contrasena)) ||
             ("Anotador".equals(selectedRol) && "anotador".equals(contrasena))) {
             rol = selectedRol;
             autenticado = true;
