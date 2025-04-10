@@ -97,7 +97,7 @@ public class MaximosAnotadores extends JDialog {
                     j.getEstadisticas().getPuntosTotales()
                 });
             });
-    } 
+    }
 
     public static void main(String[] args) {
         MaximosAnotadores dialog = new MaximosAnotadores(ControladoraLiga.getInstance());
